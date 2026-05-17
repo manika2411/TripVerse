@@ -1,3 +1,4 @@
+import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
 import DestinationDetails from './pages/DestinationDetails'
@@ -6,6 +7,8 @@ import BudgetPlanner from './pages/BudgetPlanner'
 import Community from './pages/Community'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 function App() {
   return (
