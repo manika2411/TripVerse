@@ -8,7 +8,7 @@ function Navbar() {
           to="/"
           className="text-3xl font-bold tracking-wide text-cyan-400"
         >
-          Tripverse
+          TripVerse
         </Link>
 
         <div className="hidden md:flex gap-8 text-sm uppercase tracking-wider">
@@ -16,6 +16,7 @@ function Navbar() {
           <Link to="/explore">Explore</Link>
           <Link to="/planner">Planner</Link>
           <Link to="/budget">Budget</Link>
+          <Link to="/favorites">Favorites</Link>
           <Link to="/community">Community</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>

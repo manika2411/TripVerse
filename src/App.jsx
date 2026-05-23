@@ -1,4 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
+
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import Favorites from './pages/Favorites'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
 import DestinationDetails from './pages/DestinationDetails'
@@ -7,8 +11,6 @@ import BudgetPlanner from './pages/BudgetPlanner'
 import Community from './pages/Community'
 import About from './pages/About'
 import Contact from './pages/Contact'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
 
 function App() {
   return (
@@ -18,12 +20,16 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
-        <Route path="/destination/:id" element={<DestinationDetails />} />
+        <Route
+          path="/destination/:id"
+          element={<DestinationDetails />}
+        />
         <Route path="/planner" element={<TripPlanner />} />
         <Route path="/budget" element={<BudgetPlanner />} />
         <Route path="/community" element={<Community />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/favorites" element={<Favorites />} />
       </Routes>
 
       <Footer />
