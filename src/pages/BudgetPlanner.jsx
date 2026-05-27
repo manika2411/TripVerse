@@ -39,7 +39,6 @@ function BudgetPlanner() {
     const fetchCountries = async () => {
       try {
         const data = await getCountries()
-
         setCountries(data)
       } catch (error) {
         console.log(error)
@@ -56,7 +55,7 @@ function BudgetPlanner() {
       .includes(search.toLowerCase())
   )
 
-  // Region multipliers
+  // Region pricing multipliers
   const regionMultiplier = {
     Africa: 0.7,
     Asia: 0.9,
@@ -68,13 +67,14 @@ function BudgetPlanner() {
   const multiplier =
     regionMultiplier[selectedCountry?.region] || 1
 
-  // Pricing
+  // Accommodation pricing
   const accommodationPrices = {
     Budget: 40,
     Standard: 100,
     Luxury: 250,
   }
 
+  // Transportation pricing
   const transportPrices = {
     Bus: 50,
     Train: 150,
@@ -117,8 +117,11 @@ function BudgetPlanner() {
 
   // Currency
   const currency =
-    selectedCountry &&
-    Object.keys(selectedCountry.currencies || {})[0]
+    selectedCountry?.currencies
+      ? Object.values(selectedCountry.currencies)[0]
+          ?.symbol ||
+        Object.keys(selectedCountry.currencies)[0]
+      : 'USD'
 
   // Chart data
   const chartData = [
@@ -174,7 +177,7 @@ function BudgetPlanner() {
             </h2>
 
             <div className="space-y-6">
-              {/* Search Destination */}
+              {/* Destination Search */}
               <div className="relative">
                 <label className="block mb-3 text-slate-300">
                   Search Destination
@@ -191,7 +194,7 @@ function BudgetPlanner() {
                   className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400 transition"
                 />
 
-                {/* Suggestions */}
+                {/* Dropdown */}
                 {search && filteredOpen && (
                   <div className="absolute w-full bg-slate-800 border border-slate-700 rounded-2xl mt-2 max-h-64 overflow-y-auto z-50 shadow-2xl">
                     {filteredCountries
@@ -290,7 +293,7 @@ function BudgetPlanner() {
                 </select>
               </div>
 
-              {/* Transportation */}
+              {/* Transport */}
               <div>
                 <label className="block mb-3 text-slate-300">
                   Transportation
@@ -309,7 +312,7 @@ function BudgetPlanner() {
                 </select>
               </div>
 
-              {/* Food */}
+              {/* Food Budget */}
               <div>
                 <label className="block mb-3 text-slate-300">
                   Daily Food Budget
@@ -327,7 +330,7 @@ function BudgetPlanner() {
                 />
               </div>
 
-              {/* Activities */}
+              {/* Activities Budget */}
               <div>
                 <label className="block mb-3 text-slate-300">
                   Activities Budget
@@ -349,23 +352,23 @@ function BudgetPlanner() {
 
           {/* RIGHT SIDE */}
           <div className="space-y-8">
-            {/* Budget Card */}
+            {/* Budget Summary */}
             <div className="bg-gradient-to-br from-cyan-400 via-sky-400 to-blue-500 text-slate-900 rounded-3xl p-10 shadow-2xl">
               <p className="uppercase tracking-[4px] mb-4 font-semibold">
                 Estimated Budget
               </p>
 
               <h2 className="text-6xl font-extrabold mb-4">
-                {currency || '---'} {totalBudget}
+                {currency} {totalBudget}
               </h2>
 
               <p className="text-lg font-medium">
                 Daily Average:{' '}
-                {currency || '---'} {dailyAverage}
+                {currency} {dailyAverage}
               </p>
             </div>
 
-            {/* Country Info */}
+            {/* Country Card */}
             {selectedCountry && (
               <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 hover:border-cyan-400 transition">
                 <div className="flex items-center gap-5 mb-6">
@@ -422,7 +425,7 @@ function BudgetPlanner() {
               </div>
             )}
 
-            {/* Animated Pie Chart */}
+            {/* Expense Breakdown */}
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
               <h2 className="text-3xl font-bold mb-8">
                 Expense Breakdown
@@ -443,10 +446,10 @@ function BudgetPlanner() {
                       outerRadius={130}
                       innerRadius={70}
                       paddingAngle={5}
-                      animationBegin={0}
-                      animationDuration={1200}
-                      animationEasing="ease-out"
                       label
+                      animationBegin={0}
+                      animationDuration={1500}
+                      animationEasing="ease-out"
                     >
                       {chartData.map(
                         (entry, index) => (

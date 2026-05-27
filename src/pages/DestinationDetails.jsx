@@ -1,10 +1,26 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import {
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+
+import {
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
+
+import { TravelContext } from '../context/TravelContext'
 
 function DestinationDetails() {
   const { id } = useParams()
 
+  const navigate = useNavigate()
+
+  const { setSelectedDestination } =
+    useContext(TravelContext)
+
   const [country, setCountry] = useState(null)
+
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -29,7 +45,7 @@ function DestinationDetails() {
 
   if (loading) {
     return (
-      <div className="pt-32 text-center text-3xl">
+      <div className="pt-32 text-center text-3xl text-white bg-slate-950 min-h-screen">
         Loading...
       </div>
     )
@@ -37,6 +53,7 @@ function DestinationDetails() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      {/* Hero */}
       <div className="relative h-[60vh]">
         <img
           src={country.flags.png}
@@ -57,8 +74,10 @@ function DestinationDetails() {
         </div>
       </div>
 
+      {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid md:grid-cols-2 gap-12">
+          {/* Info */}
           <div>
             <h2 className="text-3xl font-bold mb-8">
               Country Information
@@ -95,18 +114,28 @@ function DestinationDetails() {
             </div>
           </div>
 
-          <div className="bg-slate-900 p-10 rounded-3xl border border-slate-800">
+          {/* Overview */}
+          <div className="bg-slate-900 p-10 rounded-3xl border border-slate-800 hover:border-cyan-400 transition">
             <h2 className="text-3xl font-bold mb-6">
               Travel Overview
             </h2>
 
             <p className="text-slate-400 leading-8">
-              Explore the beauty, culture, landscapes, and experiences of{' '}
-              {country.name.common}. Discover popular attractions,
-              local cuisine, adventure spots, and unforgettable journeys.
+              Explore the beauty, culture,
+              landscapes, and experiences of{' '}
+              {country.name.common}. Discover
+              attractions, local cuisine,
+              adventures, and unforgettable
+              journeys with Tripverse.
             </p>
 
-            <button className="mt-8 bg-cyan-400 text-slate-900 px-8 py-4 rounded-full font-semibold">
+            <button
+              onClick={() => {
+                setSelectedDestination(country)
+                navigate('/planner')
+              }}
+              className="mt-8 bg-cyan-400 hover:bg-cyan-300 transition text-slate-900 px-8 py-4 rounded-full font-semibold"
+            >
               Start Planning
             </button>
           </div>

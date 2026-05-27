@@ -1,31 +1,60 @@
-import { useEffect, useState } from 'react'
+import {
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+
+import { TravelContext } from '../context/TravelContext'
 
 function TripPlanner() {
+  const { selectedDestination } =
+    useContext(TravelContext)
+
   const [tripName, setTripName] = useState('')
-  const [destination, setDestination] = useState('')
+
+  const [destination, setDestination] =
+    useState(
+      selectedDestination?.name?.common || ''
+    )
+
   const [day, setDay] = useState('')
+
   const [activity, setActivity] = useState('')
 
   const [plans, setPlans] = useState([])
 
-  // Load from localStorage
+  // Load saved plans
   useEffect(() => {
-    const savedPlans = localStorage.getItem('tripPlans')
+    const savedPlans =
+      localStorage.getItem('tripPlans')
 
     if (savedPlans) {
       setPlans(JSON.parse(savedPlans))
     }
   }, [])
 
-  // Save to localStorage
+  // Save plans
   useEffect(() => {
-    localStorage.setItem('tripPlans', JSON.stringify(plans))
+    localStorage.setItem(
+      'tripPlans',
+      JSON.stringify(plans)
+    )
   }, [plans])
+
+  // Update destination dynamically
+  useEffect(() => {
+    if (selectedDestination) {
+      setDestination(
+        selectedDestination.name.common
+      )
+    }
+  }, [selectedDestination])
 
   const handleAddPlan = (e) => {
     e.preventDefault()
 
-    if (!destination || !day || !activity) return
+    if (!destination || !day || !activity)
+      return
 
     const newPlan = {
       id: Date.now(),
@@ -37,13 +66,14 @@ function TripPlanner() {
 
     setPlans([...plans, newPlan])
 
-    setDestination('')
     setDay('')
     setActivity('')
   }
 
   const handleDelete = (id) => {
-    const updatedPlans = plans.filter((plan) => plan.id !== id)
+    const updatedPlans = plans.filter(
+      (plan) => plan.id !== id
+    )
 
     setPlans(updatedPlans)
   }
@@ -62,7 +92,8 @@ function TripPlanner() {
           </h1>
 
           <p className="text-slate-400 text-lg max-w-3xl leading-8">
-            Organize destinations, create itineraries, and build unforgettable
+            Organize destinations, create
+            itineraries, and build unforgettable
             travel experiences with Tripverse.
           </p>
         </div>
@@ -82,7 +113,9 @@ function TripPlanner() {
                 type="text"
                 placeholder="Trip Name"
                 value={tripName}
-                onChange={(e) => setTripName(e.target.value)}
+                onChange={(e) =>
+                  setTripName(e.target.value)
+                }
                 className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
               />
 
@@ -90,7 +123,9 @@ function TripPlanner() {
                 type="text"
                 placeholder="Destination"
                 value={destination}
-                onChange={(e) => setDestination(e.target.value)}
+                onChange={(e) =>
+                  setDestination(e.target.value)
+                }
                 className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
               />
 
@@ -98,7 +133,9 @@ function TripPlanner() {
                 type="text"
                 placeholder="Day (Example: Day 1)"
                 value={day}
-                onChange={(e) => setDay(e.target.value)}
+                onChange={(e) =>
+                  setDay(e.target.value)
+                }
                 className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
               />
 
@@ -106,7 +143,9 @@ function TripPlanner() {
                 rows="5"
                 placeholder="Activity Details"
                 value={activity}
-                onChange={(e) => setActivity(e.target.value)}
+                onChange={(e) =>
+                  setActivity(e.target.value)
+                }
                 className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
               ></textarea>
 
@@ -136,7 +175,8 @@ function TripPlanner() {
                   </h3>
 
                   <p className="text-slate-400">
-                    Start creating your travel itinerary.
+                    Start creating your travel
+                    itinerary.
                   </p>
                 </div>
               ) : (
@@ -161,7 +201,9 @@ function TripPlanner() {
                       </div>
 
                       <button
-                        onClick={() => handleDelete(plan.id)}
+                        onClick={() =>
+                          handleDelete(plan.id)
+                        }
                         className="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white transition px-4 py-2 rounded-xl"
                       >
                         Delete
