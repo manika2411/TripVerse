@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getCountries } from '../services/countryApi'
 import { useContext } from 'react'
-import { FavoritesContext } from '../context/FavoritesContext'
 
 function Explore() {
   const [countries, setCountries] = useState([])
