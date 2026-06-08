@@ -28,7 +28,7 @@ function Hero() {
         </h1>
 
         <p className="max-w-2xl mx-auto text-slate-300 text-lg mb-8">
-          Discover destinations, organize itineraries, manage travel budgets,
+          Discover destinations, organize itineraries, manage travel budgets
           and create unforgettable journeys.
         </p>
 
