@@ -10,6 +10,9 @@ import BudgetPlanner from './pages/BudgetPlanner'
 import Community from './pages/Community'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import ProtectedRoutes from './components/ProtectedRoutes'
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 function App() {
   return (
@@ -19,16 +22,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
-        <Route
-          path="/destination/:id"
-          element={<DestinationDetails />}
-        />
+        <Route path="/destination/:id"element={<DestinationDetails />}/>
         <Route path="/planner" element={<TripPlanner />} />
         <Route path="/budget" element={<BudgetPlanner />} />
         <Route path="/community" element={<Community />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}/>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<ProtectedRoutes><Dashboard /></ProtectedRoutes>}/>
       </Routes>
 
       <Footer />
