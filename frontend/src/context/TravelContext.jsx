@@ -1,17 +1,19 @@
-import { createContext, useState } from 'react'
+import {
+  createContext,
+  useState,
+} from 'react'
 
 export const TravelContext = createContext()
 
 function TravelProvider({ children }) {
-  const [selectedDestination, setSelectedDestination] =
-    useState(null)
-
-  const [suggestedActivities, setSuggestedActivities] =
-    useState([])
+  const [selectedDestination, setSelectedDestination] = useState(null)
+  const [suggestedActivities, setSuggestedActivities] = useState([])
 
   const addSuggestedActivity = (activity) => {
     setSuggestedActivities((prev) => {
-      if (prev.includes(activity)) return prev
+      if (prev.includes(activity)) {
+        return prev
+      }
 
       return [...prev, activity]
     })
@@ -26,7 +28,6 @@ function TravelProvider({ children }) {
       value={{
         selectedDestination,
         setSelectedDestination,
-
         suggestedActivities,
         addSuggestedActivity,
         clearActivities,

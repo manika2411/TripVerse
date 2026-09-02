@@ -25,10 +25,7 @@ function AuthProvider({ children }) {
     setToken(jwtToken)
 
     localStorage.setItem('token', jwtToken)
-    localStorage.setItem(
-      'user',
-      JSON.stringify(userData)
-    )
+    localStorage.setItem('user', JSON.stringify(userData))
   }
 
   const logout = () => {

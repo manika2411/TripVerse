@@ -1,7 +1,13 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
+
 import Dashboard from './pages/Dashboard'
+
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import SmoothScroll from './components/SmoothScroll'
+import PageTransition from './components/PageTransition'
+
 import Home from './pages/Home'
 import Explore from './pages/Explore'
 import DestinationDetails from './pages/DestinationDetails'
@@ -10,31 +16,148 @@ import BudgetPlanner from './pages/BudgetPlanner'
 import Community from './pages/Community'
 import About from './pages/About'
 import Contact from './pages/Contact'
-import ProtectedRoutes from './components/ProtectedRoutes'
+
 import Login from './pages/Login'
 import Register from './pages/Register'
 
+import ProtectedRoutes from './components/ProtectedRoutes'
+
 function App() {
+  const location = useLocation()
+
   return (
-    <div className="bg-slate-950 text-white min-h-screen">
-      <Navbar />
+    <>
+      <SmoothScroll />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/destination/:id"element={<DestinationDetails />}/>
-        <Route path="/planner" element={<TripPlanner />} />
-        <Route path="/budget" element={<BudgetPlanner />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<ProtectedRoutes><Dashboard /></ProtectedRoutes>}/>
-      </Routes>
+      <div className="bg-slate-950 text-white min-h-screen relative">
 
-      <Footer />
-    </div>
+        <Navbar />
+
+        <AnimatePresence
+          mode="wait"
+        >
+          <Routes
+            location={location}
+            key={location.pathname}
+          >
+
+            <Route
+              path="/"
+              element={
+                <PageTransition>
+                  <Home />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/explore"
+              element={
+                <PageTransition>
+                  <Explore />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/destination/:id"
+              element={
+                <PageTransition>
+                  <DestinationDetails />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/planner"
+              element={
+                <PageTransition>
+                  <TripPlanner />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/trip-planner"
+              element={
+                <PageTransition>
+                  <TripPlanner />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/budget"
+              element={
+                <PageTransition>
+                  <BudgetPlanner />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/community"
+              element={
+                <PageTransition>
+                  <Community />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/about"
+              element={
+                <PageTransition>
+                  <About />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/contact"
+              element={
+                <PageTransition>
+                  <Contact />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/login"
+              element={
+                <PageTransition>
+                  <Login />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/register"
+              element={
+                <PageTransition>
+                  <Register />
+                </PageTransition>
+              }
+            />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoutes>
+                  <PageTransition>
+                    <Dashboard />
+                  </PageTransition>
+                </ProtectedRoutes>
+              }
+            />
+
+          </Routes>
+        </AnimatePresence>
+
+        <Footer />
+
+      </div>
+    </>
   )
 }
 

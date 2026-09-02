@@ -3,18 +3,21 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 
 import App from './App'
-import './index.css'
-
+import AuthProvider from './context/AuthContext'
 import TravelProvider from './context/TravelContext'
+
+import './index.css'
 
 ReactDOM.createRoot(
   document.getElementById('root')
 ).render(
   <React.StrictMode>
     <BrowserRouter>
-      <TravelProvider>
-        <App />
-      </TravelProvider>
+      <AuthProvider>
+        <TravelProvider>
+          <App />
+        </TravelProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 )
