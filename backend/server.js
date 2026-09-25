@@ -1,28 +1,50 @@
-const express = require('express')
-const cors = require('cors')
-require('dotenv').config()
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 
-const connectDB = require('./config/db')
+const connectDB = require("./config/db");
 
-connectDB()
-const app = express()
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const tripRoutes = require("./routes/tripRoutes");
+const currencyRoutes = require("./routes/currencyRoutes");
+const countryRoutes = require("./routes/countryRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
 
-app.use(cors())
-app.use(express.json())
-const authRoutes = require('./routes/authRoutes')
-const userRoutes = require('./routes/userRoutes')
-const tripRoutes = require('./routes/tripRoutes')
+connectDB();
 
-app.use('/api/users', userRoutes)
-app.use('/api/auth',authRoutes)
-app.use('/api/trips', tripRoutes)
+const app = express();
 
-app.get('/', (req, res) => {
-  res.send('Tripverse API Running')
-})
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
-const PORT = process.env.PORT || 5000
+app.use(express.json());
+
+app.use("/api/users", userRoutes);
+
+app.use("/api/auth", authRoutes);
+
+app.use("/api/trips", tripRoutes);
+
+app.use("/api/countries", countryRoutes);
+
+app.use("/api/currency", currencyRoutes);
+
+app.use("/api/budgets", budgetRoutes);
+
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "TripVerse API Running",
+  });
+});
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`)
-})
+  console.log(`TripVerse backend running on port ${PORT}`);
+});

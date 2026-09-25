@@ -1,21 +1,16 @@
-const express = require('express')
+const express = require("express");
 
-const router = express.Router()
+const router = express.Router();
 
-const protect = require(
-  '../middleware/authMiddleware'
-)
+const {
+  getProfile,
+  updateProfile,
+} = require("../controllers/userController");
 
-router.get(
-  '/profile',
-  protect,
-  (req, res) => {
-    res.json({
-      message:
-        'Protected route works',
-      user: req.user,
-    })
-  }
-)
+const { protect } = require("../middleware/authMiddleware");
 
-module.exports = router
+router.get("/profile", protect, getProfile);
+
+router.put("/profile", protect, updateProfile);
+
+module.exports = router;

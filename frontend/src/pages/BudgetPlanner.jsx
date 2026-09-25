@@ -1,483 +1,701 @@
-import { useEffect, useMemo, useState } from 'react'
-import { getCountries } from '../services/countryApi'
-
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts'
+import { useEffect, useMemo, useState } from "react";
+import { getCountries } from "../services/countryApi";
+import { getExchangeRate } from "../services/currencyApi";
+import { saveBudget, getBudgetByDestination } from "../services/budgetApi";
 
 function BudgetPlanner() {
-  const [countries, setCountries] = useState([])
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [currency, setCurrency] = useState("");
+  const [currencySymbol, setCurrencySymbol] = useState("");
+  const [budget, setBudget] = useState("");
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
-  const [search, setSearch] = useState('')
-  const [selectedCountry, setSelectedCountry] =
-    useState(null)
+  const [expenses, setExpenses] = useState({
+    accommodation: "",
+    food: "",
+    transport: "",
+    activities: "",
+    shopping: "",
+    other: "",
+  });
 
-  const [filteredOpen, setFilteredOpen] =
-    useState(false)
+  const [fromCurrency, setFromCurrency] = useState("INR");
+  const [toCurrency, setToCurrency] = useState("");
+  const [conversionAmount, setConversionAmount] = useState("");
+  const [convertedAmount, setConvertedAmount] = useState(null);
+  const [exchangeRate, setExchangeRate] = useState(null);
+  const [conversionLoading, setConversionLoading] = useState(false);
+  const [conversionError, setConversionError] = useState("");
 
-  const [days, setDays] = useState(1)
-  const [travelers, setTravelers] = useState(1)
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const [accommodation, setAccommodation] =
-    useState('Standard')
-
-  const [transport, setTransport] =
-    useState('Flight')
-
-  const [foodBudget, setFoodBudget] = useState(50)
-
-  const [activitiesBudget, setActivitiesBudget] =
-    useState(200)
-
-  // Fetch countries
   useEffect(() => {
-    const fetchCountries = async () => {
+    const loadCountries = async () => {
       try {
-        const data = await getCountries()
-        setCountries(data)
-      } catch (error) {
-        console.log(error)
+        setLoading(true);
+        setError("");
+
+        const data = await getCountries();
+
+        setCountries(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Budget country loading error:", err);
+        setError("Unable to load destinations.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCountries();
+  }, []);
+
+  const handleSaveBudget = async () => {
+    if (!selectedCountry) {
+      setSaveError("Please select a destination.");
+      return;
+    }
+
+    if (!budget || Number(budget) <= 0) {
+      setSaveError("Please enter a valid trip budget.");
+      return;
+    }
+
+    if (!currency) {
+      setSaveError("Currency could not be determined.");
+      return;
+    }
+
+    const country = countries.find(
+      (item) => getCountryCode(item) === selectedCountry,
+    );
+
+    const destination = getCountryName(country);
+
+    try {
+      setSaveLoading(true);
+      setSaveMessage("");
+      setSaveError("");
+
+      await saveBudget({
+        destination,
+        destinationCode: selectedCountry,
+        currency,
+        budget: Number(budget),
+        expenses: {
+          accommodation: Number(expenses.accommodation) || 0,
+          food: Number(expenses.food) || 0,
+          transport: Number(expenses.transport) || 0,
+          activities: Number(expenses.activities) || 0,
+          shopping: Number(expenses.shopping) || 0,
+          other: Number(expenses.other) || 0,
+        },
+      });
+
+      setSaveMessage("Budget saved successfully.");
+    } catch (err) {
+      console.error("Budget save error:", err);
+
+      setSaveError(err.message || "Unable to save budget.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const getCountryName = (country) => {
+    return (
+      country?.name?.common ||
+      country?.names?.common ||
+      country?.name ||
+      "Unknown"
+    );
+  };
+
+  const getCountryCode = (country) => {
+    return (
+      country?.cca3 ||
+      country?.codes?.alpha3 ||
+      country?.code ||
+      country?.codes?.cca3 ||
+      ""
+    );
+  };
+
+  const getCountryCurrency = (country) => {
+    if (!country) return "";
+
+    if (country.currencies) {
+      if (Array.isArray(country.currencies)) {
+        const firstCurrency = country.currencies[0];
+
+        if (typeof firstCurrency === "string") {
+          return firstCurrency;
+        }
+
+        if (firstCurrency?.code) {
+          return firstCurrency.code;
+        }
+      }
+
+      if (typeof country.currencies === "object") {
+        const codes = Object.keys(country.currencies);
+
+        if (codes.length > 0) {
+          return codes[0];
+        }
       }
     }
 
-    fetchCountries()
-  }, [])
+    if (country.currency) {
+      if (typeof country.currency === "string") {
+        return country.currency;
+      }
 
-  // Search filter
-  const filteredCountries = countries.filter((country) =>
-    country.name.common
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  )
+      if (country.currency?.code) {
+        return country.currency.code;
+      }
 
-  // Region pricing multipliers
-  const regionMultiplier = {
-    Africa: 0.7,
-    Asia: 0.9,
-    Europe: 1.5,
-    Americas: 1.3,
-    Oceania: 1.7,
-  }
+      if (typeof country.currency === "object") {
+        const codes = Object.keys(country.currency);
 
-  const multiplier =
-    regionMultiplier[selectedCountry?.region] || 1
+        if (codes.length > 0) {
+          return codes[0];
+        }
+      }
+    }
 
-  // Accommodation pricing
-  const accommodationPrices = {
-    Budget: 40,
-    Standard: 100,
-    Luxury: 250,
-  }
+    if (country.currencyCode) {
+      return country.currencyCode;
+    }
 
-  // Transportation pricing
-  const transportPrices = {
-    Bus: 50,
-    Train: 150,
-    Flight: 500,
-  }
+    if (country.currency_code) {
+      return country.currency_code;
+    }
 
-  // Calculations
-  const accommodationTotal =
-    accommodationPrices[accommodation] *
-    multiplier *
-    days *
-    travelers
+    return "";
+  };
 
-  const transportTotal =
-    transportPrices[transport] *
-    multiplier *
-    travelers
+  const getCurrencySymbol = (currencyCode) => {
+    if (!currencyCode) return "";
 
-  const foodTotal =
-    foodBudget *
-    multiplier *
-    days *
-    travelers
+    try {
+      const parts = new Intl.NumberFormat("en", {
+        style: "currency",
+        currency: currencyCode,
+        currencyDisplay: "narrowSymbol",
+      }).formatToParts(0);
 
-  const activitiesTotal =
-    activitiesBudget *
-    multiplier *
-    travelers
+      return (
+        parts.find((part) => part.type === "currency")?.value || currencyCode
+      );
+    } catch {
+      return currencyCode;
+    }
+  };
 
-  const totalBudget = Math.floor(
-    accommodationTotal +
-      transportTotal +
-      foodTotal +
-      activitiesTotal
-  )
+  const handleCountryChange = async (e) => {
+    const code = e.target.value;
 
-  const dailyAverage = useMemo(() => {
-    return Math.floor(totalBudget / days)
-  }, [totalBudget, days])
+    setSelectedCountry(code);
 
-  // Currency
-  const currency =
-    selectedCountry?.currencies
-      ? Object.values(selectedCountry.currencies)[0]
-          ?.symbol ||
-        Object.keys(selectedCountry.currencies)[0]
-      : 'USD'
+    const country = countries.find((item) => getCountryCode(item) === code);
 
-  // Chart data
-  const chartData = [
-    {
-      name: 'Accommodation',
-      value: Math.floor(accommodationTotal),
-    },
-    {
-      name: 'Transport',
-      value: Math.floor(transportTotal),
-    },
-    {
-      name: 'Food',
-      value: Math.floor(foodTotal),
-    },
-    {
-      name: 'Activities',
-      value: Math.floor(activitiesTotal),
-    },
-  ]
+    const countryCurrency = getCountryCurrency(country);
 
-  const COLORS = [
-    '#22d3ee',
-    '#3b82f6',
-    '#10b981',
-    '#ec4899',
-  ]
+    setCurrency(countryCurrency);
+    setCurrencySymbol(getCurrencySymbol(countryCurrency));
+    setToCurrency(countryCurrency);
+
+    setSaveMessage("");
+    setSaveError("");
+
+    if (!code) return;
+
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    try {
+      const savedBudget = await getBudgetByDestination(code);
+
+      if (!savedBudget) return;
+
+      setBudget(savedBudget.budget?.toString() || "");
+
+      setExpenses({
+        accommodation: savedBudget.expenses?.accommodation?.toString() || "",
+        food: savedBudget.expenses?.food?.toString() || "",
+        transport: savedBudget.expenses?.transport?.toString() || "",
+        activities: savedBudget.expenses?.activities?.toString() || "",
+        shopping: savedBudget.expenses?.shopping?.toString() || "",
+        other: savedBudget.expenses?.other?.toString() || "",
+      });
+
+      setSaveMessage("Saved budget loaded.");
+    } catch (err) {
+      console.error("Load saved budget error:", err);
+    }
+  };
+
+  const handleExpenseChange = (e) => {
+    const { name, value } = e.target;
+
+    setExpenses((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const totalExpenses = useMemo(() => {
+    return Object.values(expenses).reduce(
+      (total, value) => total + (Number(value) || 0),
+      0,
+    );
+  }, [expenses]);
+
+  const remainingBudget = (Number(budget) || 0) - totalExpenses;
+
+  const expensePercentage = (value) => {
+    if (!totalExpenses) return 0;
+
+    return Math.min(
+      100,
+      Math.round(((Number(value) || 0) / totalExpenses) * 100),
+    );
+  };
+
+  const handleConvert = async () => {
+    if (!conversionAmount || Number(conversionAmount) < 0) {
+      setConversionError("Enter a valid amount.");
+      return;
+    }
+
+    if (!fromCurrency || !toCurrency) {
+      setConversionError("Select both currencies.");
+      return;
+    }
+
+    try {
+      setConversionLoading(true);
+      setConversionError("");
+
+      const result = await getExchangeRate(fromCurrency, toCurrency);
+
+      const rate = Number(result.rate);
+
+      setExchangeRate(rate);
+
+      setConvertedAmount(Number(conversionAmount) * rate);
+    } catch (err) {
+      console.error("Currency conversion error:", err);
+
+      setConvertedAmount(null);
+      setExchangeRate(null);
+      setConversionError(err.message || "Unable to convert currency.");
+    } finally {
+      setConversionLoading(false);
+    }
+  };
+
+  const handleSwapCurrencies = () => {
+    const previousFrom = fromCurrency;
+
+    setFromCurrency(toCurrency);
+    setToCurrency(previousFrom);
+
+    setConvertedAmount(null);
+    setExchangeRate(null);
+    setConversionError("");
+  };
+
+  const displayCurrency = currencySymbol || currency || "—";
+
+  const currencyOptions = [
+    "INR",
+    "USD",
+    "EUR",
+    "GBP",
+    "JPY",
+    "AUD",
+    "CAD",
+    "CHF",
+    "SGD",
+    "AED",
+    "CNY",
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white pt-32 px-6">
+    <main className="min-h-screen bg-slate-50 text-slate-900 px-6 py-12">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-14">
-          <p className="uppercase tracking-[5px] text-cyan-400 mb-4">
-            Smart Budget Planning
+        <div className="mb-12">
+          <p className="text-cyan-500 uppercase tracking-[5px] font-semibold text-sm mb-3">
+            Travel Finance
           </p>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            Budget Planner
-          </h1>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+                Budget Planner
+              </h1>
 
-          <p className="text-slate-400 text-lg max-w-3xl leading-8">
-            Estimate travel expenses, compare trip costs,
-            and plan smarter journeys with Tripverse.
-          </p>
+              <p className="text-slate-500 text-lg mt-4 max-w-2xl">
+                Plan your trip expenses, track your spending and understand your
+                travel budget in local currency.
+              </p>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl px-6 py-4 shadow-sm">
+              <p className="text-sm text-slate-500">Remaining Budget</p>
+
+              <p
+                className={`text-3xl font-extrabold mt-1 ${
+                  remainingBudget < 0 ? "text-red-500" : "text-cyan-500"
+                }`}
+              >
+                {displayCurrency} {Math.abs(remainingBudget).toLocaleString()}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* LEFT SIDE */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-            <h2 className="text-3xl font-bold mb-8">
-              Trip Details
-            </h2>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 rounded-2xl p-5 mb-8">
+            {error}
+          </div>
+        )}
 
-            <div className="space-y-6">
-              {/* Destination Search */}
-              <div className="relative">
-                <label className="block mb-3 text-slate-300">
-                  Search Destination
-                </label>
+        <div className="grid lg:grid-cols-3 gap-8">
+          <section className="lg:col-span-1">
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm">
+              <h2 className="text-2xl font-bold mb-6">Trip Details</h2>
 
-                <input
-                  type="text"
-                  placeholder="Search country..."
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value)
-                    setFilteredOpen(true)
-                  }}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400 transition"
-                />
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Destination
+                  </label>
 
-                {/* Dropdown */}
-                {search && filteredOpen && (
-                  <div className="absolute w-full bg-slate-800 border border-slate-700 rounded-2xl mt-2 max-h-64 overflow-y-auto z-50 shadow-2xl">
-                    {filteredCountries
-                      .slice(0, 8)
-                      .map((country, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            setSelectedCountry(country)
-                            setSearch(
-                              country.name.common
-                            )
-                            setFilteredOpen(false)
-                          }}
-                          className="flex items-center gap-4 p-4 hover:bg-slate-700 cursor-pointer transition"
-                        >
-                          <img
-                            src={country.flags.png}
-                            alt={
-                              country.name.common
-                            }
-                            className="w-10 h-6 object-cover rounded"
-                          />
+                  <select
+                    value={selectedCountry}
+                    onChange={handleCountryChange}
+                    disabled={loading}
+                    className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                  >
+                    <option value="">
+                      {loading
+                        ? "Loading destinations..."
+                        : "Select destination"}
+                    </option>
 
-                          <div>
-                            <p className="font-semibold">
-                              {
-                                country.name.common
-                              }
-                            </p>
+                    {countries.map((country, index) => {
+                      const code = getCountryCode(country);
+                      const name = getCountryName(country);
 
-                            <p className="text-sm text-slate-400">
-                              {country.region}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                      return (
+                        <option key={code || index} value={code}>
+                          {name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Destination Currency
+                  </label>
+
+                  <div className="w-full p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl font-bold text-cyan-500">
+                        {currencySymbol || "—"}
+                      </span>
+
+                      <span className="text-slate-700 font-semibold">
+                        {currency || "Select a destination"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Total Trip Budget
+                  </label>
+
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">
+                      {displayCurrency}
+                    </span>
+
+                    <input
+                      type="number"
+                      min="0"
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                      placeholder="Enter your budget"
+                      className="w-full p-4 pl-16 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="lg:col-span-2">
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm mb-8">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-7">
+                <div>
+                  <h2 className="text-2xl font-bold">Expense Breakdown</h2>
+
+                  <p className="text-slate-500 mt-1">
+                    Estimate how much you plan to spend in each category.
+                  </p>
+                </div>
+
+                <div className="text-left md:text-right">
+                  <p className="text-sm text-slate-500">Total Expenses</p>
+
+                  <p className="text-2xl font-extrabold">
+                    {displayCurrency} {totalExpenses.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-8">
+                <button
+                  type="button"
+                  onClick={handleSaveBudget}
+                  disabled={saveLoading}
+                  className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white py-4 rounded-xl font-bold transition"
+                >
+                  {saveLoading ? "Saving Budget..." : "Save Budget"}
+                </button>
+
+                {saveMessage && (
+                  <div className="mt-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-4 text-sm">
+                    {saveMessage}
+                  </div>
+                )}
+
+                {saveError && (
+                  <div className="mt-4 bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 text-sm">
+                    {saveError}
                   </div>
                 )}
               </div>
 
-              {/* Days */}
-              <div>
-                <label className="block mb-3 text-slate-300">
-                  Number of Days
-                </label>
+              <div className="grid md:grid-cols-2 gap-5">
+                {[
+                  ["accommodation", "Accommodation"],
+                  ["food", "Food & Dining"],
+                  ["transport", "Transport"],
+                  ["activities", "Activities"],
+                  ["shopping", "Shopping"],
+                  ["other", "Other"],
+                ].map(([name, label]) => (
+                  <div key={name}>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      {label}
+                    </label>
 
-                <input
-                  type="number"
-                  min="1"
-                  value={days}
-                  onChange={(e) =>
-                    setDays(Number(e.target.value))
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
-                />
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">
+                        {displayCurrency}
+                      </span>
+
+                      <input
+                        type="number"
+                        min="0"
+                        name={name}
+                        value={expenses[name]}
+                        onChange={handleExpenseChange}
+                        placeholder="0"
+                        className="w-full p-4 pl-16 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                      />
+                    </div>
+
+                    <div className="mt-2 h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${expensePercentage(expenses[name])}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {/* Travelers */}
-              <div>
-                <label className="block mb-3 text-slate-300">
-                  Travelers
-                </label>
+              <div className="mt-8 grid md:grid-cols-3 gap-5">
+                <div className="bg-slate-50 rounded-2xl p-5">
+                  <p className="text-sm text-slate-500">Planned Budget</p>
 
-                <input
-                  type="number"
-                  min="1"
-                  value={travelers}
-                  onChange={(e) =>
-                    setTravelers(
-                      Number(e.target.value)
-                    )
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
-                />
-              </div>
+                  <p className="text-2xl font-bold mt-2">
+                    {displayCurrency} {(Number(budget) || 0).toLocaleString()}
+                  </p>
+                </div>
 
-              {/* Accommodation */}
-              <div>
-                <label className="block mb-3 text-slate-300">
-                  Accommodation
-                </label>
+                <div className="bg-cyan-50 rounded-2xl p-5">
+                  <p className="text-sm text-cyan-700">Total Expenses</p>
 
-                <select
-                  value={accommodation}
-                  onChange={(e) =>
-                    setAccommodation(
-                      e.target.value
-                    )
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+                  <p className="text-2xl font-bold text-cyan-700 mt-2">
+                    {displayCurrency} {totalExpenses.toLocaleString()}
+                  </p>
+                </div>
+
+                <div
+                  className={`rounded-2xl p-5 ${
+                    remainingBudget < 0 ? "bg-red-50" : "bg-emerald-50"
+                  }`}
                 >
-                  <option>Budget</option>
-                  <option>Standard</option>
-                  <option>Luxury</option>
-                </select>
-              </div>
+                  <p
+                    className={`text-sm ${
+                      remainingBudget < 0 ? "text-red-600" : "text-emerald-700"
+                    }`}
+                  >
+                    {remainingBudget < 0 ? "Over Budget" : "Remaining"}
+                  </p>
 
-              {/* Transport */}
-              <div>
-                <label className="block mb-3 text-slate-300">
-                  Transportation
-                </label>
-
-                <select
-                  value={transport}
-                  onChange={(e) =>
-                    setTransport(e.target.value)
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
-                >
-                  <option>Bus</option>
-                  <option>Train</option>
-                  <option>Flight</option>
-                </select>
-              </div>
-
-              {/* Food Budget */}
-              <div>
-                <label className="block mb-3 text-slate-300">
-                  Daily Food Budget
-                </label>
-
-                <input
-                  type="number"
-                  value={foodBudget}
-                  onChange={(e) =>
-                    setFoodBudget(
-                      Number(e.target.value)
-                    )
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              {/* Activities Budget */}
-              <div>
-                <label className="block mb-3 text-slate-300">
-                  Activities Budget
-                </label>
-
-                <input
-                  type="number"
-                  value={activitiesBudget}
-                  onChange={(e) =>
-                    setActivitiesBudget(
-                      Number(e.target.value)
-                    )
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
-                />
+                  <p
+                    className={`text-2xl font-bold mt-2 ${
+                      remainingBudget < 0 ? "text-red-600" : "text-emerald-700"
+                    }`}
+                  >
+                    {displayCurrency}{" "}
+                    {Math.abs(remainingBudget).toLocaleString()}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* RIGHT SIDE */}
-          <div className="space-y-8">
-            {/* Budget Summary */}
-            <div className="bg-gradient-to-br from-cyan-400 via-sky-400 to-blue-500 text-slate-900 rounded-3xl p-10 shadow-2xl">
-              <p className="uppercase tracking-[4px] mb-4 font-semibold">
-                Estimated Budget
-              </p>
+            <div className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm">
+              <div className="mb-7">
+                <p className="text-cyan-500 uppercase tracking-[3px] text-xs font-bold mb-2">
+                  Live Conversion
+                </p>
 
-              <h2 className="text-6xl font-extrabold mb-4">
-                {currency} {totalBudget}
-              </h2>
+                <h2 className="text-2xl font-bold">Currency Converter</h2>
 
-              <p className="text-lg font-medium">
-                Daily Average:{' '}
-                {currency} {dailyAverage}
-              </p>
-            </div>
+                <p className="text-slate-500 mt-1">
+                  Check what your money is worth in another currency.
+                </p>
+              </div>
 
-            {/* Country Card */}
-            {selectedCountry && (
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 hover:border-cyan-400 transition">
-                <div className="flex items-center gap-5 mb-6">
-                  <img
-                    src={
-                      selectedCountry.flags.png
-                    }
-                    alt={
-                      selectedCountry.name.common
-                    }
-                    className="w-20 h-14 object-cover rounded-xl shadow-lg"
-                  />
+              <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    From
+                  </label>
 
-                  <div>
-                    <h2 className="text-3xl font-bold">
-                      {
-                        selectedCountry.name
-                          .common
-                      }
-                    </h2>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      value={conversionAmount}
+                      onChange={(e) => {
+                        setConversionAmount(e.target.value);
+                        setConvertedAmount(null);
+                      }}
+                      placeholder="Amount"
+                      className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                    />
 
-                    <p className="text-slate-400">
-                      {
-                        selectedCountry.region
-                      }
-                    </p>
+                    <select
+                      value={fromCurrency}
+                      onChange={(e) => {
+                        setFromCurrency(e.target.value);
+                        setConvertedAmount(null);
+                      }}
+                      className="p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400"
+                    >
+                      {currencyOptions.map((code) => (
+                        <option key={code} value={code}>
+                          {code}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                <div className="space-y-4 text-slate-300">
-                  <p>
-                    Capital:{' '}
-                    <span className="text-white font-semibold">
-                      {selectedCountry
-                        .capital?.[0] ||
-                        'N/A'}
-                    </span>
-                  </p>
+                <button
+                  type="button"
+                  onClick={handleSwapCurrencies}
+                  className="w-12 h-12 rounded-xl bg-slate-100 hover:bg-cyan-50 text-slate-700 hover:text-cyan-600 transition flex items-center justify-center font-bold text-xl"
+                >
+                  ⇄
+                </button>
 
-                  <p>
-                    Currency:{' '}
-                    <span className="text-white font-semibold">
-                      {currency}
-                    </span>
-                  </p>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    To
+                  </label>
 
-                  <p>
-                    Population:{' '}
-                    <span className="text-white font-semibold">
-                      {selectedCountry.population.toLocaleString()}
-                    </span>
-                  </p>
+                  <select
+                    value={toCurrency}
+                    onChange={(e) => {
+                      setToCurrency(e.target.value);
+                      setConvertedAmount(null);
+                    }}
+                    className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400"
+                  >
+                    <option value="">Select currency</option>
+
+                    {currencyOptions.map((code) => (
+                      <option key={code} value={code}>
+                        {code}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-            )}
 
-            {/* Expense Breakdown */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-              <h2 className="text-3xl font-bold mb-8">
-                Expense Breakdown
-              </h2>
+              <button
+                type="button"
+                onClick={handleConvert}
+                disabled={conversionLoading}
+                className="w-full mt-5 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-slate-900 py-4 rounded-xl font-bold transition"
+              >
+                {conversionLoading ? "Converting..." : "Convert Currency"}
+              </button>
 
-              <div className="h-[400px]">
-                <ResponsiveContainer
-                  width="100%"
-                  height="100%"
-                >
-                  <PieChart>
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={130}
-                      innerRadius={70}
-                      paddingAngle={5}
-                      label
-                      animationBegin={0}
-                      animationDuration={1500}
-                      animationEasing="ease-out"
-                    >
-                      {chartData.map(
-                        (entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={
-                              COLORS[
-                                index %
-                                  COLORS.length
-                              ]
-                            }
-                          />
-                        )
-                      )}
-                    </Pie>
+              {conversionError && (
+                <div className="mt-5 bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 text-sm">
+                  {conversionError}
+                </div>
+              )}
 
-                    <Tooltip />
+              {convertedAmount !== null && exchangeRate !== null && (
+                <div className="mt-6 bg-slate-50 rounded-2xl p-6">
+                  <p className="text-sm text-slate-500">Converted Amount</p>
 
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+                  <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-2">
+                    <p className="text-4xl font-extrabold text-cyan-500">
+                      {new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: toCurrency,
+                        maximumFractionDigits: 2,
+                      }).format(convertedAmount)}
+                    </p>
+
+                    <p className="text-sm text-slate-500">
+                      1 {fromCurrency} ={" "}
+                      {exchangeRate.toLocaleString(undefined, {
+                        maximumFractionDigits: 4,
+                      })}{" "}
+                      {toCurrency}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          </section>
         </div>
       </div>
-    </div>
-  )
+    </main>
+  );
 }
 
-export default BudgetPlanner
+export default BudgetPlanner;

@@ -1,298 +1,542 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaPlus,
+  FaTrash,
+  FaPlaneDeparture,
+  FaWallet,
+} from "react-icons/fa";
+
 import { TravelContext } from "../context/TravelContext";
+import { AuthContext } from "../context/AuthContext";
 import { createTrip } from "../services/tripService";
 
 function TripPlanner() {
   const navigate = useNavigate();
 
-  const { selectedDestination, suggestedActivities, clearActivities } =
-    useContext(TravelContext);
+  const travelContext = useContext(TravelContext);
+  const authContext = useContext(AuthContext);
 
-  const [tripName, setTripName] = useState("");
-  const [destination, setDestination] = useState(
-    selectedDestination?.name?.common || "",
-  );
+  const selectedDestination = travelContext?.selectedDestination;
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [budget, setBudget] = useState("");
-  const [notes, setNotes] = useState("");
+  const suggestedActivities = travelContext?.suggestedActivities || [];
 
-  const [activityInput, setActivityInput] = useState("");
-  const [activities, setActivities] = useState([]);
+  const clearActivities = travelContext?.clearActivities;
+
+  const user = authContext?.user;
+
+  const getDestinationName = (destination) => {
+    if (!destination) return "";
+
+    return (
+      destination?.name?.common ||
+      destination?.names?.common ||
+      destination?.name ||
+      ""
+    );
+  };
+
+  const [formData, setFormData] = useState({
+    tripName: "",
+    destination: getDestinationName(selectedDestination),
+    startDate: "",
+    endDate: "",
+    budget: "",
+  });
+
+  const [itinerary, setItinerary] = useState([]);
+
+  const [day, setDay] = useState("");
+  const [activity, setActivity] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    if (selectedDestination) {
-      setDestination(selectedDestination.name.common);
+    const destinationName = getDestinationName(selectedDestination);
+
+    if (destinationName) {
+      setFormData((prev) => ({
+        ...prev,
+        destination: destinationName,
+      }));
     }
   }, [selectedDestination]);
 
   useEffect(() => {
-    if (suggestedActivities.length > 0) {
-      setActivities((prev) => {
-        const merged = [...prev];
+    if (!suggestedActivities || suggestedActivities.length === 0) {
+      return;
+    }
 
-        suggestedActivities.forEach((activity) => {
-          if (!merged.includes(activity)) {
-            merged.push(activity);
-          }
-        });
+    const generatedActivities = suggestedActivities.map((item, index) => ({
+      id: `suggested-${Date.now()}-${index}`,
+      day: `Day ${index + 1}`,
+      activity:
+        typeof item === "string"
+          ? item
+          : item?.name || item?.title || "Travel activity",
+    }));
 
-        return merged;
-      });
+    setItinerary((prev) => {
+      const existing = new Set(prev.map((item) => item.activity));
 
+      const unique = generatedActivities.filter(
+        (item) => !existing.has(item.activity),
+      );
+
+      return [...prev, ...unique];
+    });
+
+    if (clearActivities) {
       clearActivities();
     }
   }, [suggestedActivities, clearActivities]);
 
-  const addActivity = () => {
-    if (!activityInput.trim()) return;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-    setActivities((prev) => [...prev, activityInput]);
-
-    setActivityInput("");
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const removeActivity = (index) => {
-    setActivities((prev) => prev.filter((_, i) => i !== index));
+  const handleAddActivity = (e) => {
+    e.preventDefault();
+
+    if (!day.trim() || !activity.trim()) {
+      return;
+    }
+
+    setItinerary((prev) => [
+      ...prev,
+      {
+        id: `manual-${Date.now()}`,
+        day: day.trim(),
+        activity: activity.trim(),
+      },
+    ]);
+
+    setDay("");
+    setActivity("");
+  };
+
+  const handleDeleteActivity = (id) => {
+    setItinerary((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const savePlannerData = () => {
+    sessionStorage.setItem(
+      "tripversePlannerData",
+      JSON.stringify({
+        tripName: formData.tripName,
+        destination: formData.destination,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        budget: formData.budget,
+        itinerary,
+      }),
+    );
+  };
+
+  const handleOpenBudgetPlanner = () => {
+    savePlannerData();
+
+    navigate("/budget-planner");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!tripName || !destination || !startDate || !endDate || !budget) {
-      alert("Please fill all required fields.");
+    setError("");
+    setSuccess("");
+
+    if (
+      !formData.tripName.trim() ||
+      !formData.destination.trim() ||
+      !formData.startDate ||
+      !formData.endDate
+    ) {
+      setError("Please fill in all required trip details.");
+      return;
+    }
+
+    if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      setError("End date cannot be before start date.");
+      return;
+    }
+
+    if (!user) {
+      savePlannerData();
+
+      navigate("/login?redirect=trip-planner");
+
       return;
     }
 
     try {
       setLoading(true);
 
-      await createTrip({
-        tripName,
-        destination,
-        startDate,
-        endDate,
-        budget: Number(budget),
-        activities,
-        notes,
-      });
+      const tripData = {
+        tripName: formData.tripName.trim(),
 
-      alert("Trip created successfully!");
+        destination: formData.destination.trim(),
 
-      navigate("/my-trips");
-    } catch (error) {
-      alert(error.message);
+        startDate: formData.startDate,
+
+        endDate: formData.endDate,
+
+        budget: Number(formData.budget) || 0,
+
+        itinerary: itinerary.map((item) => ({
+          day: item.day,
+          activity: item.activity,
+        })),
+      };
+
+      await createTrip(tripData);
+
+      sessionStorage.removeItem("tripversePlannerData");
+
+      setSuccess("Your trip has been saved successfully.");
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+    } catch (err) {
+      console.error("Create trip error:", err);
+
+      setError(err.message || "Unable to save your trip.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white pt-32 px-6">
+    <main className="min-h-screen bg-slate-50 text-slate-900 pt-28 pb-24 px-5 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-12">
-          <p className="uppercase tracking-[5px] text-cyan-400 mb-3">
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.7,
+          }}
+          className="mb-12"
+        >
+          <p className="text-cyan-600 uppercase tracking-[5px] text-sm font-bold">
             Plan Your Journey
           </p>
 
-          <h1 className="text-6xl font-bold mb-5">Trip Planner</h1>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight mt-4">
+            Build your trip.
+          </h1>
 
-          <p className="text-slate-400 max-w-3xl">
-            Create your trip, organize activities, manage your budget and save
-            everything securely to your account.
+          <p className="text-slate-500 text-lg max-w-2xl mt-5 leading-8">
+            Choose where you're going, set your dates and build your itinerary.
           </p>
-        </div>
+        </motion.div>
 
-        <form onSubmit={handleSubmit} className="grid lg:grid-cols-2 gap-10">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6">
-            <h2 className="text-3xl font-bold">Trip Details</h2>
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-600">
+            {error}
+          </div>
+        )}
 
-            <input
-              type="text"
-              placeholder="Trip Name"
-              value={tripName}
-              onChange={(e) => setTripName(e.target.value)}
-              className="w-full bg-slate-800 rounded-xl p-4"
-            />
+        {success && (
+          <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-600">
+            {success}
+          </div>
+        )}
 
-            <input
-              type="text"
-              placeholder="Destination"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              className="w-full bg-slate-800 rounded-xl p-4"
-            />
-
-            <div className="grid grid-cols-2 gap-5">
-              <div>
-                <label className="block mb-2 text-slate-400">Start Date</label>
-
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-slate-800 rounded-xl p-4"
-                />
+        <div className="grid xl:grid-cols-[0.9fr_1.1fr] gap-8">
+          <motion.section
+            initial={{
+              opacity: 0,
+              x: -25,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            transition={{
+              duration: 0.7,
+            }}
+            className="bg-white rounded-[30px] border border-slate-200 shadow-sm p-7 md:p-9"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center">
+                <FaPlaneDeparture />
               </div>
 
               <div>
-                <label className="block mb-2 text-slate-400">End Date</label>
+                <p className="text-sm text-slate-400">Step 01</p>
 
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full bg-slate-800 rounded-xl p-4"
-                />
+                <h2 className="text-2xl font-black">Trip Details</h2>
               </div>
             </div>
 
-            <input
-              type="number"
-              placeholder="Budget"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className="w-full bg-slate-800 rounded-xl p-4"
-            />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Trip Name
+                </label>
 
-            <textarea
-              rows="5"
-              placeholder="Trip Notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-slate-800 rounded-xl p-4"
-            />
-            <div>
-              <h2 className="text-3xl font-bold mb-6">Activities</h2>
-
-              <div className="flex gap-3">
                 <input
                   type="text"
-                  placeholder="Add an activity"
-                  value={activityInput}
-                  onChange={(e) => setActivityInput(e.target.value)}
-                  className="flex-1 bg-slate-800 rounded-xl p-4"
+                  name="tripName"
+                  value={formData.tripName}
+                  onChange={handleChange}
+                  placeholder="Summer in Europe"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50"
+                  required
                 />
-
-                <button
-                  type="button"
-                  onClick={addActivity}
-                  className="bg-cyan-400 text-slate-900 px-6 rounded-xl font-semibold hover:bg-cyan-300 transition"
-                >
-                  Add
-                </button>
               </div>
 
-              {activities.length > 0 && (
-                <div className="mt-6 space-y-3">
-                  {activities.map((activity, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between bg-slate-800 p-4 rounded-xl"
-                    >
-                      <span>{activity}</span>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Destination
+                </label>
 
-                      <button
-                        type="button"
-                        onClick={() => removeActivity(index)}
-                        className="text-red-400 hover:text-red-300"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
+                <div className="relative">
+                  <FaMapMarkerAlt className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-500" />
+
+                  <input
+                    type="text"
+                    name="destination"
+                    value={formData.destination}
+                    onChange={handleChange}
+                    placeholder="Paris"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-12 pr-5 py-4 outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50"
+                    required
+                  />
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Preview */}
-
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-            <h2 className="text-3xl font-bold mb-8">Trip Preview</h2>
-
-            <div className="space-y-6">
-              <div>
-                <p className="text-slate-400">Trip Name</p>
-
-                <h3 className="text-2xl font-bold">
-                  {tripName || "Not specified"}
-                </h3>
               </div>
 
-              <div>
-                <p className="text-slate-400">Destination</p>
-
-                <h3 className="text-2xl font-bold">
-                  {destination || "Not selected"}
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-5">
                 <div>
-                  <p className="text-slate-400">Start</p>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Start Date
+                  </label>
 
-                  <p>{startDate || "--"}</p>
+                  <div className="relative">
+                    <FaCalendarAlt className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-500" />
+
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleChange}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-12 pr-4 py-4 outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <p className="text-slate-400">End</p>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    End Date
+                  </label>
 
-                  <p>{endDate || "--"}</p>
+                  <div className="relative">
+                    <FaCalendarAlt className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-500" />
+
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={formData.endDate}
+                      onChange={handleChange}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-12 pr-4 py-4 outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
               <div>
-                <p className="text-slate-400">Budget</p>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Budget
+                </label>
 
-                <h3 className="text-3xl font-bold text-cyan-400">
-                  {budget ? `$${budget}` : "$0"}
-                </h3>
+                <div className="relative">
+                  <FaMoneyBillWave className="absolute left-5 top-1/2 -translate-y-1/2 text-emerald-500" />
+
+                  <input
+                    type="number"
+                    name="budget"
+                    min="0"
+                    value={formData.budget}
+                    onChange={handleChange}
+                    placeholder="2500"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-12 pr-5 py-4 outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50"
+                  />
+                </div>
               </div>
 
-              <div>
-                <p className="text-slate-400 mb-3">Activities</p>
-
-                {activities.length === 0 ? (
-                  <p className="text-slate-500">No activities added.</p>
-                ) : (
-                  <ul className="space-y-2">
-                    {activities.map((activity, index) => (
-                      <li
-                        key={index}
-                        className="bg-slate-800 rounded-xl px-4 py-3"
-                      >
-                        • {activity}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              <div>
-                <p className="text-slate-400 mb-2">Notes</p>
-
-                <p className="leading-7 text-slate-300">
-                  {notes || "No notes added."}
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={handleOpenBudgetPlanner}
+                className="w-full rounded-2xl border-2 border-cyan-100 bg-cyan-50 text-cyan-700 py-4 font-black flex items-center justify-center gap-3 hover:bg-cyan-100 transition"
+              >
+                <FaWallet />
+                Open Budget Planner
+              </button>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-8 bg-cyan-400 hover:bg-cyan-300 transition text-slate-900 py-4 rounded-2xl font-bold disabled:opacity-50"
+                className="w-full rounded-2xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 text-white py-4 font-black text-lg transition"
               >
-                {loading ? "Saving Trip..." : "Save Trip"}
+                {loading
+                  ? "Saving Trip..."
+                  : user
+                    ? "Save Trip"
+                    : "Continue to Login & Save"}
               </button>
-            </div>
+            </form>
+          </motion.section>
+
+          <div className="space-y-8">
+            <motion.section
+              initial={{
+                opacity: 0,
+                x: 25,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              transition={{
+                duration: 0.7,
+              }}
+              className="bg-white rounded-[30px] border border-slate-200 shadow-sm p-7 md:p-9"
+            >
+              <div className="flex items-center justify-between gap-4 mb-8">
+                <div>
+                  <p className="text-sm text-cyan-600 font-bold uppercase tracking-[3px]">
+                    Step 02
+                  </p>
+
+                  <h2 className="text-2xl font-black mt-1">Build Itinerary</h2>
+                </div>
+
+                <span className="rounded-full bg-cyan-50 text-cyan-600 px-4 py-2 text-sm font-bold">
+                  {itinerary.length}{" "}
+                  {itinerary.length === 1 ? "Activity" : "Activities"}
+                </span>
+              </div>
+
+              <form
+                onSubmit={handleAddActivity}
+                className="grid md:grid-cols-[150px_1fr_auto] gap-4 items-end"
+              >
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                    Day
+                  </label>
+
+                  <input
+                    type="text"
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                    placeholder="Day 1"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                    Activity
+                  </label>
+
+                  <input
+                    type="text"
+                    value={activity}
+                    onChange={(e) => setActivity(e.target.value)}
+                    placeholder="Visit the Eiffel Tower"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="h-[58px] w-[58px] rounded-2xl bg-slate-900 text-white flex items-center justify-center hover:bg-slate-800 transition"
+                >
+                  <FaPlus />
+                </button>
+              </form>
+            </motion.section>
+
+            <section>
+              {itinerary.length === 0 ? (
+                <div className="rounded-[30px] border border-dashed border-slate-300 bg-white p-12 text-center">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 text-cyan-500 flex items-center justify-center mx-auto text-2xl">
+                    ✈
+                  </div>
+
+                  <h3 className="text-xl font-black mt-5">
+                    Your itinerary is empty
+                  </h3>
+
+                  <p className="text-slate-500 mt-2">
+                    Add activities to build your journey.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {itinerary.map((item, index) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{
+                        opacity: 0,
+                        y: 15,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      className="bg-white rounded-[24px] border border-slate-200 shadow-sm p-5 flex items-center gap-5"
+                    >
+                      <div className="w-12 h-12 shrink-0 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center font-black">
+                        {index + 1}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs uppercase tracking-[2px] text-cyan-600 font-bold">
+                          {item.day}
+                        </p>
+
+                        <p className="text-lg font-bold text-slate-800 mt-1 break-words">
+                          {item.activity}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteActivity(item.id)}
+                        className="w-10 h-10 shrink-0 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition"
+                      >
+                        <FaTrash />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </section>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 

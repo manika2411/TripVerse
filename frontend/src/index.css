@@ -13,26 +13,36 @@
     sans-serif;
 
   color-scheme: dark;
-
-  background: #020617;
-  color: #f8fafc;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background: #061827;
+  color: #f8fafc;
 }
 
 html {
   scroll-behavior: auto;
-  background: #020617;
+  background: #061827;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #020617;
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(34, 211, 238, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(14, 165, 233, 0.07),
+      transparent 28%
+    ),
+    #061827;
   color: #f8fafc;
   overflow-x: hidden;
 }
@@ -54,7 +64,7 @@ a {
 }
 
 /* =========================================================
-   CUSTOM SCROLLBAR
+   SCROLLBAR
 ========================================================= */
 
 ::-webkit-scrollbar {
@@ -62,23 +72,21 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: #061827;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #155e75;
+  background: #19718a;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #22d3ee;
 }
-
-/* Firefox */
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #155e75 #020617;
+  scrollbar-color: #19718a #061827;
 }
 
 /* =========================================================
@@ -86,78 +94,68 @@ a {
 ========================================================= */
 
 ::selection {
-  background: rgba(34, 211, 238, 0.25);
+  background: rgba(34, 211, 238, 0.3);
   color: white;
 }
 
 /* =========================================================
-   GLOBAL BACKGROUND
+   ROOT
 ========================================================= */
 
 #root {
   min-height: 100vh;
   position: relative;
+  overflow-x: hidden;
 }
 
-/* Atmospheric cyan glow */
+/* =========================================================
+   ATMOSPHERIC BACKGROUND
+========================================================= */
 
 #root::before {
   content: "";
   position: fixed;
-
-  width: 600px;
-  height: 600px;
-
-  top: -250px;
-  left: -200px;
-
+  width: 700px;
+  height: 700px;
+  top: -350px;
+  left: -250px;
+  border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(6, 182, 212, 0.12),
-    transparent 70%
+    rgba(34, 211, 238, 0.11),
+    transparent 68%
   );
-
   pointer-events: none;
   z-index: 0;
 }
 
-/* Secondary glow */
-
 #root::after {
   content: "";
-
   position: fixed;
-
-  width: 650px;
-  height: 650px;
-
-  right: -300px;
-  bottom: -250px;
-
+  width: 800px;
+  height: 800px;
+  right: -400px;
+  bottom: -400px;
+  border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(14, 165, 233, 0.08),
-    transparent 70%
+    rgba(56, 189, 248, 0.09),
+    transparent 68%
   );
-
   pointer-events: none;
   z-index: 0;
 }
 
 /* =========================================================
-   NOISE / GRAIN
+   GLOBAL GRAIN
 ========================================================= */
 
 body::before {
   content: "";
-
   position: fixed;
   inset: 0;
-
   pointer-events: none;
-
-  opacity: 0.025;
-
+  opacity: 0.018;
   z-index: 9999;
 
   background-image:
@@ -167,32 +165,56 @@ body::before {
 }
 
 /* =========================================================
+   GRID BACKGROUND
+========================================================= */
+
+.trip-grid {
+  background-image:
+    linear-gradient(
+      rgba(148, 163, 184, 0.055) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.055) 1px,
+      transparent 1px
+    );
+
+  background-size: 64px 64px;
+}
+
+/* =========================================================
    GLASS
 ========================================================= */
 
 .trip-glass {
-  background: rgba(2, 6, 23, 0.68);
+  background: rgba(8, 32, 50, 0.68);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
 
+.trip-glass-light {
+  background: rgba(17, 52, 72, 0.52);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
-  border: 1px solid rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 /* =========================================================
-   CYAN GLOW
+   GLOW
 ========================================================= */
 
 .trip-glow {
   box-shadow:
-    0 0 30px rgba(6, 182, 212, 0.08),
-    inset 0 0 30px rgba(6, 182, 212, 0.02);
+    0 0 35px rgba(34, 211, 238, 0.08),
+    inset 0 0 35px rgba(34, 211, 238, 0.025);
 }
 
 .trip-glow-strong {
   box-shadow:
-    0 0 40px rgba(6, 182, 212, 0.15),
-    0 0 100px rgba(6, 182, 212, 0.06);
+    0 0 40px rgba(34, 211, 238, 0.16),
+    0 0 110px rgba(34, 211, 238, 0.07);
 }
 
 /* =========================================================
@@ -201,30 +223,30 @@ body::before {
 
 .trip-gradient-text {
   background: linear-gradient(
-    120deg,
+    110deg,
     #ffffff 0%,
-    #67e8f9 45%,
+    #b9f6ff 35%,
+    #67e8f9 65%,
     #22d3ee 100%
   );
 
   -webkit-background-clip: text;
   background-clip: text;
-
   color: transparent;
 }
 
 /* =========================================================
-   IMAGE EFFECT
+   IMAGE
 ========================================================= */
 
 .trip-image {
   transition:
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.8s ease;
 }
 
 .trip-image:hover {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 /* =========================================================
@@ -234,7 +256,6 @@ body::before {
 .trip-button {
   position: relative;
   overflow: hidden;
-
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -242,12 +263,9 @@ body::before {
 
 .trip-button::before {
   content: "";
-
   position: absolute;
-
   top: 0;
   left: -120%;
-
   width: 80%;
   height: 100%;
 
@@ -259,7 +277,6 @@ body::before {
   );
 
   transform: skewX(-20deg);
-
   transition: left 0.7s ease;
 }
 
@@ -272,12 +289,79 @@ body::before {
 }
 
 /* =========================================================
-   PAGE TRANSITION
+   CARD BORDER
+========================================================= */
+
+.trip-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(9, 32, 50, 0.72);
+  backdrop-filter: blur(16px);
+  transition:
+    border-color 0.4s ease,
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.trip-card:hover {
+  border-color: rgba(34, 211, 238, 0.42);
+  transform: translateY(-6px);
+  box-shadow:
+    0 20px 60px rgba(2, 15, 27, 0.3),
+    0 0 35px rgba(34, 211, 238, 0.05);
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.trip-input {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(8, 30, 47, 0.8);
+  color: white;
+  padding: 15px 18px;
+  outline: none;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.trip-input::placeholder {
+  color: #7c91a1;
+}
+
+.trip-input:focus {
+  border-color: rgba(34, 211, 238, 0.65);
+  background: rgba(10, 39, 58, 0.95);
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.07);
+}
+
+/* =========================================================
+   PAGE
 ========================================================= */
 
 .trip-page {
   position: relative;
   z-index: 1;
+}
+
+/* =========================================================
+   SECTION DIVIDER
+========================================================= */
+
+.trip-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(34, 211, 238, 0.3),
+    transparent
+  );
 }
 
 /* =========================================================

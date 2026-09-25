@@ -1,27 +1,25 @@
-const express = require('express')
+const express = require("express");
 
-const router = express.Router()
+const { protect } = require("../middleware/authMiddleware");
 
 const {
-  createTrip,
   getTrips,
-  getTrip,
+  getTripById,
+  createTrip,
   updateTrip,
   deleteTrip,
-} = require('../controllers/tripController')
+} = require("../controllers/tripController");
 
-const authMiddleware = require('../middleware/authMiddleware')
+const router = express.Router();
 
-router.use(authMiddleware)
+router.get("/", protect, getTrips);
 
-router.post('/', createTrip)
+router.get("/:id", protect, getTripById);
 
-router.get('/', getTrips)
+router.post("/", protect, createTrip);
 
-router.get('/:id', getTrip)
+router.put("/:id", protect, updateTrip);
 
-router.put('/:id', updateTrip)
+router.delete("/:id", protect, deleteTrip);
 
-router.delete('/:id', deleteTrip)
-
-module.exports = router
+module.exports = router;

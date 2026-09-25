@@ -1,76 +1,74 @@
-const API_URL = `${import.meta.env.VITE_API_URL}/trips`
+const API_URL = import.meta.env.VITE_API_URL;
 
 const getToken = () => {
-  return localStorage.getItem('token')
-}
+  return localStorage.getItem("token");
+};
 
-export const createTrip = async (tripData) => {
-  const response = await fetch(API_URL, {
-    method: 'POST',
+const request = async (url, options = {}) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}${url}`, {
+    ...options,
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+      ...(token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {}),
+      ...(options.headers || {}),
     },
-    body: JSON.stringify(tripData),
-  })
+  });
 
-  const data = await response.json()
+  const text = await response.text();
 
-  if (!response.ok) {
-    throw new Error(data.message)
+  let data = {};
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(
+        `Server returned an invalid response (${response.status})`
+      );
+    }
   }
 
-  return data
-}
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+        data.error ||
+        `Request failed (${response.status})`
+    );
+  }
+
+  return data;
+};
 
 export const getTrips = async () => {
-  const response = await fetch(API_URL, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
+  return request("/trips");
+};
 
-  const data = await response.json()
+export const getTripById = async (id) => {
+  return request(`/trips/${id}`);
+};
 
-  if (!response.ok) {
-    throw new Error(data.message)
-  }
-
-  return data
-}
-
-export const deleteTrip = async (id) => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
-
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.message)
-  }
-
-  return data
-}
+export const createTrip = async (tripData) => {
+  return request("/trips", {
+    method: "POST",
+    body: JSON.stringify(tripData),
+  });
+};
 
 export const updateTrip = async (id, tripData) => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
+  return request(`/trips/${id}`, {
+    method: "PUT",
     body: JSON.stringify(tripData),
-  })
+  });
+};
 
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.message)
-  }
-
-  return data
-}
+export const deleteTrip = async (id) => {
+  return request(`/trips/${id}`, {
+    method: "DELETE",
+  });
+};
