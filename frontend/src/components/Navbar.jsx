@@ -1,387 +1,188 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-
-import { AuthContext } from "../context/AuthContext";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Navbar() {
-  const { user, logout } = useContext(AuthContext);
-
   const navigate = useNavigate();
   const location = useLocation();
-
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const isHome = location.pathname === "/";
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 35);
-    };
-
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 24);
     handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
+  const navItems = [
+    { name: "HOME", path: "/" },
+    { name: "EXPLORE", path: "/explore" },
+    { name: "PLANNER", path: "/planner" },
+    { name: "BUDGET", path: "/budget-planner" },
+    { name: "DASHBOARD", path: "/dashboard" },
+    { name: "COMMUNITY", path: "/community" },
+    { name: "ABOUT", path: "/about" },
+    { name: "CONTACT", path: "/contact" },
+  ];
+
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setMenuOpen(false);
     navigate("/login");
   };
 
-  const navItems = [
-    { label: "HOME", path: "/" },
-    { label: "EXPLORE", path: "/explore" },
-    { label: "PLANNER", path: "/planner" },
-    { label: "BUDGET", path: "/budget-planner" },
-    { label: "DASHBOARD", path: "/dashboard" },
-    { label: "COMMUNITY", path: "/community" },
-    { label: "ABOUT", path: "/about" },
-    { label: "CONTACT", path: "/contact" },
-  ];
+  const lightMode = !isHome || scrolled;
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{
-          duration: 0.8,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        className={`
-          fixed
-          top-0
-          left-0
-          right-0
-          z-50
-          transition-all
-          duration-500
-          ${
-            scrolled
-              ? "bg-[#071827]/80 backdrop-blur-2xl border-b border-cyan-300/10 shadow-[0_10px_50px_rgba(3,15,28,0.25)]"
-              : "bg-gradient-to-b from-[#061524]/50 to-transparent"
-          }
-        `}
-      >
-        {/* TOP CYAN LINE */}
+    <header
+      className={`fixed inset-x-0 top-0 z-[1000] w-full border-b backdrop-blur-xl transition-all duration-500 ease-out ${
+        lightMode
+          ? "border-slate-200/70 bg-white/90 text-slate-900 shadow-[0_8px_30px_rgba(15,23,42,0.08)]"
+          : "border-white/10 bg-slate-950/35 text-white"
+      }`}
+    >
+      <div className="mx-auto flex h-[84px] w-full max-w-[1680px] items-center gap-8 px-5 sm:px-8 lg:px-10 2xl:px-14">
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          aria-label="TripVerse Home"
+          className="group flex shrink-0 items-center border-0 bg-transparent p-0 leading-none"
+        >
+          <span
+            className={`text-[32px] font-extrabold tracking-[-2px] transition-colors duration-300 sm:text-[36px] ${
+              lightMode ? "text-slate-950" : "text-white"
+            }`}
+          >
+            Trip
+          </span>
+          <span className="text-[32px] font-extrabold tracking-[-2px] text-cyan-500 transition-colors duration-300 group-hover:text-cyan-400 sm:text-[36px]">
+            Verse
+          </span>
+        </button>
 
-        <motion.div
-          className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-300 to-transparent"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{
-            duration: 1.5,
-            ease: "easeInOut",
-          }}
-        />
-
-        <div className="max-w-[1900px] mx-auto px-6 md:px-10">
-          <div className="h-[88px] flex items-center justify-between">
-            {/* LOGO */}
-
-            <Link to="/" className="relative group flex items-center">
-              <motion.span
-                whileHover={{ scale: 1.04 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 20,
-                }}
-                className="text-3xl md:text-4xl font-black tracking-tight trip-gradient-text"
-              >
-                TripVerse
-              </motion.span>
-
-              <span
-                className="
-                  absolute
-                  -inset-4
-                  bg-cyan-300/10
-                  blur-2xl
-                  rounded-full
-                  opacity-0
-                  group-hover:opacity-100
-                  transition-opacity
-                  duration-500
-                  -z-10
-                "
-              />
-            </Link>
-
-            {/* DESKTOP NAV */}
-
-            <div className="hidden xl:flex items-center gap-7">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className="relative group py-2"
-                >
-                  {({ isActive }) => (
-                    <>
-                      <span
-                        className={`
-                          text-[13px]
-                          font-semibold
-                          tracking-[0.12em]
-                          transition-colors
-                          duration-300
-                          ${
-                            isActive
-                              ? "text-cyan-300"
-                              : "text-slate-200/85 group-hover:text-white"
-                          }
-                        `}
-                      >
-                        {item.label}
-                      </span>
-
-                      {isActive && (
-                        <motion.span
-                          layoutId="navbar-active"
-                          className="
-                            absolute
-                            left-0
-                            right-0
-                            -bottom-1
-                            h-[2px]
-                            bg-cyan-300
-                            shadow-[0_0_14px_rgba(34,211,238,0.8)]
-                          "
-                          transition={{
-                            type: "spring",
-                            stiffness: 500,
-                            damping: 35,
-                          }}
-                        />
-                      )}
-
-                      {!isActive && (
-                        <span
-                          className="
-                            absolute
-                            left-1/2
-                            -bottom-1
-                            h-[2px]
-                            w-0
-                            -translate-x-1/2
-                            bg-cyan-300/60
-                            transition-all
-                            duration-300
-                            group-hover:w-full
-                          "
-                        />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </div>
-
-            {/* AUTH */}
-
-            <div className="hidden lg:flex items-center gap-3">
-              {!user ? (
+        <nav className="hidden min-w-0 flex-1 items-center justify-center gap-2 xl:flex 2xl:gap-4">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `relative whitespace-nowrap px-3 py-3 text-[14px] font-bold tracking-[0.04em] transition-colors duration-300 2xl:px-3.5 2xl:text-[15px] ${
+                  isActive
+                    ? "text-cyan-500"
+                    : lightMode
+                      ? "text-slate-600 hover:text-cyan-500"
+                      : "text-white/80 hover:text-white"
+                }`
+              }
+            >
+              {({ isActive }) => (
                 <>
-                  <Link
-                    to="/login"
-                    className="
-                      px-5
-                      py-3
-                      text-sm
-                      font-semibold
-                      tracking-wide
-                      text-slate-100
-                      hover:text-cyan-300
-                      transition
-                    "
-                  >
-                    LOGIN
-                  </Link>
-
-                  <Link
-                    to="/register"
-                    className="
-                      px-7
-                      py-3.5
-                      rounded-full
-                      bg-cyan-400
-                      text-slate-950
-                      font-bold
-                      text-sm
-                      shadow-[0_10px_35px_rgba(34,211,238,0.18)]
-                      hover:bg-cyan-300
-                      hover:-translate-y-0.5
-                      transition-all
-                    "
-                  >
-                    SIGN UP
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/profile"
-                    className="
-                      px-5
-                      py-3
-                      text-sm
-                      font-semibold
-                      text-slate-100
-                      hover:text-cyan-300
-                      transition
-                    "
-                  >
-                    PROFILE
-                  </Link>
-
-                  <button
-                    onClick={handleLogout}
-                    className="
-                      px-6
-                      py-3
-                      rounded-full
-                      border
-                      border-white/15
-                      bg-white/5
-                      backdrop-blur-md
-                      text-sm
-                      font-semibold
-                      text-white
-                      hover:border-cyan-300/50
-                      hover:text-cyan-300
-                      transition-all
-                    "
-                  >
-                    LOGOUT
-                  </button>
+                  {item.name}
+                  <span
+                    className={`absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-cyan-400 transition-all duration-300 ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
                 </>
               )}
-            </div>
+            </NavLink>
+          ))}
+        </nav>
 
-            {/* MOBILE BUTTON */}
-
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="
-                xl:hidden
-                w-11
-                h-11
-                rounded-full
-                border
-                border-white/15
-                bg-white/5
-                backdrop-blur-md
-                flex
-                flex-col
-                items-center
-                justify-center
-                gap-1.5
-              "
-            >
-              <span className="w-5 h-[2px] bg-white" />
-              <span className="w-5 h-[2px] bg-cyan-300" />
-              <span className="w-5 h-[2px] bg-white" />
-            </button>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* MOBILE MENU */}
-
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="
-              fixed
-              top-[88px]
-              left-4
-              right-4
-              z-40
-              xl:hidden
-              rounded-3xl
-              border
-              border-white/10
-              bg-[#0a2237]/95
-              backdrop-blur-2xl
-              shadow-2xl
-              p-5
-            "
+        <div className="ml-auto hidden shrink-0 items-center gap-3 xl:flex">
+          <button
+            type="button"
+            onClick={() => navigate("/profile")}
+            className={`rounded-full px-4 py-3 text-[14px] font-bold transition-colors duration-300 ${
+              location.pathname === "/profile"
+                ? "text-cyan-500"
+                : lightMode
+                  ? "text-slate-700 hover:text-cyan-500"
+                  : "text-white/85 hover:text-white"
+            }`}
           >
-            <div className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => `
-                    px-5
-                    py-3
-                    rounded-2xl
-                    text-sm
-                    font-semibold
-                    tracking-wider
-                    transition
-                    ${
-                      isActive
-                        ? "bg-cyan-400/10 text-cyan-300"
-                        : "text-slate-200 hover:bg-white/5"
-                    }
-                  `}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+            PROFILE
+          </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className={`rounded-full border px-5 py-3 text-[14px] font-bold transition-all duration-300 ${
+              lightMode
+                ? "border-slate-300 bg-white/70 text-slate-800 hover:border-cyan-300 hover:text-cyan-600"
+                : "border-white/25 bg-white/5 text-white hover:border-cyan-300 hover:text-cyan-300"
+            }`}
+          >
+            LOGOUT
+          </button>
+        </div>
 
-              <div className="border-t border-white/10 mt-3 pt-3">
-                {!user ? (
-                  <div className="grid grid-cols-2 gap-3">
-                    <Link
-                      to="/login"
-                      className="text-center py-3 rounded-xl border border-white/10 text-white"
-                    >
-                      LOGIN
-                    </Link>
+        <button
+          type="button"
+          onClick={() => setMenuOpen((value) => !value)}
+          aria-label="Toggle navigation"
+          aria-expanded={menuOpen}
+          className={`ml-auto flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-xl border xl:hidden ${
+            lightMode
+              ? "border-slate-200 bg-white text-slate-900"
+              : "border-white/20 bg-white/10 text-white"
+          }`}
+        >
+          <span className="h-0.5 w-5 rounded-full bg-current" />
+          <span className="h-0.5 w-5 rounded-full bg-current" />
+          <span className="h-0.5 w-5 rounded-full bg-current" />
+        </button>
+      </div>
 
-                    <Link
-                      to="/register"
-                      className="text-center py-3 rounded-xl bg-cyan-400 text-slate-950 font-bold"
-                    >
-                      SIGN UP
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-3">
-                    <Link
-                      to="/profile"
-                      className="text-center py-3 rounded-xl border border-white/10 text-white"
-                    >
-                      PROFILE
-                    </Link>
+      <div
+        className={`overflow-hidden border-t transition-all duration-300 xl:hidden ${
+          lightMode ? "border-slate-200 bg-white/95" : "border-white/10 bg-slate-950/95"
+        } ${menuOpen ? "max-h-[620px] opacity-100" : "max-h-0 opacity-0"}`}
+      >
+        <nav className="mx-auto flex max-w-3xl flex-col gap-1 px-6 py-4">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `rounded-xl px-4 py-3 text-sm font-bold transition-colors ${
+                  isActive
+                    ? "bg-cyan-50 text-cyan-600"
+                    : lightMode
+                      ? "text-slate-700 hover:bg-slate-50"
+                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                }`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
 
-                    <button
-                      onClick={handleLogout}
-                      className="py-3 rounded-xl bg-white/5 text-white"
-                    >
-                      LOGOUT
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+          <button
+            type="button"
+            onClick={() => navigate("/profile")}
+            className={`rounded-xl px-4 py-3 text-left text-sm font-bold ${
+              lightMode ? "text-slate-700" : "text-white/80"
+            }`}
+          >
+            PROFILE
+          </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="rounded-xl px-4 py-3 text-left text-sm font-bold text-red-500"
+          >
+            LOGOUT
+          </button>
+        </nav>
+      </div>
+    </header>
   );
 }
 

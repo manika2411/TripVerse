@@ -20,13 +20,13 @@ function Contact() {
           transition={{ duration: 0.8 }}
           className="text-center mb-14"
         >
-          <p className="text-cyan-300 uppercase tracking-[6px] text-sm">
+          <p className="text-cyan-600 uppercase tracking-[6px] text-sm">
             Get In Touch
           </p>
 
           <h1 className="text-6xl md:text-8xl font-black mt-5">Let's Talk.</h1>
 
-          <p className="text-slate-400 max-w-2xl mx-auto mt-6 text-lg leading-8">
+          <p className="text-slate-500 max-w-2xl mx-auto mt-6 text-lg leading-8">
             Have a question, suggestion or simply want to say hello? Send us a
             message.
           </p>
@@ -52,13 +52,13 @@ function Contact() {
                 w-20
                 h-20
                 rounded-full
-                bg-cyan-300/10
+                bg-cyan-50
                 border
-                border-cyan-300/20
+                border-cyan-200
                 flex
                 items-center
                 justify-center
-                text-cyan-300
+                text-cyan-600
                 text-3xl
                 mx-auto
               "
@@ -80,9 +80,9 @@ function Contact() {
                   py-3
                   rounded-full
                   border
-                  border-white/15
-                  hover:border-cyan-300/40
-                  hover:text-cyan-300
+                  border-slate-200
+                  hover:border-cyan-300
+                  hover:text-cyan-600
                   transition
                 "
               >

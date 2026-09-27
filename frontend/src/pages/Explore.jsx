@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { getCountries } from "../services/countryApi";
+import { getCountries, getCurrencyInfo } from "../services/countryApi";
 
 function Explore() {
   const [countries, setCountries] = useState([]);
@@ -53,21 +53,13 @@ function Explore() {
   };
 
   const getCountryCurrency = (country) => {
-    const currencies = country?.currencies || {};
+    const currency = getCurrencyInfo(country);
 
-    const values = Object.values(currencies);
-
-    if (!values.length) {
+    if (!currency) {
       return "Not available";
     }
 
-    const currency = values[0];
-
-    if (typeof currency === "string") {
-      return currency;
-    }
-
-    return currency?.name || currency?.symbol || "Not available";
+    return `${currency.name} (${currency.code}) ${currency.symbol}`;
   };
 
   const fetchCountries = async () => {
@@ -128,7 +120,7 @@ function Explore() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-900 pt-28 pb-24">
+      <main className="site-light-page min-h-screen bg-slate-50 text-slate-900 pt-28 pb-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-14">
             <div className="h-4 w-36 rounded-full bg-slate-200 animate-pulse mb-5" />
@@ -207,8 +199,6 @@ function Explore() {
 
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-5">
-            <span className="w-10 h-[2px] bg-cyan-500" />
-
             <p className="uppercase tracking-[5px] text-cyan-600 text-sm font-bold">
               Explore The World
             </p>

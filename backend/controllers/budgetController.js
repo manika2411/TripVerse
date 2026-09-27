@@ -50,7 +50,7 @@ const saveBudget = async (req, res) => {
         remainingBudget,
       },
       {
-        new: true,
+        returnDocument: "after",
         upsert: true,
         runValidators: true,
       },

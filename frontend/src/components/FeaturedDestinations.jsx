@@ -4,21 +4,21 @@ import DestinationCard from './DestinationCard'
 
 const destinations = [
   {
-    id: 1,
+    id: 'IDN',
     name: 'Bali',
     country: 'Indonesia',
     image:
       'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=85&w=1400',
   },
   {
-    id: 2,
+    id: 'FRA',
     name: 'Paris',
     country: 'France',
     image:
       'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=85&w=1400',
   },
   {
-    id: 3,
+    id: 'JPN',
     name: 'Tokyo',
     country: 'Japan',
     image:
@@ -45,12 +45,12 @@ function FeaturedDestinations() {
             <div className="flex items-center gap-4 mb-5">
               <span className="w-16 h-px bg-cyan-300" />
 
-              <p className="text-cyan-300 uppercase tracking-[5px] text-sm font-semibold">
+              <p className="text-cyan-600 uppercase tracking-[5px] text-sm font-semibold">
                 Featured Destinations
               </p>
             </div>
 
-            <h2 className="text-5xl md:text-7xl font-black tracking-tight">
+            <h2 className="text-5xl md:text-7xl font-black tracking-tight text-slate-950">
               Your Next
               <span className="block trip-gradient-text">
                 Adventure.
@@ -71,12 +71,12 @@ function FeaturedDestinations() {
               py-4
               rounded-full
               border
-              border-white/15
-              bg-white/[0.03]
-              text-slate-200
+              border-slate-200
+              bg-white
+              text-slate-700
               font-semibold
-              hover:border-cyan-300/50
-              hover:text-cyan-300
+              hover:border-cyan-300
+              hover:text-cyan-600
               transition-all
             "
           >

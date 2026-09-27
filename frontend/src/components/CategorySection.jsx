@@ -69,7 +69,7 @@ function CategorySection() {
           <div className="flex items-center justify-center gap-4 mb-5">
             <span className="w-14 h-px bg-cyan-300" />
 
-            <p className="uppercase tracking-[6px] text-cyan-300 text-sm">
+            <p className="uppercase tracking-[6px] text-cyan-600 text-sm">
               Find Your Vibe
             </p>
 
@@ -115,10 +115,10 @@ function CategorySection() {
                   overflow-hidden
                   rounded-[34px]
                   border
-                  border-white/10
+                  border-slate-200
                   bg-gradient-to-br
                   ${category.gradient}
-                  bg-[#0b2033]
+                  bg-white
                   p-8
                   flex
                   flex-col
@@ -140,7 +140,7 @@ function CategorySection() {
                   text-[150px]
                   leading-none
                   font-black
-                  text-white/[0.025]
+                  text-slate-900/[0.035]
                   pointer-events-none
                 "
                 >
@@ -150,7 +150,7 @@ function CategorySection() {
                 {/* ICON */}
 
                 <div className="relative z-10 flex items-start justify-between">
-                  <span className="text-slate-500 text-sm tracking-[4px]">
+                  <span className="text-slate-400 text-sm tracking-[4px]">
                     {category.number}
                   </span>
 
@@ -163,14 +163,14 @@ function CategorySection() {
                       w-14
                       h-14
                       rounded-full
-                      bg-white/5
+                      bg-slate-50
                       border
-                      border-white/10
+                      border-slate-200
                       backdrop-blur-md
                       flex
                       items-center
                       justify-center
-                      text-cyan-300
+                      text-cyan-600
                     "
                   >
                     <Icon />
@@ -180,13 +180,13 @@ function CategorySection() {
                 {/* TEXT */}
 
                 <div className="relative z-10">
-                  <h3 className="text-3xl md:text-4xl font-black mb-3">
+                  <h3 className="text-3xl md:text-4xl font-black mb-3 text-slate-950">
                     {category.title}
                   </h3>
 
                   <p
                     className="
-                    text-slate-400
+                    text-slate-500
                     max-w-sm
                     leading-7
                     opacity-0

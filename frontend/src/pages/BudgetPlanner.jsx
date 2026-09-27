@@ -1,700 +1,440 @@
 import { useEffect, useMemo, useState } from "react";
-import { getCountries } from "../services/countryApi";
-import { getExchangeRate } from "../services/currencyApi";
-import { saveBudget, getBudgetByDestination } from "../services/budgetApi";
+import { AnimatePresence, motion } from "framer-motion";
+import { getAllCountries, getCountryCode, getCountryName, getCurrencyCode, getCurrencyInfo, getCurrencyInfoAsync, getCurrencySymbol } from "../services/countryApi";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const categories = [
+  "Accommodation",
+  "Food & Dining",
+  "Transport",
+  "Activities",
+  "Shopping",
+  "Other",
+];
+
+const initialExpenses = {
+  Accommodation: 0,
+  "Food & Dining": 0,
+  Transport: 0,
+  Activities: 0,
+  Shopping: 0,
+  Other: 0,
+};
 
 function BudgetPlanner() {
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [currency, setCurrency] = useState("");
-  const [currencySymbol, setCurrencySymbol] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [resolvedCurrency, setResolvedCurrency] = useState(null);
   const [budget, setBudget] = useState("");
-  const [saveLoading, setSaveLoading] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
-  const [saveError, setSaveError] = useState("");
-
-  const [expenses, setExpenses] = useState({
-    accommodation: "",
-    food: "",
-    transport: "",
-    activities: "",
-    shopping: "",
-    other: "",
-  });
-
-  const [fromCurrency, setFromCurrency] = useState("INR");
-  const [toCurrency, setToCurrency] = useState("");
-  const [conversionAmount, setConversionAmount] = useState("");
-  const [convertedAmount, setConvertedAmount] = useState(null);
-  const [exchangeRate, setExchangeRate] = useState(null);
-  const [conversionLoading, setConversionLoading] = useState(false);
-  const [conversionError, setConversionError] = useState("");
-
-  const [loading, setLoading] = useState(true);
+  const [expenses, setExpenses] = useState(initialExpenses);
+  const [loadingCountries, setLoadingCountries] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     const loadCountries = async () => {
       try {
-        setLoading(true);
+        setLoadingCountries(true);
         setError("");
-
-        const data = await getCountries();
-
-        setCountries(Array.isArray(data) ? data : []);
+        const data = await getAllCountries();
+        const sorted = [...data].sort((a, b) =>
+          getCountryName(a).localeCompare(getCountryName(b)),
+        );
+        setCountries(sorted);
       } catch (err) {
-        console.error("Budget country loading error:", err);
-        setError("Unable to load destinations.");
+        console.error("Failed to load countries:", err);
+        setError(err.message || "Unable to load destinations.");
       } finally {
-        setLoading(false);
+        setLoadingCountries(false);
       }
     };
 
     loadCountries();
   }, []);
 
-  const handleSaveBudget = async () => {
-    if (!selectedCountry) {
-      setSaveError("Please select a destination.");
-      return;
-    }
+  const currency = resolvedCurrency || getCurrencyInfo(selectedCountry);
 
-    if (!budget || Number(budget) <= 0) {
-      setSaveError("Please enter a valid trip budget.");
-      return;
-    }
+  const totalExpenses = useMemo(
+    () =>
+      Object.values(expenses).reduce(
+        (sum, value) => sum + Number(value || 0),
+        0,
+      ),
+    [expenses],
+  );
 
-    if (!currency) {
-      setSaveError("Currency could not be determined.");
-      return;
-    }
+  const numericBudget = Number(budget) || 0;
+  const remainingBudget = numericBudget - totalExpenses;
+  const expensePercentage =
+    numericBudget > 0
+      ? Math.min(100, (totalExpenses / numericBudget) * 100)
+      : 0;
 
-    const country = countries.find(
-      (item) => getCountryCode(item) === selectedCountry,
-    );
-
-    const destination = getCountryName(country);
-
-    try {
-      setSaveLoading(true);
-      setSaveMessage("");
-      setSaveError("");
-
-      await saveBudget({
-        destination,
-        destinationCode: selectedCountry,
-        currency,
-        budget: Number(budget),
-        expenses: {
-          accommodation: Number(expenses.accommodation) || 0,
-          food: Number(expenses.food) || 0,
-          transport: Number(expenses.transport) || 0,
-          activities: Number(expenses.activities) || 0,
-          shopping: Number(expenses.shopping) || 0,
-          other: Number(expenses.other) || 0,
-        },
-      });
-
-      setSaveMessage("Budget saved successfully.");
-    } catch (err) {
-      console.error("Budget save error:", err);
-
-      setSaveError(err.message || "Unable to save budget.");
-    } finally {
-      setSaveLoading(false);
-    }
-  };
-
-  const getCountryName = (country) => {
-    return (
-      country?.name?.common ||
-      country?.names?.common ||
-      country?.name ||
-      "Unknown"
-    );
-  };
-
-  const getCountryCode = (country) => {
-    return (
-      country?.cca3 ||
-      country?.codes?.alpha3 ||
-      country?.code ||
-      country?.codes?.cca3 ||
-      ""
-    );
-  };
-
-  const getCountryCurrency = (country) => {
-    if (!country) return "";
-
-    if (country.currencies) {
-      if (Array.isArray(country.currencies)) {
-        const firstCurrency = country.currencies[0];
-
-        if (typeof firstCurrency === "string") {
-          return firstCurrency;
-        }
-
-        if (firstCurrency?.code) {
-          return firstCurrency.code;
-        }
-      }
-
-      if (typeof country.currencies === "object") {
-        const codes = Object.keys(country.currencies);
-
-        if (codes.length > 0) {
-          return codes[0];
-        }
-      }
-    }
-
-    if (country.currency) {
-      if (typeof country.currency === "string") {
-        return country.currency;
-      }
-
-      if (country.currency?.code) {
-        return country.currency.code;
-      }
-
-      if (typeof country.currency === "object") {
-        const codes = Object.keys(country.currency);
-
-        if (codes.length > 0) {
-          return codes[0];
-        }
-      }
-    }
-
-    if (country.currencyCode) {
-      return country.currencyCode;
-    }
-
-    if (country.currency_code) {
-      return country.currency_code;
-    }
-
-    return "";
-  };
-
-  const getCurrencySymbol = (currencyCode) => {
-    if (!currencyCode) return "";
-
-    try {
-      const parts = new Intl.NumberFormat("en", {
-        style: "currency",
-        currency: currencyCode,
-        currencyDisplay: "narrowSymbol",
-      }).formatToParts(0);
-
-      return (
-        parts.find((part) => part.type === "currency")?.value || currencyCode
-      );
-    } catch {
-      return currencyCode;
-    }
-  };
-
-  const handleCountryChange = async (e) => {
+  const handleDestinationChange = async (e) => {
     const code = e.target.value;
-
-    setSelectedCountry(code);
-
     const country = countries.find((item) => getCountryCode(item) === code);
 
-    const countryCurrency = getCountryCurrency(country);
+    setSelectedCountry(country || null);
+    setResolvedCurrency(null);
 
-    setCurrency(countryCurrency);
-    setCurrencySymbol(getCurrencySymbol(countryCurrency));
-    setToCurrency(countryCurrency);
-
-    setSaveMessage("");
-    setSaveError("");
-
-    if (!code) return;
-
-    const token = localStorage.getItem("token");
-
-    if (!token) return;
-
-    try {
-      const savedBudget = await getBudgetByDestination(code);
-
-      if (!savedBudget) return;
-
-      setBudget(savedBudget.budget?.toString() || "");
-
-      setExpenses({
-        accommodation: savedBudget.expenses?.accommodation?.toString() || "",
-        food: savedBudget.expenses?.food?.toString() || "",
-        transport: savedBudget.expenses?.transport?.toString() || "",
-        activities: savedBudget.expenses?.activities?.toString() || "",
-        shopping: savedBudget.expenses?.shopping?.toString() || "",
-        other: savedBudget.expenses?.other?.toString() || "",
-      });
-
-      setSaveMessage("Saved budget loaded.");
-    } catch (err) {
-      console.error("Load saved budget error:", err);
+    if (country) {
+      const info = await getCurrencyInfoAsync(country);
+      setResolvedCurrency(info);
     }
   };
 
-  const handleExpenseChange = (e) => {
-    const { name, value } = e.target;
-
-    setExpenses((previous) => ({
-      ...previous,
-      [name]: value,
+  const handleExpenseChange = (category, value) => {
+    setExpenses((prev) => ({
+      ...prev,
+      [category]: Math.max(0, Number(value) || 0),
     }));
   };
 
-  const totalExpenses = useMemo(() => {
-    return Object.values(expenses).reduce(
-      (total, value) => total + (Number(value) || 0),
-      0,
-    );
-  }, [expenses]);
+  const saveBudget = async () => {
+    setError("");
+    setMessage("");
 
-  const remainingBudget = (Number(budget) || 0) - totalExpenses;
-
-  const expensePercentage = (value) => {
-    if (!totalExpenses) return 0;
-
-    return Math.min(
-      100,
-      Math.round(((Number(value) || 0) / totalExpenses) * 100),
-    );
-  };
-
-  const handleConvert = async () => {
-    if (!conversionAmount || Number(conversionAmount) < 0) {
-      setConversionError("Enter a valid amount.");
+    if (!localStorage.getItem("token")) {
+      setError("Please login before saving a budget.");
       return;
     }
 
-    if (!fromCurrency || !toCurrency) {
-      setConversionError("Select both currencies.");
+    if (!selectedCountry) {
+      setError("Please select a destination.");
+      return;
+    }
+
+    if (!numericBudget) {
+      setError("Please enter your total trip budget.");
+      return;
+    }
+
+    if (totalExpenses > numericBudget) {
+      setError("Your expenses cannot exceed the total budget.");
       return;
     }
 
     try {
-      setConversionLoading(true);
-      setConversionError("");
+      setSaving(true);
 
-      const result = await getExchangeRate(fromCurrency, toCurrency);
+      const payload = {
+        destination: getCountryName(selectedCountry),
+        currency: getCurrencyCode(selectedCountry),
+        currencySymbol: getCurrencySymbol(selectedCountry),
+        budget: numericBudget,
+        accommodation: Number(expenses.Accommodation) || 0,
+        food: Number(expenses["Food & Dining"]) || 0,
+        transport: Number(expenses.Transport) || 0,
+        activities: Number(expenses.Activities) || 0,
+        shopping: Number(expenses.Shopping) || 0,
+        other: Number(expenses.Other) || 0,
+        totalExpenses,
+        remainingBudget,
+      };
 
-      const rate = Number(result.rate);
+      const response = await fetch(`${API_URL}/budgets`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-      setExchangeRate(rate);
+      const text = await response.text();
+      let result = {};
 
-      setConvertedAmount(Number(conversionAmount) * rate);
+      if (text) {
+        try {
+          result = JSON.parse(text);
+        } catch {
+          throw new Error(`Server returned an invalid response (${response.status})`);
+        }
+      }
+
+      if (!response.ok || result.success === false) {
+        throw new Error(result.message || "Failed to save budget");
+      }
+
+      setMessage("Budget saved successfully!");
     } catch (err) {
-      console.error("Currency conversion error:", err);
-
-      setConvertedAmount(null);
-      setExchangeRate(null);
-      setConversionError(err.message || "Unable to convert currency.");
+      console.error("Save budget error:", err);
+      setError(err.message || "Failed to save budget.");
     } finally {
-      setConversionLoading(false);
+      setSaving(false);
     }
   };
 
-  const handleSwapCurrencies = () => {
-    const previousFrom = fromCurrency;
-
-    setFromCurrency(toCurrency);
-    setToCurrency(previousFrom);
-
-    setConvertedAmount(null);
-    setExchangeRate(null);
-    setConversionError("");
-  };
-
-  const displayCurrency = currencySymbol || currency || "—";
-
-  const currencyOptions = [
-    "INR",
-    "USD",
-    "EUR",
-    "GBP",
-    "JPY",
-    "AUD",
-    "CAD",
-    "CHF",
-    "SGD",
-    "AED",
-    "CNY",
-  ];
-
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 px-6 py-12">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-12">
-          <p className="text-cyan-500 uppercase tracking-[5px] font-semibold text-sm mb-3">
-            Travel Finance
-          </p>
+    <main className="site-light-page px-6 pb-20 pt-32">
+      <div className="pointer-events-none absolute left-0 top-28 h-[450px] w-[450px] rounded-full bg-cyan-200/25 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-[550px] h-[500px] w-[500px] rounded-full bg-blue-200/20 blur-3xl" />
 
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
-                Budget Planner
-              </h1>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10 flex flex-col justify-between gap-7 lg:flex-row lg:items-end"
+        >
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
+              Travel Finance
+            </p>
+            <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
+              Budget Planner
+            </h1>
+            <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-500">
+              Plan your trip expenses, track your spending and understand your travel budget in local currency.
+            </p>
+          </div>
 
-              <p className="text-slate-500 text-lg mt-4 max-w-2xl">
-                Plan your trip expenses, track your spending and understand your
-                travel budget in local currency.
-              </p>
-            </div>
+          <div className="rounded-3xl border border-slate-200 bg-white px-8 py-6 shadow-sm">
+            <p className="text-sm text-slate-500">Remaining Budget</p>
+            <motion.p
+              key={remainingBudget}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className={`mt-2 text-3xl font-black ${remainingBudget < 0 ? "text-red-500" : "text-cyan-600"}`}
+            >
+              {currency?.symbol || "—"} {remainingBudget.toLocaleString()}
+            </motion.p>
+          </div>
+        </motion.div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl px-6 py-4 shadow-sm">
-              <p className="text-sm text-slate-500">Remaining Budget</p>
+        <AnimatePresence>
+          {(error || message) && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`mb-6 rounded-2xl border px-5 py-4 ${
+                error
+                  ? "border-red-200 bg-red-50 text-red-600"
+                  : "border-emerald-200 bg-emerald-50 text-emerald-600"
+              }`}
+            >
+              {error || message}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              <p
-                className={`text-3xl font-extrabold mt-1 ${
-                  remainingBudget < 0 ? "text-red-500" : "text-cyan-500"
-                }`}
+        <div className="grid gap-8 lg:grid-cols-[500px_1fr]">
+          <motion.section
+            initial={{ opacity: 0, x: -35 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="h-fit rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.07)]"
+          >
+            <h2 className="mb-8 text-2xl font-black text-slate-950">Trip Details</h2>
+
+            <label className="mb-3 block text-sm font-bold text-slate-700">
+              Destination
+            </label>
+            <select
+              value={getCountryCode(selectedCountry)}
+              onChange={handleDestinationChange}
+              disabled={loadingCountries}
+              className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none transition focus:border-cyan-400 focus:bg-white focus:ring-4 focus:ring-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <option value="">
+                {loadingCountries ? "Loading destinations..." : "Select a destination"}
+              </option>
+              {countries.map((country, index) => {
+                const code = getCountryCode(country) || `country-${index}`;
+                return (
+                  <option key={code} value={getCountryCode(country)}>
+                    {getCountryName(country)}
+                  </option>
+                );
+              })}
+            </select>
+
+            <div className="mt-8">
+              <label className="mb-3 block text-sm font-bold text-slate-700">
+                Destination Currency
+              </label>
+              <motion.div
+                layout
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
               >
-                {displayCurrency} {Math.abs(remainingBudget).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 rounded-2xl p-5 mb-8">
-            {error}
-          </div>
-        )}
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          <section className="lg:col-span-1">
-            <div className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm">
-              <h2 className="text-2xl font-bold mb-6">Trip Details</h2>
-
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Destination
-                  </label>
-
-                  <select
-                    value={selectedCountry}
-                    onChange={handleCountryChange}
-                    disabled={loading}
-                    className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
-                  >
-                    <option value="">
-                      {loading
-                        ? "Loading destinations..."
-                        : "Select destination"}
-                    </option>
-
-                    {countries.map((country, index) => {
-                      const code = getCountryCode(country);
-                      const name = getCountryName(country);
-
-                      return (
-                        <option key={code || index} value={code}>
-                          {name}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Destination Currency
-                  </label>
-
-                  <div className="w-full p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl font-bold text-cyan-500">
-                        {currencySymbol || "—"}
-                      </span>
-
-                      <span className="text-slate-700 font-semibold">
-                        {currency || "Select a destination"}
-                      </span>
+                {currency ? (
+                  <div className="flex items-center gap-4">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -20 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-2xl font-black text-cyan-600"
+                    >
+                      {currency.symbol}
+                    </motion.div>
+                    <div>
+                      <p className="font-black text-slate-950">{currency.code}</p>
+                      <p className="text-sm text-slate-500">{currency.name}</p>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-slate-400">Select a destination</p>
+                )}
+              </motion.div>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Total Trip Budget
-                  </label>
-
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">
-                      {displayCurrency}
-                    </span>
-
-                    <input
-                      type="number"
-                      min="0"
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      placeholder="Enter your budget"
-                      className="w-full p-4 pl-16 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
-                    />
-                  </div>
-                </div>
+            <div className="mt-8">
+              <label className="mb-3 block text-sm font-bold text-slate-700">
+                Total Trip Budget
+              </label>
+              <div className="relative">
+                <span className="absolute left-5 top-1/2 z-10 -translate-y-1/2 font-black text-cyan-600">
+                  {currency?.symbol || "—"}
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  placeholder="Enter your budget"
+                  className="trip-input pl-16"
+                />
               </div>
             </div>
-          </section>
 
-          <section className="lg:col-span-2">
-            <div className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm mb-8">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-7">
-                <div>
-                  <h2 className="text-2xl font-bold">Expense Breakdown</h2>
+            {selectedCountry && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 rounded-2xl border border-cyan-100 bg-cyan-50 p-5"
+              >
+                <p className="text-sm text-slate-500">Planning for</p>
+                <p className="mt-1 text-xl font-black text-slate-950">
+                  {getCountryName(selectedCountry)}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-cyan-700">
+                  Currency: {getCurrencyCode(selectedCountry)} · {getCurrencySymbol(selectedCountry)}
+                </p>
+              </motion.div>
+            )}
+          </motion.section>
 
-                  <p className="text-slate-500 mt-1">
-                    Estimate how much you plan to spend in each category.
-                  </p>
-                </div>
-
-                <div className="text-left md:text-right">
-                  <p className="text-sm text-slate-500">Total Expenses</p>
-
-                  <p className="text-2xl font-extrabold">
-                    {displayCurrency} {totalExpenses.toLocaleString()}
-                  </p>
-                </div>
+          <motion.section
+            initial={{ opacity: 0, x: 35 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.07)]"
+          >
+            <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-start">
+              <div>
+                <h2 className="text-2xl font-black text-slate-950">Expense Breakdown</h2>
+                <p className="mt-2 text-slate-500">Estimate how much you plan to spend in each category.</p>
               </div>
-              <div className="mt-8">
-                <button
-                  type="button"
-                  onClick={handleSaveBudget}
-                  disabled={saveLoading}
-                  className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white py-4 rounded-xl font-bold transition"
+              <div className="rounded-2xl bg-slate-50 px-5 py-4 text-right">
+                <p className="text-sm text-slate-500">Total Expenses</p>
+                <motion.p
+                  key={totalExpenses}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="mt-1 text-2xl font-black text-slate-950"
                 >
-                  {saveLoading ? "Saving Budget..." : "Save Budget"}
-                </button>
-
-                {saveMessage && (
-                  <div className="mt-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-4 text-sm">
-                    {saveMessage}
-                  </div>
-                )}
-
-                {saveError && (
-                  <div className="mt-4 bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 text-sm">
-                    {saveError}
-                  </div>
-                )}
+                  {currency?.symbol || "—"} {totalExpenses.toLocaleString()}
+                </motion.p>
               </div>
+            </div>
 
-              <div className="grid md:grid-cols-2 gap-5">
-                {[
-                  ["accommodation", "Accommodation"],
-                  ["food", "Food & Dining"],
-                  ["transport", "Transport"],
-                  ["activities", "Activities"],
-                  ["shopping", "Shopping"],
-                  ["other", "Other"],
-                ].map(([name, label]) => (
-                  <div key={name}>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      {label}
-                    </label>
+            <div className="grid gap-6 md:grid-cols-2">
+              {categories.map((category, index) => {
+                const value = Number(expenses[category]) || 0;
+                const percentage =
+                  numericBudget > 0 ? Math.min(100, (value / numericBudget) * 100) : 0;
 
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">
-                        {displayCurrency}
+                return (
+                  <motion.div
+                    key={category}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.07 }}
+                  >
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <label className="text-sm font-bold text-slate-700">{category}</label>
+                      <span className="text-sm font-semibold text-slate-400">
+                        {currency?.symbol || "—"} {value.toLocaleString()}
                       </span>
-
+                    </div>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 z-10 -translate-y-1/2 font-black text-cyan-600">
+                        {currency?.symbol || "—"}
+                      </span>
                       <input
                         type="number"
                         min="0"
-                        name={name}
-                        value={expenses[name]}
-                        onChange={handleExpenseChange}
-                        placeholder="0"
-                        className="w-full p-4 pl-16 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                        value={value}
+                        onChange={(e) => handleExpenseChange(category, e.target.value)}
+                        className="trip-input pl-12"
                       />
                     </div>
-
-                    <div className="mt-2 h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-cyan-400 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${expensePercentage(expenses[name])}%`,
-                        }}
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percentage}%` }}
+                        transition={{ duration: 0.5 }}
+                        className="h-full rounded-full bg-cyan-400"
                       />
                     </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 grid md:grid-cols-3 gap-5">
-                <div className="bg-slate-50 rounded-2xl p-5">
-                  <p className="text-sm text-slate-500">Planned Budget</p>
-
-                  <p className="text-2xl font-bold mt-2">
-                    {displayCurrency} {(Number(budget) || 0).toLocaleString()}
-                  </p>
-                </div>
-
-                <div className="bg-cyan-50 rounded-2xl p-5">
-                  <p className="text-sm text-cyan-700">Total Expenses</p>
-
-                  <p className="text-2xl font-bold text-cyan-700 mt-2">
-                    {displayCurrency} {totalExpenses.toLocaleString()}
-                  </p>
-                </div>
-
-                <div
-                  className={`rounded-2xl p-5 ${
-                    remainingBudget < 0 ? "bg-red-50" : "bg-emerald-50"
-                  }`}
-                >
-                  <p
-                    className={`text-sm ${
-                      remainingBudget < 0 ? "text-red-600" : "text-emerald-700"
-                    }`}
-                  >
-                    {remainingBudget < 0 ? "Over Budget" : "Remaining"}
-                  </p>
-
-                  <p
-                    className={`text-2xl font-bold mt-2 ${
-                      remainingBudget < 0 ? "text-red-600" : "text-emerald-700"
-                    }`}
-                  >
-                    {displayCurrency}{" "}
-                    {Math.abs(remainingBudget).toLocaleString()}
-                  </p>
-                </div>
-              </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm">
-              <div className="mb-7">
-                <p className="text-cyan-500 uppercase tracking-[3px] text-xs font-bold mb-2">
-                  Live Conversion
-                </p>
-
-                <h2 className="text-2xl font-bold">Currency Converter</h2>
-
-                <p className="text-slate-500 mt-1">
-                  Check what your money is worth in another currency.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-end">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    From
-                  </label>
-
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      min="0"
-                      value={conversionAmount}
-                      onChange={(e) => {
-                        setConversionAmount(e.target.value);
-                        setConvertedAmount(null);
-                      }}
-                      placeholder="Amount"
-                      className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
-                    />
-
-                    <select
-                      value={fromCurrency}
-                      onChange={(e) => {
-                        setFromCurrency(e.target.value);
-                        setConvertedAmount(null);
-                      }}
-                      className="p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400"
-                    >
-                      {currencyOptions.map((code) => (
-                        <option key={code} value={code}>
-                          {code}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleSwapCurrencies}
-                  className="w-12 h-12 rounded-xl bg-slate-100 hover:bg-cyan-50 text-slate-700 hover:text-cyan-600 transition flex items-center justify-center font-bold text-xl"
-                >
-                  ⇄
-                </button>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    To
-                  </label>
-
-                  <select
-                    value={toCurrency}
-                    onChange={(e) => {
-                      setToCurrency(e.target.value);
-                      setConvertedAmount(null);
-                    }}
-                    className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-cyan-400"
-                  >
-                    <option value="">Select currency</option>
-
-                    {currencyOptions.map((code) => (
-                      <option key={code} value={code}>
-                        {code}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleConvert}
-                disabled={conversionLoading}
-                className="w-full mt-5 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-slate-900 py-4 rounded-xl font-bold transition"
-              >
-                {conversionLoading ? "Converting..." : "Convert Currency"}
-              </button>
-
-              {conversionError && (
-                <div className="mt-5 bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 text-sm">
-                  {conversionError}
-                </div>
-              )}
-
-              {convertedAmount !== null && exchangeRate !== null && (
-                <div className="mt-6 bg-slate-50 rounded-2xl p-6">
-                  <p className="text-sm text-slate-500">Converted Amount</p>
-
-                  <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-2">
-                    <p className="text-4xl font-extrabold text-cyan-500">
-                      {new Intl.NumberFormat("en-IN", {
-                        style: "currency",
-                        currency: toCurrency,
-                        maximumFractionDigits: 2,
-                      }).format(convertedAmount)}
-                    </p>
-
-                    <p className="text-sm text-slate-500">
-                      1 {fromCurrency} ={" "}
-                      {exchangeRate.toLocaleString(undefined, {
-                        maximumFractionDigits: 4,
-                      })}{" "}
-                      {toCurrency}
-                    </p>
-                  </div>
-                </div>
-              )}
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              <SummaryCard label="Planned Budget" value={numericBudget} symbol={currency?.symbol} />
+              <SummaryCard label="Total Expenses" value={totalExpenses} symbol={currency?.symbol} tone="cyan" />
+              <SummaryCard
+                label="Remaining"
+                value={remainingBudget}
+                symbol={currency?.symbol}
+                tone={remainingBudget < 0 ? "red" : "green"}
+              />
             </div>
-          </section>
+
+            <div className="mt-8 overflow-hidden rounded-2xl bg-slate-100">
+              <div className="flex items-center justify-between px-4 py-3 text-sm font-bold text-slate-600">
+                <span>Budget used</span>
+                <span>{Math.round(expensePercentage)}%</span>
+              </div>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${expensePercentage}%` }}
+                className="h-2 rounded-full bg-cyan-400"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={saveBudget}
+              disabled={saving || loadingCountries}
+              className="mt-8 w-full rounded-2xl bg-slate-950 py-4 font-black text-white transition hover:bg-cyan-500 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {saving ? "Saving Budget..." : "Save Budget"}
+            </motion.button>
+          </motion.section>
         </div>
       </div>
     </main>
+  );
+}
+
+function SummaryCard({ label, value, symbol, tone = "neutral" }) {
+  const styles = {
+    neutral: "bg-slate-50 text-slate-950",
+    cyan: "bg-cyan-50 text-slate-950",
+    green: "bg-emerald-50 text-emerald-700",
+    red: "bg-red-50 text-red-600",
+  };
+
+  return (
+    <div className={`rounded-2xl p-5 ${styles[tone]}`}>
+      <p className="text-sm opacity-75">{label}</p>
+      <p className="mt-2 text-2xl font-black">
+        {symbol || "—"} {Number(value || 0).toLocaleString()}
+      </p>
+    </div>
   );
 }
 

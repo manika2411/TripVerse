@@ -24,9 +24,9 @@ function Hero() {
 
       {/* COLOR OVERLAY */}
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#062238]/55 via-[#06304a]/35 to-[#061827]/95" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/35 via-cyan-950/10 to-slate-900/70" />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-[#061827]/55 via-transparent to-[#061827]/35" />
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-900/45 via-transparent to-slate-900/20" />
 
       {/* ANIMATED LIGHT */}
 

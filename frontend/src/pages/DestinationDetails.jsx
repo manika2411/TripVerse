@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useParams } from "react-router-dom";
-import { getCountryByCode } from "../services/countryApi";
+import { getCountryByCode, getCurrencyInfo } from "../services/countryApi";
 
 function DestinationDetails() {
   const { id } = useParams();
@@ -92,9 +92,7 @@ function DestinationDetails() {
 
   const flag = country.flags?.svg || country.flags?.png;
 
-  const currencies = country.currencies
-    ? Object.entries(country.currencies)
-    : [];
+  const currency = getCurrencyInfo(country);
 
   return (
     <main className="min-h-screen bg-[#f5f9fc] text-slate-900">
@@ -314,10 +312,8 @@ function DestinationDetails() {
               icon="💳"
               title="Currency"
               value={
-                currencies.length > 0
-                  ? currencies
-                      .map(([code, currency]) => `${currency.name} (${code})`)
-                      .join(", ")
+                currency
+                  ? `${currency.name} (${currency.code}) · ${currency.symbol}`
                   : "Information unavailable"
               }
               description="Useful information for planning your travel budget."

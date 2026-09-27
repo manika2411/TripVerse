@@ -31,7 +31,7 @@ function About() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl"
         >
-          <p className="text-cyan-300 uppercase tracking-[6px] text-sm mb-5">
+          <p className="text-cyan-600 uppercase tracking-[6px] text-sm mb-5">
             About TripVerse
           </p>
 
@@ -40,7 +40,7 @@ function About() {
             <span className="block trip-gradient-text">Expectations.</span>
           </h1>
 
-          <p className="text-slate-400 text-lg md:text-xl leading-8 mt-8 max-w-3xl">
+          <p className="text-slate-500 text-lg md:text-xl leading-8 mt-8 max-w-3xl">
             TripVerse is a modern travel planning platform built around
             destination discovery, itinerary organization, budget planning and
             immersive travel experiences.
@@ -74,7 +74,7 @@ function About() {
                   flex
                   items-center
                   justify-center
-                  text-cyan-300
+                  text-cyan-600
                   text-xl
                 "
                 >
@@ -83,7 +83,7 @@ function About() {
 
                 <h2 className="text-2xl font-bold mt-8">{feature.title}</h2>
 
-                <p className="text-slate-400 mt-4 leading-7">{feature.text}</p>
+                <p className="text-slate-500 mt-4 leading-7">{feature.text}</p>
               </motion.div>
             );
           })}
@@ -109,14 +109,14 @@ function About() {
             absolute
             inset-0
             bg-gradient-to-r
-            from-[#061827]/95
-            via-[#061827]/55
+            from-slate-950/80
+            via-slate-950/35
             to-transparent
           "
           />
 
           <div className="relative z-10 p-10 md:p-16 max-w-2xl">
-            <p className="text-cyan-300 uppercase tracking-[5px] text-sm">
+            <p className="text-cyan-600 uppercase tracking-[5px] text-sm">
               The idea
             </p>
 
