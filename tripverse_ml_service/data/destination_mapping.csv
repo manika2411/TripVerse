@@ -1,0 +1,1487 @@
+destination_id,destination,country_raw,api_country
+0,"Butrint, Albania",Albania,Albania
+1,"Tirana, Albania",Albania,Albania
+2,"Algiers, Algeria",Algeria,Algeria
+3,"Oran, Algeria",Algeria,Algeria
+4,"Andorra la Vella, Andorra",Andorra,Andorra
+5,"Jolly Harbour, Antigua and Barbuda",Antigua and Barbuda,Antigua and Barbuda
+6,"St John's, Antigua and Barbuda",Antigua and Barbuda,Antigua and Barbuda
+7,"Buenos Aires, Argentina",Argentina,Argentina
+8,"Córdoba, Argentina",Argentina,Argentina
+9,"Mar del Plata, Argentina",Argentina,Argentina
+10,"Mendoza, Argentina",Argentina,Argentina
+11,"Puerto Iguazu, Argentina",Argentina,Argentina
+12,"Puerto Madryn, Argentina",Argentina,Argentina
+13,"Salta, Argentina",Argentina,Argentina
+14,"San Carlos de Bariloche, Argentina",Argentina,Argentina
+15,"San Martin de los Andes, Argentina",Argentina,Argentina
+16,"San Miguel de Tucuman, Argentina",Argentina,Argentina
+17,"Ushuaia, Argentina",Argentina,Argentina
+18,"Villa Gesell, Argentina",Argentina,Argentina
+19,"Garni, Armenia",Armenia,Armenia
+20,"Sevan, Armenia",Armenia,Armenia
+21,"Yerevan, Armenia",Armenia,Armenia
+22,"Adelaide, Australia",Australia,Australia
+23,"Alice Springs, Australia",Australia,Australia
+24,"Brisbane, Australia",Australia,Australia
+25,"Broome, Australia",Australia,Australia
+26,"Byron Bay, Australia",Australia,Australia
+27,"Cairns, Australia",Australia,Australia
+28,"Canberra, Australia",Australia,Australia
+29,"Darwin, Australia",Australia,Australia
+30,"Geelong, Australia",Australia,Australia
+31,"Hobart, Australia",Australia,Australia
+32,"Launceston, Australia",Australia,Australia
+33,"Melbourne, Australia",Australia,Australia
+34,"Newcastle, Australia",Australia,Australia
+35,"Perth, Australia",Australia,Australia
+36,"Sydney, Australia",Australia,Australia
+37,"Bad Gastein, Austria",Austria,Austria
+38,"Bregenz, Austria",Austria,Austria
+39,"Graz, Austria",Austria,Austria
+40,"Hallstatt, Austria",Austria,Austria
+41,"Innsbruck, Austria",Austria,Austria
+42,"Ischgl, Austria",Austria,Austria
+43,"Kaprun, Austria",Austria,Austria
+44,"Klagenfurt, Austria",Austria,Austria
+45,"Obertauern, Austria",Austria,Austria
+46,"Salzburg, Austria",Austria,Austria
+47,"Schladming, Austria",Austria,Austria
+48,"Vienna, Austria",Austria,Austria
+49,"Weißenkirchen in der Wachau, Austria",Austria,Austria
+50,"Zell am See, Austria",Austria,Austria
+51,"Zillertal, Austria",Austria,Austria
+52,"Baku, Azerbaijan",Azerbaijan,Azerbaijan
+53,"Freeport, Bahamas",Bahamas,Bahamas
+54,"Harbour Island, Bahamas",Bahamas,Bahamas
+55,"Nassau, Bahamas",Bahamas,Bahamas
+56,"Manama, Bahrain",Bahrain,Bahrain
+57,"Bridgetown, Barbados",Barbados,Barbados
+58,"Brest, Belarus",Belarus,Belarus
+59,"Gomel, Belarus",Belarus,Belarus
+60,"Grodno, Belarus",Belarus,Belarus
+61,"Minsk, Belarus",Belarus,Belarus
+62,"Vitebsk, Belarus",Belarus,Belarus
+63,"Antwerpen, Belgium",Belgium,Belgium
+64,"Ardennes, Belgium",Belgium,Belgium
+65,"Bruges, Belgium",Belgium,Belgium
+66,"Brussels, Belgium",Belgium,Belgium
+67,"Dinant, Belgium",Belgium,Belgium
+68,"Ghent, Belgium",Belgium,Belgium
+69,"Leuven, Belgium",Belgium,Belgium
+70,"Liège, Belgium",Belgium,Belgium
+71,"Mechelen, Belgium",Belgium,Belgium
+72,"Mons, Belgium",Belgium,Belgium
+73,"Ostend, Belgium",Belgium,Belgium
+74,"Belize City, Belize",Belize,Belize
+75,"Caye Caulker, Belize",Belize,Belize
+76,"Hopkins, Belize",Belize,Belize
+77,"Placencia, Belize",Belize,Belize
+78,"San Ignacio, Belize",Belize,Belize
+79,"San Pedro, Belize",Belize,Belize
+80,"Cochabamba, Bolivia",Bolivia,Bolivia
+81,"Copacabana, Bolivia",Bolivia,Bolivia
+82,"La Paz, Bolivia",Bolivia,Bolivia
+83,"Potosí, Bolivia",Bolivia,Bolivia
+84,"Santa Cruz, Bolivia",Bolivia,Bolivia
+85,"Sucre, Bolivia",Bolivia,Bolivia
+86,"Uyuni, Bolivia",Bolivia,Bolivia
+87,"Banja Luka, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+88,"Jahorina, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+89,"Mostar, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+90,"Neum, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+91,"Sarajevo, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+92,"Trebinje, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+93,"Višegrad, Bosnia and Herzegovina",Bosnia and Herzegovina,Bosnia and Herzegovina
+94,"Gaborone, Botswana",Botswana,Botswana
+95,"Armacao dos Buzios, Brazil",Brazil,Brazil
+96,"Barra Grande, Brazil",Brazil,Brazil
+97,"Belem, Brazil",Brazil,Brazil
+98,"Belo Horizonte, Brazil",Brazil,Brazil
+99,"Bombas, Brazil",Brazil,Brazil
+100,"Brasilia, Brazil",Brazil,Brazil
+101,"Campos Do Jordao, Brazil",Brazil,Brazil
+102,"Florianópolis, Brazil",Brazil,Brazil
+103,"Fortaleza, Brazil",Brazil,Brazil
+104,"Foz do Iguaçu, Brazil",Brazil,Brazil
+105,"Gramado, Brazil",Brazil,Brazil
+106,"Ilhabela, Brazil",Brazil,Brazil
+107,"Manaus, Brazil",Brazil,Brazil
+108,"Ouro Preto, Brazil",Brazil,Brazil
+109,"Paraty, Brazil",Brazil,Brazil
+110,"Recife, Brazil",Brazil,Brazil
+111,"Rio De Janeiro, Brazil",Brazil,Brazil
+112,"Salvador, Brazil",Brazil,Brazil
+113,"Santos, Brazil",Brazil,Brazil
+114,"Sao Paulo, Brazil",Brazil,Brazil
+115,"Trancoso, Brazil",Brazil,Brazil
+116,"Bandar Seri Begawan, Brunei",Brunei,Brunei
+117,"Bansko, Bulgaria",Bulgaria,Bulgaria
+118,"Plovdiv, Bulgaria",Bulgaria,Bulgaria
+119,"Sofia, Bulgaria",Bulgaria,Bulgaria
+120,"Varna, Bulgaria",Bulgaria,Bulgaria
+121,"Banff, Canada",Canada,Canada
+122,"Calgary, Canada",Canada,Canada
+123,"Edmonton, Canada",Canada,Canada
+124,"Halifax, Canada",Canada,Canada
+125,"Mont-Tremblant, Canada",Canada,Canada
+126,"Montreal, Canada",Canada,Canada
+127,"Ottawa, Canada",Canada,Canada
+128,"Quebec City, Canada",Canada,Canada
+129,"Regina, Canada",Canada,Canada
+130,"St. John's, Canada",Canada,Canada
+131,"Toronto, Canada",Canada,Canada
+132,"Vancouver, Canada",Canada,Canada
+133,"Victoria, Canada",Canada,Canada
+134,"Whistler, Canada",Canada,Canada
+135,"Whitehorse, Canada",Canada,Canada
+136,"Winnipeg, Canada",Canada,Canada
+137,"Praia, Cape Verde",Cape Verde,Cape Verde
+138,"Arica, Chile",Chile,Chile
+139,"Coyhaique, Chile",Chile,Chile
+140,"La Serena, Chile",Chile,Chile
+141,"Pucon, Chile",Chile,Chile
+142,"Puerto Natales, Chile",Chile,Chile
+143,"Puerto Varas, Chile",Chile,Chile
+144,"Punta Arenas, Chile",Chile,Chile
+145,"San Pedro de Atacama, Chile",Chile,Chile
+146,"Santiago, Chile",Chile,Chile
+147,"Temuco, Chile",Chile,Chile
+148,"Valparaiso, Chile",Chile,Chile
+149,"Lhasa, Tibet, China",China,China
+150,"Beijing, China",China,China
+151,"Chengdu, China",China,China
+152,"Guangzhou, China",China,China
+153,"Guilin, China",China,China
+154,"Hangzhou, China",China,China
+155,"Hong Kong, China",China,China
+156,"Huangshan, China",China,China
+157,"Leshan, China",China,China
+158,"Lijiang, China",China,China
+159,"Macau, China",China,China
+160,"Qingdao, China",China,China
+161,"Qinhuangdao, China",China,China
+162,"Shanghai, China",China,China
+163,"Suzhou, China",China,China
+164,"Xi'an, China",China,China
+165,"Xiamen, China",China,China
+166,"Yangshuo, China",China,China
+167,"Zhangjiajie, China",China,China
+168,"Bogota, Colombia",Colombia,Colombia
+169,"Cartagena, Colombia",Colombia,Colombia
+170,"Guadalupe, Colombia",Colombia,Colombia
+171,"Guatape, Colombia",Colombia,Colombia
+172,"Popayan, Colombia",Colombia,Colombia
+173,"Raquira, Colombia",Colombia,Colombia
+174,"San Andres, Colombia",Colombia,Colombia
+175,"Santa Marta, Colombia",Colombia,Colombia
+176,"Jaco, Costa Rica",Costa Rica,Costa Rica
+177,"Manuel Antonio, Costa Rica",Costa Rica,Costa Rica
+178,"Puerto Viejo de Talamanca, Costa Rica",Costa Rica,Costa Rica
+179,"San Jose, Costa Rica",Costa Rica,Costa Rica
+180,"Tamarindo, Costa Rica",Costa Rica,Costa Rica
+181,"Bol, Croatia",Croatia,Croatia
+182,"Dubrovnik, Croatia",Croatia,Croatia
+183,"Hvar, Croatia",Croatia,Croatia
+184,"Korčula, Croatia",Croatia,Croatia
+185,"Omiš, Croatia",Croatia,Croatia
+186,"Pula, Croatia",Croatia,Croatia
+187,"Rovinj, Croatia",Croatia,Croatia
+188,"Šibenik, Croatia",Croatia,Croatia
+189,"Split, Croatia",Croatia,Croatia
+190,"Supetar, Croatia",Croatia,Croatia
+191,"Trogir, Croatia",Croatia,Croatia
+192,"Vis, Croatia",Croatia,Croatia
+193,"Zadar, Croatia",Croatia,Croatia
+194,"Zagreb, Croatia",Croatia,Croatia
+195,"Cienfuegos, Cuba",Cuba,Cuba
+196,"Havana, Cuba",Cuba,Cuba
+197,"Holguin, Cuba",Cuba,Cuba
+198,"Santa Clara, Cuba",Cuba,Cuba
+199,"Santiago de Cuba, Cuba",Cuba,Cuba
+200,"Trinidad, Cuba",Cuba,Cuba
+201,"Varadero, Cuba",Cuba,Cuba
+202,"Vinales, Cuba",Cuba,Cuba
+203,"Famagusta, Cyprus",Cyprus,Cyprus
+204,"Larnaca, Cyprus",Cyprus,Cyprus
+205,"Limassol, Cyprus",Cyprus,Cyprus
+206,"Nicosia, Cyprus",Cyprus,Cyprus
+207,"Paphos, Cyprus",Cyprus,Cyprus
+208,"Brno, Czech Republic",Czech Republic,Czechia
+209,"Český Krumlov, Czech Republic",Czech Republic,Czechia
+210,"Karlovy Vary, Czech Republic",Czech Republic,Czechia
+211,"Kutná Hora, Czech Republic",Czech Republic,Czechia
+212,"Prague, Czech Republic",Czech Republic,Czechia
+213,"Aalborg, Denmark",Denmark,Denmark
+214,"Århus, Denmark",Denmark,Denmark
+215,"Billund, Denmark",Denmark,Denmark
+216,"Copenhagen, Denmark",Denmark,Denmark
+217,"Elsinore, Denmark",Denmark,Denmark
+218,"Helsingør, Denmark",Denmark,Denmark
+219,"Ribe, Denmark",Denmark,Denmark
+220,"Roskilde, Denmark",Denmark,Denmark
+221,"Skagen, Denmark",Denmark,Denmark
+222,"Portsmouth, Dominica",Dominica,Dominica
+223,"Roseau, Dominica",Dominica,Dominica
+224,"Bavaro, Dominican Republic",Dominican Republic,Dominican Republic
+225,"La Romana, Dominican Republic",Dominican Republic,Dominican Republic
+226,"Las Terrenas, Dominican Republic",Dominican Republic,Dominican Republic
+227,"Puerto Plata, Dominican Republic",Dominican Republic,Dominican Republic
+228,"Punta Cana, Dominican Republic",Dominican Republic,Dominican Republic
+229,"Santo Domingo, Dominican Republic",Dominican Republic,Dominican Republic
+230,"Banos, Ecuador",Ecuador,Ecuador
+231,"Cuenca, Ecuador",Ecuador,Ecuador
+232,"Guayaquil, Ecuador",Ecuador,Ecuador
+233,"Mindo, Ecuador",Ecuador,Ecuador
+234,"Montañita, Ecuador",Ecuador,Ecuador
+235,"Puerto Ayora, Ecuador",Ecuador,Ecuador
+236,"Quito, Ecuador",Ecuador,Ecuador
+237,"Abu Simbel, Egypt",Egypt,Egypt
+238,"Alexandria, Egypt",Egypt,Egypt
+239,"Aswan, Egypt",Egypt,Egypt
+240,"Cairo, Egypt",Egypt,Egypt
+241,"Dahab, Egypt",Egypt,Egypt
+242,"Dahshur, Egypt",Egypt,Egypt
+243,"Edfu, Egypt",Egypt,Egypt
+244,"Hurghada, Egypt",Egypt,Egypt
+245,"Kom Ombo, Egypt",Egypt,Egypt
+246,"Luxor, Egypt",Egypt,Egypt
+247,"Marsa Alam, Egypt",Egypt,Egypt
+248,"Port Said, Egypt",Egypt,Egypt
+249,"Saint Catherine, Egypt",Egypt,Egypt
+250,"Sharm El-Sheikh, Egypt",Egypt,Egypt
+251,"Siwa Oasis, Egypt",Egypt,Egypt
+252,"Suez, Egypt",Egypt,Egypt
+253,"Taba, Egypt",Egypt,Egypt
+254,"Chalchuapa, El Salvador",El Salvador,El Salvador
+255,"San Salvador, El Salvador",El Salvador,El Salvador
+256,"Haapsalu, Estonia",Estonia,Estonia
+257,"Tallinn, Estonia",Estonia,Estonia
+258,"Tartu, Estonia",Estonia,Estonia
+259,"Addis Ababa, Ethiopia",Ethiopia,Ethiopia
+260,"Nadi, Fiji",Fiji,Fiji
+261,"Savusavu, Fiji",Fiji,Fiji
+262,"Suva, Fiji",Fiji,Fiji
+263,"Kemi, Lapland, Finland",Finland,Finland
+264,"Levi, Lapland, Finland",Finland,Finland
+265,"Rovaniemi, Lapland, Finland",Finland,Finland
+266,"Saariselkä, Lapland, Finland",Finland,Finland
+267,"Helsinki, Finland",Finland,Finland
+268,"Porvoo, Finland",Finland,Finland
+269,"Savonlinna, Finland",Finland,Finland
+270,"Turku, Finland",Finland,Finland
+271,"Ajaccio, Corsica, France",France,France
+272,"Bastia, Corsica, France",France,France
+273,"Bonifacio, Corsica, France",France,France
+274,"Calvi, Corsica, France",France,France
+275,"Porto-Vecchio, Corsica, France",France,France
+276,"Maharepa, French Polynesia, France",France,France
+277,"Papeete, French Polynesia, France",France,France
+278,"Vaitape, French Polynesia, France",France,France
+279,"Aix-en-Provence, France",France,France
+280,"Angers, France",France,France
+281,"Antibes, France",France,France
+282,"Arles, France",France,France
+283,"Avignon, France",France,France
+284,"Beausoleil, France",France,France
+285,"Bordeaux, France",France,France
+286,"Calais, France",France,France
+287,"Cannes, France",France,France
+288,"Chamonix-Mont-Blanc, France",France,France
+289,"Colmar, France",France,France
+290,"Dijon, France",France,France
+291,"Honfleur, France",France,France
+292,"Le Mont-Saint-Michel, France",France,France
+293,"Lille, France",France,France
+294,"Lyon, France",France,France
+295,"Marseille, France",France,France
+296,"Montpellier, France",France,France
+297,"Nantes, France",France,France
+298,"Nice, France",France,France
+299,"Orléans, France",France,France
+300,"Paris, France",France,France
+301,"Perigueux, France",France,France
+302,"Rouen, France",France,France
+303,"Saignon, France",France,France
+304,"Saint-Tropez, France",France,France
+305,"Versailles, France",France,France
+306,"Batumi, Georgia",Georgia,Georgia
+307,"Sighnaghi, Georgia",Georgia,Georgia
+308,"Tbilisi, Georgia",Georgia,Georgia
+309,"Aachen, Germany",Germany,Germany
+310,"Augsburg, Germany",Germany,Germany
+311,"Bamberg, Germany",Germany,Germany
+312,"Berchtesgaden, Germany",Germany,Germany
+313,"Berlin, Germany",Germany,Germany
+314,"Bonn, Germany",Germany,Germany
+315,"Bremen, Germany",Germany,Germany
+316,"Cologne, Germany",Germany,Germany
+317,"Dortmund, Germany",Germany,Germany
+318,"Dresden, Germany",Germany,Germany
+319,"Düsseldorf, Germany",Germany,Germany
+320,"Frankfurt am Main, Germany",Germany,Germany
+321,"Freiburg, Germany",Germany,Germany
+322,"Füssen, Germany",Germany,Germany
+323,"Garmisch-Partenkirchen, Germany",Germany,Germany
+324,"Hamburg, Germany",Germany,Germany
+325,"Hannover, Germany",Germany,Germany
+326,"Heidelberg, Germany",Germany,Germany
+327,"Kiel, Germany",Germany,Germany
+328,"Leipzig, Germany",Germany,Germany
+329,"Lübeck, Germany",Germany,Germany
+330,"Mainz, Germany",Germany,Germany
+331,"Mannheim, Germany",Germany,Germany
+332,"Munich, Germany",Germany,Germany
+333,"Münster, Germany",Germany,Germany
+334,"Nuremberg, Germany",Germany,Germany
+335,"Passau, Germany",Germany,Germany
+336,"Potsdam, Germany",Germany,Germany
+337,"Regensburg, Germany",Germany,Germany
+338,"Rostock, Germany",Germany,Germany
+339,"Rüdesheim am Rhein, Germany",Germany,Germany
+340,"Stuttgart, Germany",Germany,Germany
+341,"Trier, Germany",Germany,Germany
+342,"Würzburg, Germany",Germany,Germany
+343,"Chania, Crete, Greece",Greece,Greece
+344,"Heraklion, Crete, Greece",Greece,Greece
+345,"Sitia, Crete, Greece",Greece,Greece
+346,"Aegina, Greece",Greece,Greece
+347,"Athens, Greece",Greece,Greece
+348,"Cephalonia, Greece",Greece,Greece
+349,"Corfu, Greece",Greece,Greece
+350,"Corinth, Greece",Greece,Greece
+351,"Delphi, Greece",Greece,Greece
+352,"Kastoria, Greece",Greece,Greece
+353,"Kavala, Greece",Greece,Greece
+354,"Kos, Greece",Greece,Greece
+355,"Lefkada, Greece",Greece,Greece
+356,"Milos, Greece",Greece,Greece
+357,"Mykonos, Greece",Greece,Greece
+358,"Nafplion, Greece",Greece,Greece
+359,"Naxos, Greece",Greece,Greece
+360,"Olympia, Greece",Greece,Greece
+361,"Paros, Greece",Greece,Greece
+362,"Rhodes, Greece",Greece,Greece
+363,"Skiathos, Greece",Greece,Greece
+364,"Thasos, Greece",Greece,Greece
+365,"Thessaloniki, Greece",Greece,Greece
+366,"Zagori, Greece",Greece,Greece
+367,"Zakynthos, Greece",Greece,Greece
+368,"Nuuk, Greenland (Denmark)",Greenland (Denmark),Greenland
+369,"Qaqortoq, Greenland (Denmark)",Greenland (Denmark),Greenland
+370,"St. George's, Grenada",Grenada,Grenada
+371,"Guatemala City, Guatemala",Guatemala,Guatemala
+372,"Tikal, Guatemala",Guatemala,Guatemala
+373,"Georgetown, Guyana",Guyana,Guyana
+374,"Comayagua, Honduras",Honduras,Honduras
+375,"Tegucigalpa, Honduras",Honduras,Honduras
+376,"West Bay, Honduras",Honduras,Honduras
+377,"Budapest, Hungary",Hungary,Hungary
+378,"Eger, Hungary",Hungary,Hungary
+379,"Győr, Hungary",Hungary,Hungary
+380,"Pécs, Hungary",Hungary,Hungary
+381,"Sopron, Hungary",Hungary,Hungary
+382,"Szentendre, Hungary",Hungary,Hungary
+383,"Akureyri, Iceland",Iceland,Iceland
+384,"Höfn, Iceland",Iceland,Iceland
+385,"Jökulsárlón, Iceland",Iceland,Iceland
+386,"Keflavik, Iceland",Iceland,Iceland
+387,"Reykjavik, Iceland",Iceland,Iceland
+388,"Selfoss, Iceland",Iceland,Iceland
+389,"Vík í Mýrdal, Iceland",Iceland,Iceland
+390,"Agra, India",India,India
+391,"Ajanta, India",India,India
+392,"Amritsar, India",India,India
+393,"Bengaluru, India",India,India
+394,"Chennai, India",India,India
+395,"Hyderabad, India",India,India
+396,"Jaipur, India",India,India
+397,"Kolkata, India",India,India
+398,"Mumbai, India",India,India
+399,"Mysore, India",India,India
+400,"New Delhi, India",India,India
+401,"Panaji, India",India,India
+402,"Varanasi, India",India,India
+403,"Gili Trawangan, Indonesia",Indonesia,Indonesia
+404,"Jakarta, Indonesia",Indonesia,Indonesia
+405,"Kuta, Indonesia",Indonesia,Indonesia
+406,"Ubud, Indonesia",Indonesia,Indonesia
+407,"Yogyakarta, Indonesia",Indonesia,Indonesia
+408,"Cashel, Ireland",Ireland,Ireland
+409,"Cork, Ireland",Ireland,Ireland
+410,"Dingle, Ireland",Ireland,Ireland
+411,"Dublin, Ireland",Ireland,Ireland
+412,"Gaillimh, Ireland",Ireland,Ireland
+413,"Kilkenny, Ireland",Ireland,Ireland
+414,"Killarney, Ireland",Ireland,Ireland
+415,"Liscannor, Ireland",Ireland,Ireland
+416,"Shannon, Ireland",Ireland,Ireland
+417,"Caesarea, Israel",Israel,Israel
+418,"Eilat, Israel",Israel,Israel
+419,"Ein Gedi, Israel",Israel,Israel
+420,"Haifa, Israel",Israel,Israel
+421,"Nazareth, Israel",Israel,Israel
+422,"Neve Zohar, Israel",Israel,Israel
+423,"Tel Aviv, Israel",Israel,Israel
+424,"Tiberias, Israel",Israel,Israel
+425,"Alghero, Sardinia, Italy",Italy,Italy
+426,"Cagliari, Sardinia, Italy",Italy,Italy
+427,"Olbia, Sardinia, Italy",Italy,Italy
+428,"Agrigento, Sicily, Italy",Italy,Italy
+429,"Catania, Sicily, Italy",Italy,Italy
+430,"Palermo, Sicily, Italy",Italy,Italy
+431,"Syracuse, Sicily, Italy",Italy,Italy
+432,"Taormina, Sicily, Italy",Italy,Italy
+433,"Amalfi, Italy",Italy,Italy
+434,"Arezzo, Italy",Italy,Italy
+435,"Brindisi, Italy",Italy,Italy
+436,"Capri, Italy",Italy,Italy
+437,"Florence, Italy",Italy,Italy
+438,"Genoa, Italy",Italy,Italy
+439,"La Spezia, Italy",Italy,Italy
+440,"Lipari, Italy",Italy,Italy
+441,"Lucca, Italy",Italy,Italy
+442,"Milan, Italy",Italy,Italy
+443,"Montepulciano, Italy",Italy,Italy
+444,"Naples, Italy",Italy,Italy
+445,"Perugia, Italy",Italy,Italy
+446,"Pescara, Italy",Italy,Italy
+447,"Pisa, Italy",Italy,Italy
+448,"Pompei, Italy",Italy,Italy
+449,"Portoferraio, Italy",Italy,Italy
+450,"Puglia, Italy",Italy,Italy
+451,"Riomaggiore, Italy",Italy,Italy
+452,"Rome, Italy",Italy,Italy
+453,"Salerno, Italy",Italy,Italy
+454,"Sperlonga, Italy",Italy,Italy
+455,"Trieste, Italy",Italy,Italy
+456,"Turin, Italy",Italy,Italy
+457,"Udine, Italy",Italy,Italy
+458,"Venice, Italy",Italy,Italy
+459,"Vernazza, Italy",Italy,Italy
+460,"Verona, Italy",Italy,Italy
+461,"Falmouth, Jamaica",Jamaica,Jamaica
+462,"Kingston, Jamaica",Jamaica,Jamaica
+463,"Lucea, Jamaica",Jamaica,Jamaica
+464,"Montego Bay, Jamaica",Jamaica,Jamaica
+465,"Negril, Jamaica",Jamaica,Jamaica
+466,"Ocho Rios, Jamaica",Jamaica,Jamaica
+467,"Port Antonio, Jamaica",Jamaica,Jamaica
+468,"Runaway Bay, Jamaica",Jamaica,Jamaica
+469,"Hakuba, Japan",Japan,Japan
+470,"Hiroshima, Japan",Japan,Japan
+471,"Kyoto, Japan",Japan,Japan
+472,"Nagoya, Japan",Japan,Japan
+473,"Nikko, Japan",Japan,Japan
+474,"Osaka, Japan",Japan,Japan
+475,"Sapporo, Japan",Japan,Japan
+476,"Takayama, Japan",Japan,Japan
+477,"Tokyo, Japan",Japan,Japan
+478,"Yokohama, Japan",Japan,Japan
+479,"Amman, Jordan",Jordan,Jordan
+480,"Aqaba, Jordan",Jordan,Jordan
+481,"Petra, Jordan",Jordan,Jordan
+482,"Almaty, Kazakhstan",Kazakhstan,Kazakhstan
+483,"Mombasa, Kenya",Kenya,Kenya
+484,"Nairobi, Kenya",Kenya,Kenya
+485,"Kuwait City, Kuwait",Kuwait,Kuwait
+486,"Bishkek, Kyrgyzstan",Kyrgyzstan,Kyrgyzstan
+487,"Luang Prabang, Laos",Laos,Laos
+488,"Vangviang, Laos",Laos,Laos
+489,"Vientiane, Laos",Laos,Laos
+490,"Jaunmārupe, Latvia",Latvia,Latvia
+491,"Jurmala, Latvia",Latvia,Latvia
+492,"Riga, Latvia",Latvia,Latvia
+493,"Skulte, Latvia",Latvia,Latvia
+494,"Vecrīga, Latvia",Latvia,Latvia
+495,"Baalbek, Lebanon",Lebanon,Lebanon
+496,"Beirut, Lebanon",Lebanon,Lebanon
+497,"Byblos, Lebanon",Lebanon,Lebanon
+498,"Tyre, Lebanon",Lebanon,Lebanon
+499,"Vaduz, Liechtenstein",Liechtenstein,Liechtenstein
+500,"Kaunas, Lithuania",Lithuania,Lithuania
+501,"Kernave, Lithuania",Lithuania,Lithuania
+502,"Klaipeda, Lithuania",Lithuania,Lithuania
+503,"Neringa, Lithuania",Lithuania,Lithuania
+504,"Palanga, Lithuania",Lithuania,Lithuania
+505,"Vilnius, Lithuania",Lithuania,Lithuania
+506,"Luxembourg, Luxembourg",Luxembourg,Luxembourg
+507,"Antananarivo , Madagascar",Madagascar,Madagascar
+508,"George Town, Malaysia",Malaysia,Malaysia
+509,"Kuala Lumpur, Malaysia",Malaysia,Malaysia
+510,"Langkawi, Malaysia",Malaysia,Malaysia
+511,"Malacca, Malaysia",Malaysia,Malaysia
+512,"Penang, Malaysia",Malaysia,Malaysia
+513,"Male, Maldives",Maldives,Maldives
+514,"Rabat, Malta",Malta,Malta
+515,"Valletta, Malta",Malta,Malta
+516,"Majuro, Marshall Islands",Marshall Islands,Marshall Islands
+517,"Port Louis, Mauritius",Mauritius,Mauritius
+518,"Acapulco, Mexico",Mexico,Mexico
+519,"Akumal, Mexico",Mexico,Mexico
+520,"Cabo San Lucas, Mexico",Mexico,Mexico
+521,"Cancun, Mexico",Mexico,Mexico
+522,"Chichén-Itzá, Mexico",Mexico,Mexico
+523,"Guadalajara, Mexico",Mexico,Mexico
+524,"Izamal, Mexico",Mexico,Mexico
+525,"Mérida, Mexico",Mexico,Mexico
+526,"Mexico City, Mexico",Mexico,Mexico
+527,"Monterrey, Mexico",Mexico,Mexico
+528,"Oaxaca, Mexico",Mexico,Mexico
+529,"Playa del Carmen, Mexico",Mexico,Mexico
+530,"Puebla, Mexico",Mexico,Mexico
+531,"Puerto Morelos, Mexico",Mexico,Mexico
+532,"Puerto Vallarta, Mexico",Mexico,Mexico
+533,"San Jose del Cabo, Mexico",Mexico,Mexico
+534,"San Juan Teotihuacan, Mexico",Mexico,Mexico
+535,"San Miguel de Allende, Mexico",Mexico,Mexico
+536,"San Miguel de Cozumel, Mexico",Mexico,Mexico
+537,"Tijuana, Mexico",Mexico,Mexico
+538,"Tulum, Mexico",Mexico,Mexico
+539,"Palikir, Micronesia",Micronesia,Micronesia
+540,"Chisinau, Moldova",Moldova,Moldova
+541,"Monaco, Monaco",Monaco,Monaco
+542,"Budva, Montenegro",Montenegro,Montenegro
+543,"Herceg-Novi, Montenegro",Montenegro,Montenegro
+544,"Kotor, Montenegro",Montenegro,Montenegro
+545,"Podgorica, Montenegro",Montenegro,Montenegro
+546,"Tivat, Montenegro",Montenegro,Montenegro
+547,"Agadir, Morocco",Morocco,Morocco
+548,"Aït Ben Haddou, Morocco",Morocco,Morocco
+549,"Casablanca, Morocco",Morocco,Morocco
+550,"Chefchaouene, Morocco",Morocco,Morocco
+551,"Essaouira, Morocco",Morocco,Morocco
+552,"Fès, Morocco",Morocco,Morocco
+553,"Marrakesh, Morocco",Morocco,Morocco
+554,"Meknès, Morocco",Morocco,Morocco
+555,"Ouarzazat, Morocco",Morocco,Morocco
+556,"Rabat, Morocco",Morocco,Morocco
+557,"Tangier, Morocco",Morocco,Morocco
+558,"Maputo, Mozambique",Mozambique,Mozambique
+559,"Mandalay, Myanmar",Myanmar,Myanmar
+560,"Ngapali , Myanmar",Myanmar,Myanmar
+561,"Yangon, Myanmar",Myanmar,Myanmar
+562,"Swakopmund, Namibia",Namibia,Namibia
+563,"Windhoek, Namibia",Namibia,Namibia
+564,"Yaren, Nauru",Nauru,Nauru
+565,"Kathmandu, Nepal",Nepal,Nepal
+566,"Pokhara, Nepal",Nepal,Nepal
+567,"Alkmaar, Netherlands",Netherlands,Netherlands
+568,"Amsterdam, Netherlands",Netherlands,Netherlands
+569,"Delft, Netherlands",Netherlands,Netherlands
+570,"Eindhoven, Netherlands",Netherlands,Netherlands
+571,"Giethoorn, Netherlands",Netherlands,Netherlands
+572,"Gouda, Netherlands",Netherlands,Netherlands
+573,"Groningen, Netherlands",Netherlands,Netherlands
+574,"Haarlem, Netherlands",Netherlands,Netherlands
+575,"Leiden, Netherlands",Netherlands,Netherlands
+576,"Maastricht, Netherlands",Netherlands,Netherlands
+577,"Rotterdam, Netherlands",Netherlands,Netherlands
+578,"The Hague, Netherlands",Netherlands,Netherlands
+579,"Utrecht, Netherlands",Netherlands,Netherlands
+580,"Auckland, New Zealand",New Zealand,New Zealand
+581,"Christchurch, New Zealand",New Zealand,New Zealand
+582,"Hamilton, New Zealand",New Zealand,New Zealand
+583,"Napier, New Zealand",New Zealand,New Zealand
+584,"Nelson, New Zealand",New Zealand,New Zealand
+585,"Paihia, New Zealand",New Zealand,New Zealand
+586,"Queenstown, New Zealand",New Zealand,New Zealand
+587,"Rotorua, New Zealand",New Zealand,New Zealand
+588,"Wellington, New Zealand",New Zealand,New Zealand
+589,"Whangarei, New Zealand",New Zealand,New Zealand
+590,"Granada, Nicaragua",Nicaragua,Nicaragua
+591,"Leon, Nicaragua",Nicaragua,Nicaragua
+592,"Managua, Nicaragua",Nicaragua,Nicaragua
+593,"Masaya, Nicaragua",Nicaragua,Nicaragua
+594,"San Juan del Sur, Nicaragua",Nicaragua,Nicaragua
+595,"Ålesund, Norway",Norway,Norway
+596,"Bergen, Norway",Norway,Norway
+597,"Bodø, Norway",Norway,Norway
+598,"Geiranger, Norway",Norway,Norway
+599,"Kristiansand, Norway",Norway,Norway
+600,"Narvik, Norway",Norway,Norway
+601,"Oslo, Norway",Norway,Norway
+602,"Stavanger, Norway",Norway,Norway
+603,"Tromsø, Norway",Norway,Norway
+604,"Trondheim, Norway",Norway,Norway
+605,"Muscat, Oman",Oman,Oman
+606,"Şalālah, Oman",Oman,Oman
+607,"Koror, Palau",Palau,Palau
+608,"Bethlehem, Palestine",Palestine,Palestine
+609,"Bocas del Toro, Panama",Panama,Panama
+610,"Boquete, Panama",Panama,Panama
+611,"El Valle de Anton, Panama",Panama,Panama
+612,"Isla Bastimentos, Panama",Panama,Panama
+613,"Panama City, Panama",Panama,Panama
+614,"Santa Catalina, Panama",Panama,Panama
+615,"Alotau, Papua New Guinea",Papua New Guinea,Papua New Guinea
+616,"Madang, Papua New Guinea",Papua New Guinea,Papua New Guinea
+617,"Mount Hagen, Papua New Guinea",Papua New Guinea,Papua New Guinea
+618,"Port Moresby, Papua New Guinea",Papua New Guinea,Papua New Guinea
+619,"Rabaul, Papua New Guinea",Papua New Guinea,Papua New Guinea
+620,"Asuncion, Paraguay",Paraguay,Paraguay
+621,"Encarnacion, Paraguay",Paraguay,Paraguay
+622,"Aguas Calientes, Peru",Peru,Peru
+623,"Arequipa, Peru",Peru,Peru
+624,"Cusco, Peru",Peru,Peru
+625,"Huancayo, Peru",Peru,Peru
+626,"Huaraz, Peru",Peru,Peru
+627,"Ica, Peru",Peru,Peru
+628,"Lima, Peru",Peru,Peru
+629,"Mancora, Peru",Peru,Peru
+630,"Ollantaytambo, Peru",Peru,Peru
+631,"Paracas, Peru",Peru,Peru
+632,"Puno, Peru",Peru,Peru
+633,"Tarapoto, Peru",Peru,Peru
+634,"Trujillo, Peru",Peru,Peru
+635,"Bantayan, Philippines",Philippines,Philippines
+636,"Cebu City, Philippines",Philippines,Philippines
+637,"Coron, Philippines",Philippines,Philippines
+638,"Manila, Philippines",Philippines,Philippines
+639,"Gdansk, Poland",Poland,Poland
+640,"Gdynia, Poland",Poland,Poland
+641,"Katowice, Poland",Poland,Poland
+642,"Krakow, Poland",Poland,Poland
+643,"Łódź, Poland",Poland,Poland
+644,"Oświęcim, Poland",Poland,Poland
+645,"Poznań, Poland",Poland,Poland
+646,"Sopot, Poland",Poland,Poland
+647,"Szczecin, Poland",Poland,Poland
+648,"Warsaw, Poland",Poland,Poland
+649,"Wola, Poland",Poland,Poland
+650,"Wrocław, Poland",Poland,Poland
+651,"Zakopane, Poland",Poland,Poland
+652,"Zamość, Poland",Poland,Poland
+653,"Funchal, Madeira, Portugal",Portugal,Portugal
+654,"Santana, Madeira, Portugal",Portugal,Portugal
+655,"Albufeira, Portugal",Portugal,Portugal
+656,"Belém, Portugal",Portugal,Portugal
+657,"Bragança, Portugal",Portugal,Portugal
+658,"Cascais, Portugal",Portugal,Portugal
+659,"Coimbra, Portugal",Portugal,Portugal
+660,"Evora, Portugal",Portugal,Portugal
+661,"Faro, Portugal",Portugal,Portugal
+662,"Lagos, Portugal",Portugal,Portugal
+663,"Lisbon, Portugal",Portugal,Portugal
+664,"Porto, Portugal",Portugal,Portugal
+665,"Sintra, Portugal",Portugal,Portugal
+666,"Doha, Qatar",Qatar,Qatar
+667,"Braşov, Romania",Romania,Romania
+668,"Bucharest, Romania",Romania,Romania
+669,"Cluj-Napoca, Romania",Romania,Romania
+670,"Constanţa, Romania",Romania,Romania
+671,"Oradea, Romania",Romania,Romania
+672,"Sibiu, Romania",Romania,Romania
+673,"Sighișoara, Romania",Romania,Romania
+674,"Sinaia, Romania",Romania,Romania
+675,"Timișoara, Romania",Romania,Romania
+676,"Irkutsk, Russia",Russia,Russia
+677,"Kaliningrad, Russia",Russia,Russia
+678,"Kazan, Russia",Russia,Russia
+679,"Moscow, Russia",Russia,Russia
+680,"Nizhny Novgorod, Russia",Russia,Russia
+681,"Saint Petersburg, Russia",Russia,Russia
+682,"Sochi, Russia",Russia,Russia
+683,"Veliky Novgorod, Russia",Russia,Russia
+684,"Vladivostok, Russia",Russia,Russia
+685,"Yekaterinburg, Russia",Russia,Russia
+686,"Apia, Samoa",Samoa,Samoa
+687,"Si'umu, Samoa",Samoa,Samoa
+688,"San Marino, San Marino",San Marino,San Marino
+689,"São Tomé, Sao Tome and Principe",Sao Tome and Principe,Sao Tome and Principe
+690,"Dammam, Saudi Arabia",Saudi Arabia,Saudi Arabia
+691,"Jeddah, Saudi Arabia",Saudi Arabia,Saudi Arabia
+692,"Mecca, Saudi Arabia",Saudi Arabia,Saudi Arabia
+693,"Medina, Saudi Arabia",Saudi Arabia,Saudi Arabia
+694,"Riyadh, Saudi Arabia",Saudi Arabia,Saudi Arabia
+695,"Dakar, Senegal",Senegal,Senegal
+696,"Belgrade, Serbia",Serbia,Serbia
+697,"Kopaonik, Serbia",Serbia,Serbia
+698,"Niš, Serbia",Serbia,Serbia
+699,"Novi Sad, Serbia",Serbia,Serbia
+700,"Stari Grad, Serbia",Serbia,Serbia
+701,"Subotica, Serbia",Serbia,Serbia
+702,"Zlatibor, Serbia",Serbia,Serbia
+703,"Victoria, Seychelles",Seychelles,Seychelles
+704,"Singapore, Singapore",Singapore,Singapore
+705,"Bratislava, Slovakia",Slovakia,Slovakia
+706,"Košice, Slovakia",Slovakia,Slovakia
+707,"Poprad, Slovakia",Slovakia,Slovakia
+708,"Bled, Slovenia",Slovenia,Slovenia
+709,"Bovec, Slovenia",Slovenia,Slovenia
+710,"Koper, Slovenia",Slovenia,Slovenia
+711,"Ljubljana, Slovenia",Slovenia,Slovenia
+712,"Maribor, Slovenia",Slovenia,Slovenia
+713,"Novo Mesto, Slovenia",Slovenia,Slovenia
+714,"Piran, Slovenia",Slovenia,Slovenia
+715,"Postojna, Slovenia",Slovenia,Slovenia
+716,"Honiara, Solomon Islands",Solomon Islands,Solomon Islands
+717,"Cape Town, South Africa",South Africa,South Africa
+718,"Durban, South Africa",South Africa,South Africa
+719,"Johannesburg, South Africa",South Africa,South Africa
+720,"Port Elizabeth, South Africa",South Africa,South Africa
+721,"Pretoria, South Africa",South Africa,South Africa
+722,"Andong, South Korea",South Korea,South Korea
+723,"Busan, South Korea",South Korea,South Korea
+724,"Chuncheon, South Korea",South Korea,South Korea
+725,"Jeonju, South Korea",South Korea,South Korea
+726,"Seoul, South Korea",South Korea,South Korea
+727,"Palma, Balearic Islands, Spain",Spain,Spain
+728,"Las Palmas de Gran Canaria, Canary Islands, Spain",Spain,Spain
+729,"Santa Cruz de Tenerife, Tenerife, Spain",Spain,Spain
+730,"Alicante, Spain",Spain,Spain
+731,"Almeria, Spain",Spain,Spain
+732,"Barcelona, Spain",Spain,Spain
+733,"Begur, Spain",Spain,Spain
+734,"Benidorm, Spain",Spain,Spain
+735,"Bilbao, Spain",Spain,Spain
+736,"Burgos, Spain",Spain,Spain
+737,"Cadaques, Spain",Spain,Spain
+738,"Cadiz, Spain",Spain,Spain
+739,"Cartagena, Spain",Spain,Spain
+740,"Córdoba, Spain",Spain,Spain
+741,"Figueres, Spain",Spain,Spain
+742,"Girona, Spain",Spain,Spain
+743,"Granada, Spain",Spain,Spain
+744,"Ibiza, Spain",Spain,Spain
+745,"Madrid, Spain",Spain,Spain
+746,"Malaga, Spain",Spain,Spain
+747,"Pamplona, Spain",Spain,Spain
+748,"Ronda, Spain",Spain,Spain
+749,"Salamanca, Spain",Spain,Spain
+750,"Sant Joan Despí, Spain",Spain,Spain
+751,"Santiago de Compostela, Spain",Spain,Spain
+752,"Segovia, Spain",Spain,Spain
+753,"Sevilla, Spain",Spain,Spain
+754,"Sitges, Spain",Spain,Spain
+755,"Toledo, Spain",Spain,Spain
+756,"Valencia, Spain",Spain,Spain
+757,"Valladolid, Spain",Spain,Spain
+758,"Vigo, Spain",Spain,Spain
+759,"Zaragoza, Spain",Spain,Spain
+760,"Colombo, Sri Lanka",Sri Lanka,Sri Lanka
+761,"Galle, Sri Lanka",Sri Lanka,Sri Lanka
+762,"Kandy, Sri Lanka",Sri Lanka,Sri Lanka
+763,"Basseterre, St. Kitts and Nevis",St. Kitts and Nevis,St. Kitts and Nevis
+764,"Charlestown, St. Kitts and Nevis",St. Kitts and Nevis,St. Kitts and Nevis
+765,"Castries, St. Lucia",St. Lucia,St. Lucia
+766,"Kingstown, St. Vincent and the Grenadines",St. Vincent and the Grenadines,St. Vincent and the Grenadines
+767,"Paramaribo, Suriname",Suriname,Suriname
+768,"Göteborg, Sweden",Sweden,Sweden
+769,"Gothenburg, Sweden",Sweden,Sweden
+770,"Kiruna, Sweden",Sweden,Sweden
+771,"Luleå, Sweden",Sweden,Sweden
+772,"Malmö, Sweden",Sweden,Sweden
+773,"Stockholm, Sweden",Sweden,Sweden
+774,"Uppsala, Sweden",Sweden,Sweden
+775,"Visby, Sweden",Sweden,Sweden
+776,"Basel, Switzerland",Switzerland,Switzerland
+777,"Bern, Switzerland",Switzerland,Switzerland
+778,"Brienz, Switzerland",Switzerland,Switzerland
+779,"Geneva, Switzerland",Switzerland,Switzerland
+780,"Gruyères, Switzerland",Switzerland,Switzerland
+781,"Interlaken, Switzerland",Switzerland,Switzerland
+782,"Lausanne, Switzerland",Switzerland,Switzerland
+783,"Lauterbrunnen, Switzerland",Switzerland,Switzerland
+784,"Lugano, Switzerland",Switzerland,Switzerland
+785,"Luzern, Switzerland",Switzerland,Switzerland
+786,"Meyrin, Switzerland",Switzerland,Switzerland
+787,"Montreux, Switzerland",Switzerland,Switzerland
+788,"St. Moritz, Switzerland",Switzerland,Switzerland
+789,"Stein am Rhein, Switzerland",Switzerland,Switzerland
+790,"Zermatt, Switzerland",Switzerland,Switzerland
+791,"Zürich, Switzerland",Switzerland,Switzerland
+792,"Kaohsiung, Taiwan, Taiwan",Taiwan,Taiwan
+793,"Taichung, Taiwan, Taiwan",Taiwan,Taiwan
+794,"Taipei, Taiwan, Taiwan",Taiwan,Taiwan
+795,"Dushanbe, Tajikistan",Tajikistan,Tajikistan
+796,"Dar es Salaam, Tanzania",Tanzania,Tanzania
+797,"Zanzibar, Tanzania",Tanzania,Tanzania
+798,"Ayutthaya, Thailand",Thailand,Thailand
+799,"Bankok, Thailand",Thailand,Thailand
+800,"Chiang Mai, Thailand",Thailand,Thailand
+801,"Pai, Thailand",Thailand,Thailand
+802,"Phang Nga, Thailand",Thailand,Thailand
+803,"Phi Phi Don, Thailand",Thailand,Thailand
+804,"Phuket, Thailand",Thailand,Thailand
+805,"Railay Beach, Thailand",Thailand,Thailand
+806,"Sukhothai, Thailand",Thailand,Thailand
+807,"Trang, Thailand",Thailand,Thailand
+808,"Port of Spain, Trinidad and Tobago",Trinidad and Tobago,Trinidad and Tobago
+809,"Scarborough, Trinidad and Tobago",Trinidad and Tobago,Trinidad and Tobago
+810,"Djerba, Tunisia",Tunisia,Tunisia
+811,"Monastir, Tunisia",Tunisia,Tunisia
+812,"Sidi Bou Saïd, Tunisia",Tunisia,Tunisia
+813,"Tunis, Tunisia",Tunisia,Tunisia
+814,"Alaçatı, Turkey",Turkey,Türkiye
+815,"Alanya, Turkey",Turkey,Türkiye
+816,"Ankara, Turkey",Turkey,Türkiye
+817,"Antalya, Turkey",Turkey,Türkiye
+818,"Bodrum, Turkey",Turkey,Türkiye
+819,"Ephesus, Turkey",Turkey,Türkiye
+820,"Göreme, Turkey",Turkey,Türkiye
+821,"Istanbul, Turkey",Turkey,Türkiye
+822,"Izmir, Turkey",Turkey,Türkiye
+823,"Konya, Turkey",Turkey,Türkiye
+824,"Mardin, Turkey",Turkey,Türkiye
+825,"Marmaris, Turkey",Turkey,Türkiye
+826,"Selçuk, Turkey",Turkey,Türkiye
+827,"Side, Turkey",Turkey,Türkiye
+828,"Kampala, Uganda",Uganda,Uganda
+829,"Bukovel, Ukraine",Ukraine,Ukraine
+830,"Chernihiv, Ukraine",Ukraine,Ukraine
+831,"Kiev, Ukraine",Ukraine,Ukraine
+832,"Lviv, Ukraine",Ukraine,Ukraine
+833,"Odessa, Ukraine",Ukraine,Ukraine
+834,"Zhytomyr, Ukraine",Ukraine,Ukraine
+835,"Abu Dhabi, United Arab Emirates",United Arab Emirates,United Arab Emirates
+836,"Al Ain, United Arab Emirates",United Arab Emirates,United Arab Emirates
+837,"Dubai, United Arab Emirates",United Arab Emirates,United Arab Emirates
+838,"Bath, England, United Kingdom",United Kingdom,United Kingdom
+839,"Birmingham, England, United Kingdom",United Kingdom,United Kingdom
+840,"Brighton, England, United Kingdom",United Kingdom,United Kingdom
+841,"Bristol, England, United Kingdom",United Kingdom,United Kingdom
+842,"Cambridge, England, United Kingdom",United Kingdom,United Kingdom
+843,"Crawley, England, United Kingdom",United Kingdom,United Kingdom
+844,"Leeds, England, United Kingdom",United Kingdom,United Kingdom
+845,"Liverpool, England, United Kingdom",United Kingdom,United Kingdom
+846,"London, England, United Kingdom",United Kingdom,United Kingdom
+847,"Manchester, England, United Kingdom",United Kingdom,United Kingdom
+848,"Oxford, England, United Kingdom",United Kingdom,United Kingdom
+849,"Southampton, England, United Kingdom",United Kingdom,United Kingdom
+850,"York, England, United Kingdom",United Kingdom,United Kingdom
+851,"Gibraltar, Gibraltar, United Kingdom",United Kingdom,United Kingdom
+852,"Belfast, Northern Ireland, United Kingdom",United Kingdom,United Kingdom
+853,"Derry, Northern Ireland, United Kingdom",United Kingdom,United Kingdom
+854,"Aberdeen, Scotland, United Kingdom",United Kingdom,United Kingdom
+855,"Edinburgh, Scotland, United Kingdom",United Kingdom,United Kingdom
+856,"Fort William, Scotland, United Kingdom",United Kingdom,United Kingdom
+857,"Glasgow, Scotland, United Kingdom",United Kingdom,United Kingdom
+858,"Inverness, Scotland, United Kingdom",United Kingdom,United Kingdom
+859,"Islay, Scotland, United Kingdom",United Kingdom,United Kingdom
+860,"St. Andrews, Scotland, United Kingdom",United Kingdom,United Kingdom
+861,"Cardiff, Wales, United Kingdom",United Kingdom,United Kingdom
+862,"Swansea, Wales, United Kingdom",United Kingdom,United Kingdom
+863,"Tenby, Wales, United Kingdom",United Kingdom,United Kingdom
+864,"Auburn, Alabama, United States",United States,United States
+865,"Birmingham, Alabama, United States",United States,United States
+866,"Dothan, Alabama, United States",United States,United States
+867,"Foley, Alabama, United States",United States,United States
+868,"Gulf Shores, Alabama, United States",United States,United States
+869,"Homewood, Alabama, United States",United States,United States
+870,"Hoover, Alabama, United States",United States,United States
+871,"Huntsville, Alabama, United States",United States,United States
+872,"Mobile, Alabama, United States",United States,United States
+873,"Montgomery, Alabama, United States",United States,United States
+874,"Orange Beach, Alabama, United States",United States,United States
+875,"Pelham, Alabama, United States",United States,United States
+876,"Scottsboro, Alabama, United States",United States,United States
+877,"Tuscaloosa, Alabama, United States",United States,United States
+878,"Anchorage, Alaska, United States",United States,United States
+879,"Fairbanks, Alaska, United States",United States,United States
+880,"Healy, Alaska, United States",United States,United States
+881,"Homer, Alaska, United States",United States,United States
+882,"Hoonah, Alaska, United States",United States,United States
+883,"Juneau, Alaska, United States",United States,United States
+884,"Kenai, Alaska, United States",United States,United States
+885,"Ketchikan, Alaska, United States",United States,United States
+886,"McCarthy, Alaska, United States",United States,United States
+887,"Palmer, Alaska, United States",United States,United States
+888,"Seward, Alaska, United States",United States,United States
+889,"Sitka, Alaska, United States",United States,United States
+890,"Skagway, Alaska, United States",United States,United States
+891,"Soldotna, Alaska, United States",United States,United States
+892,"Talkeetna, Alaska, United States",United States,United States
+893,"Wasilla, Alaska, United States",United States,United States
+894,"Whittier, Alaska, United States",United States,United States
+895,"Apache Junction, Arizona, United States",United States,United States
+896,"Bisbee, Arizona, United States",United States,United States
+897,"Chandler, Arizona, United States",United States,United States
+898,"Flagstaff, Arizona, United States",United States,United States
+899,"Grand Canyon, Arizona, United States",United States,United States
+900,"Jerome, Arizona, United States",United States,United States
+901,"Kingman, Arizona, United States",United States,United States
+902,"Mesa, Arizona, United States",United States,United States
+903,"Page, Arizona, United States",United States,United States
+904,"Phoenix, Arizona, United States",United States,United States
+905,"Prescott, Arizona, United States",United States,United States
+906,"Scottsdale, Arizona, United States",United States,United States
+907,"Sedona, Arizona, United States",United States,United States
+908,"Supai, Arizona, United States",United States,United States
+909,"Tempe, Arizona, United States",United States,United States
+910,"Tombstone, Arizona, United States",United States,United States
+911,"Tucson, Arizona, United States",United States,United States
+912,"Tusayan, Arizona, United States",United States,United States
+913,"Bentonville, Arkansas, United States",United States,United States
+914,"Conway, Arkansas, United States",United States,United States
+915,"Eureka Springs, Arkansas, United States",United States,United States
+916,"Fayetteville, Arkansas, United States",United States,United States
+917,"Fort Smith, Arkansas, United States",United States,United States
+918,"Hot Springs, Arkansas, United States",United States,United States
+919,"Rogers, Arkansas, United States",United States,United States
+920,"Springdale, Arkansas, United States",United States,United States
+921,"West Memphis, Arkansas, United States",United States,United States
+922,"Anaheim, California, United States",United States,United States
+923,"Berkeley, California, United States",United States,United States
+924,"Beverly Hills, California, United States",United States,United States
+925,"Big Bear Lake, California, United States",United States,United States
+926,"Big Sur, California, United States",United States,United States
+927,"Burney, California, United States",United States,United States
+928,"Calistoga, California, United States",United States,United States
+929,"Cambria, California, United States",United States,United States
+930,"Carlsbad, California, United States",United States,United States
+931,"Carmel, California, United States",United States,United States
+932,"Fresno, California, United States",United States,United States
+933,"Irvine, California, United States",United States,United States
+934,"La Jolla, California, United States",United States,United States
+935,"Laguna Beach, California, United States",United States,United States
+936,"Long Beach, California, United States",United States,United States
+937,"Los Angeles, California, United States",United States,United States
+938,"Malibu, California, United States",United States,United States
+939,"Mill Valley, California, United States",United States,United States
+940,"Monterey, California, United States",United States,United States
+941,"Napa, California, United States",United States,United States
+942,"Newport Beach, California, United States",United States,United States
+943,"Oakland, California, United States",United States,United States
+944,"Oceanside, California, United States",United States,United States
+945,"Palm Springs, California, United States",United States,United States
+946,"Palo Alto, California, United States",United States,United States
+947,"Paso Robles, California, United States",United States,United States
+948,"Pismo Beach, California, United States",United States,United States
+949,"Rutherford, California, United States",United States,United States
+950,"Sacramento, California, United States",United States,United States
+951,"San Diego, California, United States",United States,United States
+952,"San Francisco, California, United States",United States,United States
+953,"San Jose, California, United States",United States,United States
+954,"Santa Barbara, California, United States",United States,United States
+955,"Santa Cruz, California, United States",United States,United States
+956,"Santa Monica, California, United States",United States,United States
+957,"Sausalito, California, United States",United States,United States
+958,"Sonoma, California, United States",United States,United States
+959,"Temecula, California, United States",United States,United States
+960,"Truckee, California, United States",United States,United States
+961,"Venice, California, United States",United States,United States
+962,"Ventura, California, United States",United States,United States
+963,"West Hollywood, California, United States",United States,United States
+964,"Yosemite Village, California, United States",United States,United States
+965,"Aspen, Colorado, United States",United States,United States
+966,"Aurora, Colorado, United States",United States,United States
+967,"Boulder, Colorado, United States",United States,United States
+968,"Breckenridge, Colorado, United States",United States,United States
+969,"Colorado Springs, Colorado, United States",United States,United States
+970,"Crested Butte, Colorado, United States",United States,United States
+971,"Denver, Colorado, United States",United States,United States
+972,"Durango, Colorado, United States",United States,United States
+973,"Estes Park, Colorado, United States",United States,United States
+974,"Fort Collins, Colorado, United States",United States,United States
+975,"Glenwood Springs, Colorado, United States",United States,United States
+976,"Grand Junction, Colorado, United States",United States,United States
+977,"Loveland, Colorado, United States",United States,United States
+978,"Pagosa Springs, Colorado, United States",United States,United States
+979,"Pueblo, Colorado, United States",United States,United States
+980,"Steamboat Springs, Colorado, United States",United States,United States
+981,"Telluride, Colorado, United States",United States,United States
+982,"Vail, Colorado, United States",United States,United States
+983,"Groton, Connecticut, United States",United States,United States
+984,"Hartford, Connecticut, United States",United States,United States
+985,"Mystic, Connecticut, United States",United States,United States
+986,"New Haven, Connecticut, United States",United States,United States
+987,"Norwalk, Connecticut, United States",United States,United States
+988,"Stamford, Connecticut, United States",United States,United States
+989,"Uncasville, Connecticut, United States",United States,United States
+990,"Bethany Beach, Delaware, United States",United States,United States
+991,"Fenwick Island, Delaware, United States",United States,United States
+992,"Lewes, Delaware, United States",United States,United States
+993,"Rehoboth Beach, Delaware, United States",United States,United States
+994,"Wilmington, Delaware, United States",United States,United States
+995,"Washington, District of Columbia, United States",United States,United States
+996,"Amelia Island, Florida, United States",United States,United States
+997,"Boca Raton, Florida, United States",United States,United States
+998,"Cape Canaveral, Florida, United States",United States,United States
+999,"Clearwater, Florida, United States",United States,United States
+1000,"Daytona Beach, Florida, United States",United States,United States
+1001,"Destin, Florida, United States",United States,United States
+1002,"Fort Lauderdale, Florida, United States",United States,United States
+1003,"Hollywood, Florida, United States",United States,United States
+1004,"Jacksonville, Florida, United States",United States,United States
+1005,"Key Largo, Florida, United States",United States,United States
+1006,"Key West, Florida, United States",United States,United States
+1007,"Kissimmee, Florida, United States",United States,United States
+1008,"Lake Buena Vista, Florida, United States",United States,United States
+1009,"Marco Island, Florida, United States",United States,United States
+1010,"Miami, Florida, United States",United States,United States
+1011,"Naples, Florida, United States",United States,United States
+1012,"Orlando, Florida, United States",United States,United States
+1013,"Panama City Beach, Florida, United States",United States,United States
+1014,"Pensacola, Florida, United States",United States,United States
+1015,"Sarasota, Florida, United States",United States,United States
+1016,"St. Augustine, Florida, United States",United States,United States
+1017,"St. Petersburg, Florida, United States",United States,United States
+1018,"Tallahassee, Florida, United States",United States,United States
+1019,"Tampa, Florida, United States",United States,United States
+1020,"West Palm Beach, Florida, United States",United States,United States
+1021,"Athens, Georgia, United States",United States,United States
+1022,"Atlanta, Georgia, United States",United States,United States
+1023,"Augusta, Georgia, United States",United States,United States
+1024,"Columbus, Georgia, United States",United States,United States
+1025,"Cumberland Island, Georgia, United States",United States,United States
+1026,"Dahlonega, Georgia, United States",United States,United States
+1027,"Helen, Georgia, United States",United States,United States
+1028,"Jekyll Island, Georgia, United States",United States,United States
+1029,"Macon, Georgia, United States",United States,United States
+1030,"Marietta, Georgia, United States",United States,United States
+1031,"Savannah, Georgia, United States",United States,United States
+1032,"Stone Mountain, Georgia, United States",United States,United States
+1033,"Tybee Island, Georgia, United States",United States,United States
+1034,"Valdosta, Georgia, United States",United States,United States
+1035,"Hana, Hawaii, United States",United States,United States
+1036,"Hilo, Hawaii, United States",United States,United States
+1037,"Honolulu, Hawaii, United States",United States,United States
+1038,"Kahului, Hawaii, United States",United States,United States
+1039,"Kapaa, Hawaii, United States",United States,United States
+1040,"Kapolei, Hawaii, United States",United States,United States
+1041,"Lahaina, Hawaii, United States",United States,United States
+1042,"Lihue, Hawaii, United States",United States,United States
+1043,"Poipu, Hawaii, United States",United States,United States
+1044,"Puako, Hawaii, United States",United States,United States
+1045,"Waikoloa, Hawaii, United States",United States,United States
+1046,"Wailea, Hawaii, United States",United States,United States
+1047,"Boise, Idaho, United States",United States,United States
+1048,"Coeur d'Alene, Idaho, United States",United States,United States
+1049,"Driggs, Idaho, United States",United States,United States
+1050,"Idaho Falls, Idaho, United States",United States,United States
+1051,"Island Park, Idaho, United States",United States,United States
+1052,"Ketchum, Idaho, United States",United States,United States
+1053,"Lava Hot Springs, Idaho, United States",United States,United States
+1054,"McCall, Idaho, United States",United States,United States
+1055,"Meridian, Idaho, United States",United States,United States
+1056,"Pocatello, Idaho, United States",United States,United States
+1057,"Sandpoint, Idaho, United States",United States,United States
+1058,"Sun Valley, Idaho, United States",United States,United States
+1059,"Twin Falls, Idaho, United States",United States,United States
+1060,"Arthur, Illinois, United States",United States,United States
+1061,"Bloomington, Illinois, United States",United States,United States
+1062,"Champaign, Illinois, United States",United States,United States
+1063,"Chicago, Illinois, United States",United States,United States
+1064,"Galena, Illinois, United States",United States,United States
+1065,"Rockford, Illinois, United States",United States,United States
+1066,"Rosemont, Illinois, United States",United States,United States
+1067,"Springfield, Illinois, United States",United States,United States
+1068,"Bloomington, Indiana, United States",United States,United States
+1069,"Fort Wayne, Indiana, United States",United States,United States
+1070,"Indianapolis, Indiana, United States",United States,United States
+1071,"Michigan City, Indiana, United States",United States,United States
+1072,"Nashville, Indiana, United States",United States,United States
+1073,"South Bend, Indiana, United States",United States,United States
+1074,"Terre Haute, Indiana, United States",United States,United States
+1075,"Ames, Iowa, United States",United States,United States
+1076,"Cedar Rapids, Iowa, United States",United States,United States
+1077,"Council Bluffs, Iowa, United States",United States,United States
+1078,"Davenport, Iowa, United States",United States,United States
+1079,"Des Moines, Iowa, United States",United States,United States
+1080,"Dubuque, Iowa, United States",United States,United States
+1081,"Iowa City, Iowa, United States",United States,United States
+1082,"Sioux City, Iowa, United States",United States,United States
+1083,"Dodge City, Kansas, United States",United States,United States
+1084,"Fort Scott, Kansas, United States",United States,United States
+1085,"Hays, Kansas, United States",United States,United States
+1086,"Kansas City, Kansas, United States",United States,United States
+1087,"Lawrence, Kansas, United States",United States,United States
+1088,"Lindsborg, Kansas, United States",United States,United States
+1089,"Oakley, Kansas, United States",United States,United States
+1090,"Olathe, Kansas, United States",United States,United States
+1091,"Overland Park, Kansas, United States",United States,United States
+1092,"Salina, Kansas, United States",United States,United States
+1093,"Topeka, Kansas, United States",United States,United States
+1094,"Wamego, Kansas, United States",United States,United States
+1095,"Bowling Green, Kentucky, United States",United States,United States
+1096,"Brownsville, Kentucky, United States",United States,United States
+1097,"Covington, Kentucky, United States",United States,United States
+1098,"Florence, Kentucky, United States",United States,United States
+1099,"Frankfort, Kentucky, United States",United States,United States
+1100,"Georgetown, Kentucky, United States",United States,United States
+1101,"Hebron, Kentucky, United States",United States,United States
+1102,"Lexington, Kentucky, United States",United States,United States
+1103,"Louisville, Kentucky, United States",United States,United States
+1104,"Middlesboro, Kentucky, United States",United States,United States
+1105,"Newport, Kentucky, United States",United States,United States
+1106,"Owensboro, Kentucky, United States",United States,United States
+1107,"Paducah, Kentucky, United States",United States,United States
+1108,"Avery Island, Louisiana, United States",United States,United States
+1109,"Baton Rouge, Louisiana, United States",United States,United States
+1110,"Bossier City, Louisiana, United States",United States,United States
+1111,"Grand Isle, Louisiana, United States",United States,United States
+1112,"Lafayette, Louisiana, United States",United States,United States
+1113,"Lake Charles, Louisiana, United States",United States,United States
+1114,"Natchitoches, Louisiana, United States",United States,United States
+1115,"New Orleans, Louisiana, United States",United States,United States
+1116,"Shreveport, Louisiana, United States",United States,United States
+1117,"Augusta, Maine, United States",United States,United States
+1118,"Bangor, Maine, United States",United States,United States
+1119,"Bar Harbor, Maine, United States",United States,United States
+1120,"Boothbay Harbor, Maine, United States",United States,United States
+1121,"Camden, Maine, United States",United States,United States
+1122,"Kennebunkport, Maine, United States",United States,United States
+1123,"Ogunquit, Maine, United States",United States,United States
+1124,"Old Orchard Beach, Maine, United States",United States,United States
+1125,"Portland, Maine, United States",United States,United States
+1126,"Rockland, Maine, United States",United States,United States
+1127,"Wells, Maine, United States",United States,United States
+1128,"Annapolis, Maryland, United States",United States,United States
+1129,"Baltimore, Maryland, United States",United States,United States
+1130,"Bethesda, Maryland, United States",United States,United States
+1131,"Frederick, Maryland, United States",United States,United States
+1132,"Hagerstown, Maryland, United States",United States,United States
+1133,"McHenry, Maryland, United States",United States,United States
+1134,"Ocean City, Maryland, United States",United States,United States
+1135,"Silver Spring, Maryland, United States",United States,United States
+1136,"Boston, Massachusetts, United States",United States,United States
+1137,"Brookline, Massachusetts, United States",United States,United States
+1138,"Cambridge, Massachusetts, United States",United States,United States
+1139,"Concord, Massachusetts, United States",United States,United States
+1140,"Edgartown, Massachusetts, United States",United States,United States
+1141,"Falmouth, Massachusetts, United States",United States,United States
+1142,"Hyannis, Massachusetts, United States",United States,United States
+1143,"Lenox, Massachusetts, United States",United States,United States
+1144,"Lexington, Massachusetts, United States",United States,United States
+1145,"Nantucket, Massachusetts, United States",United States,United States
+1146,"Plymouth, Massachusetts, United States",United States,United States
+1147,"Provincetown, Massachusetts, United States",United States,United States
+1148,"Salem, Massachusetts, United States",United States,United States
+1149,"Somerville, Massachusetts, United States",United States,United States
+1150,"Sudbury, Massachusetts, United States",United States,United States
+1151,"Worcester, Massachusetts, United States",United States,United States
+1152,"Ann Arbor, Michigan, United States",United States,United States
+1153,"Charlevoix, Michigan, United States",United States,United States
+1154,"Detroit, Michigan, United States",United States,United States
+1155,"Grand Rapids, Michigan, United States",United States,United States
+1156,"Holland, Michigan, United States",United States,United States
+1157,"Kalamazoo, Michigan, United States",United States,United States
+1158,"Lansing, Michigan, United States",United States,United States
+1159,"Mackinac Island, Michigan, United States",United States,United States
+1160,"Marquette, Michigan, United States",United States,United States
+1161,"Muskegon, Michigan, United States",United States,United States
+1162,"Petoskey, Michigan, United States",United States,United States
+1163,"Saugatuck, Michigan, United States",United States,United States
+1164,"Traverse City, Michigan, United States",United States,United States
+1165,"Ypsilanti, Michigan, United States",United States,United States
+1166,"Bloomington, Minnesota, United States",United States,United States
+1167,"Duluth, Minnesota, United States",United States,United States
+1168,"Grand Marais, Minnesota, United States",United States,United States
+1169,"Lutsen, Minnesota, United States",United States,United States
+1170,"Minneapolis, Minnesota, United States",United States,United States
+1171,"Rochester, Minnesota, United States",United States,United States
+1172,"Saint Paul, Minnesota, United States",United States,United States
+1173,"Stillwater, Minnesota, United States",United States,United States
+1174,"Two Harbors, Minnesota, United States",United States,United States
+1175,"Biloxi, Mississippi, United States",United States,United States
+1176,"Clarksdale, Mississippi, United States",United States,United States
+1177,"Gulfport, Mississippi, United States",United States,United States
+1178,"Hattiesburg, Mississippi, United States",United States,United States
+1179,"Jackson, Mississippi, United States",United States,United States
+1180,"Meridian, Mississippi, United States",United States,United States
+1181,"Natchez, Mississippi, United States",United States,United States
+1182,"Oxford, Mississippi, United States",United States,United States
+1183,"Tunica, Mississippi, United States",United States,United States
+1184,"Tupelo, Mississippi, United States",United States,United States
+1185,"Vicksburg, Mississippi, United States",United States,United States
+1186,"Branson, Missouri, United States",United States,United States
+1187,"Chesterfield, Missouri, United States",United States,United States
+1188,"Columbia, Missouri, United States",United States,United States
+1189,"Hannibal, Missouri, United States",United States,United States
+1190,"Jefferson City, Missouri, United States",United States,United States
+1191,"Kansas City, Missouri, United States",United States,United States
+1192,"Lake Ozark, Missouri, United States",United States,United States
+1193,"Osage Beach, Missouri, United States",United States,United States
+1194,"Saint Charles, Missouri, United States",United States,United States
+1195,"Saint Louis, Missouri, United States",United States,United States
+1196,"Springfield, Missouri, United States",United States,United States
+1197,"Big Sky, Montana, United States",United States,United States
+1198,"Billings, Montana, United States",United States,United States
+1199,"Bozeman, Montana, United States",United States,United States
+1200,"Butte, Montana, United States",United States,United States
+1201,"Gardiner, Montana, United States",United States,United States
+1202,"Great Falls, Montana, United States",United States,United States
+1203,"Helena, Montana, United States",United States,United States
+1204,"Kalispell, Montana, United States",United States,United States
+1205,"Missoula, Montana, United States",United States,United States
+1206,"Red Lodge, Montana, United States",United States,United States
+1207,"West Glacier, Montana, United States",United States,United States
+1208,"West Yellowstone, Montana, United States",United States,United States
+1209,"Grand Island, Nebraska, United States",United States,United States
+1210,"Kearney, Nebraska, United States",United States,United States
+1211,"Lincoln, Nebraska, United States",United States,United States
+1212,"North Platte, Nebraska, United States",United States,United States
+1213,"Omaha, Nebraska, United States",United States,United States
+1214,"Valentine, Nebraska, United States",United States,United States
+1215,"Carson City, Nevada, United States",United States,United States
+1216,"Henderson, Nevada, United States",United States,United States
+1217,"Incline Village, Nevada, United States",United States,United States
+1218,"Las Vegas, Nevada, United States",United States,United States
+1219,"Laughlin, Nevada, United States",United States,United States
+1220,"Mesquite, Nevada, United States",United States,United States
+1221,"Paradise, Nevada, United States",United States,United States
+1222,"Reno, Nevada, United States",United States,United States
+1223,"Stateline, Nevada, United States",United States,United States
+1224,"Concord, New Hampshire, United States",United States,United States
+1225,"Gorham, New Hampshire, United States",United States,United States
+1226,"Hampton, New Hampshire, United States",United States,United States
+1227,"Hanover, New Hampshire, United States",United States,United States
+1228,"Jackson, New Hampshire, United States",United States,United States
+1229,"Keene, New Hampshire, United States",United States,United States
+1230,"Lebanon, New Hampshire, United States",United States,United States
+1231,"Lincoln, New Hampshire, United States",United States,United States
+1232,"Manchester, New Hampshire, United States",United States,United States
+1233,"North Conway, New Hampshire, United States",United States,United States
+1234,"Portsmouth, New Hampshire, United States",United States,United States
+1235,"Atlantic City, New Jersey, United States",United States,United States
+1236,"Cape May, New Jersey, United States",United States,United States
+1237,"Frenchtown, New Jersey, United States",United States,United States
+1238,"Hoboken, New Jersey, United States",United States,United States
+1239,"Jersey City, New Jersey, United States",United States,United States
+1240,"Long Branch, New Jersey, United States",United States,United States
+1241,"Newark, New Jersey, United States",United States,United States
+1242,"Ocean City, New Jersey, United States",United States,United States
+1243,"Princeton, New Jersey, United States",United States,United States
+1244,"Seaside Heights, New Jersey, United States",United States,United States
+1245,"Spring Lake, New Jersey, United States",United States,United States
+1246,"Wildwood, New Jersey, United States",United States,United States
+1247,"Albuquerque, New Mexico, United States",United States,United States
+1248,"Carlsbad, New Mexico, United States",United States,United States
+1249,"Gallup, New Mexico, United States",United States,United States
+1250,"Las Cruces, New Mexico, United States",United States,United States
+1251,"Los Alamos, New Mexico, United States",United States,United States
+1252,"Pecos, New Mexico, United States",United States,United States
+1253,"Red River, New Mexico, United States",United States,United States
+1254,"Roswell, New Mexico, United States",United States,United States
+1255,"Ruidoso, New Mexico, United States",United States,United States
+1256,"Santa Fe, New Mexico, United States",United States,United States
+1257,"Taos, New Mexico, United States",United States,United States
+1258,"Albany, New York, United States",United States,United States
+1259,"Binghamton, New York, United States",United States,United States
+1260,"Buffalo, New York, United States",United States,United States
+1261,"Cooperstown, New York, United States",United States,United States
+1262,"Ithaca, New York, United States",United States,United States
+1263,"Lake George, New York, United States",United States,United States
+1264,"Lake Placid, New York, United States",United States,United States
+1265,"Montauk, New York, United States",United States,United States
+1266,"New York City, New York, United States",United States,United States
+1267,"Poughkeepsie, New York, United States",United States,United States
+1268,"Rochester, New York, United States",United States,United States
+1269,"Saratoga Springs, New York, United States",United States,United States
+1270,"Syracuse, New York, United States",United States,United States
+1271,"Ticonderoga, New York, United States",United States,United States
+1272,"Asheville, North Carolina, United States",United States,United States
+1273,"Blowing Rock, North Carolina, United States",United States,United States
+1274,"Boone, North Carolina, United States",United States,United States
+1275,"Chapel Hill, North Carolina, United States",United States,United States
+1276,"Charlotte, North Carolina, United States",United States,United States
+1277,"Cherokee, North Carolina, United States",United States,United States
+1278,"Davidson, North Carolina, United States",United States,United States
+1279,"Durham, North Carolina, United States",United States,United States
+1280,"Greensboro, North Carolina, United States",United States,United States
+1281,"Kill Devil Hills, North Carolina, United States",United States,United States
+1282,"Nags Head, North Carolina, United States",United States,United States
+1283,"New Bern, North Carolina, United States",United States,United States
+1284,"Raleigh, North Carolina, United States",United States,United States
+1285,"Southport, North Carolina, United States",United States,United States
+1286,"Wilmington, North Carolina, United States",United States,United States
+1287,"Winston-Salem, North Carolina, United States",United States,United States
+1288,"Bismarck, North Dakota, United States",United States,United States
+1289,"Dickinson, North Dakota, United States",United States,United States
+1290,"Fargo, North Dakota, United States",United States,United States
+1291,"Grand Forks, North Dakota, United States",United States,United States
+1292,"Jamestown, North Dakota, United States",United States,United States
+1293,"Medora, North Dakota, United States",United States,United States
+1294,"Minot, North Dakota, United States",United States,United States
+1295,"San Jose, Northern Mariana Islands, United States",United States,United States
+1296,"Akron, Ohio, United States",United States,United States
+1297,"Berlin, Ohio, United States",United States,United States
+1298,"Cincinnati, Ohio, United States",United States,United States
+1299,"Cleveland, Ohio, United States",United States,United States
+1300,"Columbus, Ohio, United States",United States,United States
+1301,"Dayton, Ohio, United States",United States,United States
+1302,"Sandusky, Ohio, United States",United States,United States
+1303,"Toledo, Ohio, United States",United States,United States
+1304,"Lawton, Oklahoma, United States",United States,United States
+1305,"Norman, Oklahoma, United States",United States,United States
+1306,"Oklahoma City, Oklahoma, United States",United States,United States
+1307,"Tulsa, Oklahoma, United States",United States,United States
+1308,"Ashland, Oregon, United States",United States,United States
+1309,"Astoria, Oregon, United States",United States,United States
+1310,"Bend, Oregon, United States",United States,United States
+1311,"Cannon Beach, Oregon, United States",United States,United States
+1312,"Eugene, Oregon, United States",United States,United States
+1313,"Florence, Oregon, United States",United States,United States
+1314,"Joseph, Oregon, United States",United States,United States
+1315,"Lincoln City, Oregon, United States",United States,United States
+1316,"Mount Hood, Oregon, United States",United States,United States
+1317,"Newport, Oregon, United States",United States,United States
+1318,"Portland, Oregon, United States",United States,United States
+1319,"Salem, Oregon, United States",United States,United States
+1320,"Seaside, Oregon, United States",United States,United States
+1321,"Sisters, Oregon, United States",United States,United States
+1322,"The Dalles, Oregon, United States",United States,United States
+1323,"Tillamook, Oregon, United States",United States,United States
+1324,"Bethlehem, Pennsylvania, United States",United States,United States
+1325,"Erie, Pennsylvania, United States",United States,United States
+1326,"Gettysburg, Pennsylvania, United States",United States,United States
+1327,"Harrisburg, Pennsylvania, United States",United States,United States
+1328,"Hershey, Pennsylvania, United States",United States,United States
+1329,"Lancaster, Pennsylvania, United States",United States,United States
+1330,"Philadelphia, Pennsylvania, United States",United States,United States
+1331,"Valley Forge, Pennsylvania, United States",United States,United States
+1332,"Dorado, Puerto Rico, United States",United States,United States
+1333,"Fajardo, Puerto Rico, United States",United States,United States
+1334,"Guanica, Puerto Rico, United States",United States,United States
+1335,"Isla Verde, Puerto Rico, United States",United States,United States
+1336,"Palmas Del Mar, Puerto Rico, United States",United States,United States
+1337,"Ponce, Puerto Rico, United States",United States,United States
+1338,"Rincon, Puerto Rico, United States",United States,United States
+1339,"Rio Grande, Puerto Rico, United States",United States,United States
+1340,"San Juan, Puerto Rico, United States",United States,United States
+1341,"Bristol, Rhode Island, United States",United States,United States
+1342,"Middletown, Rhode Island, United States",United States,United States
+1343,"Misquamicut, Rhode Island, United States",United States,United States
+1344,"Narragansett, Rhode Island, United States",United States,United States
+1345,"Newport, Rhode Island, United States",United States,United States
+1346,"Providence, Rhode Island, United States",United States,United States
+1347,"Bluffton, South Carolina, United States",United States,United States
+1348,"Charleston, South Carolina, United States",United States,United States
+1349,"Columbia, South Carolina, United States",United States,United States
+1350,"Folly Beach, South Carolina, United States",United States,United States
+1351,"Georgetown, South Carolina, United States",United States,United States
+1352,"Greenville, South Carolina, United States",United States,United States
+1353,"Hilton Head, South Carolina, United States",United States,United States
+1354,"Isle of Palms, South Carolina, United States",United States,United States
+1355,"Myrtle Beach, South Carolina, United States",United States,United States
+1356,"Spartanburg, South Carolina, United States",United States,United States
+1357,"Sullivan's Island, South Carolina, United States",United States,United States
+1358,"Custer, South Dakota, United States",United States,United States
+1359,"Deadwood, South Dakota, United States",United States,United States
+1360,"Hot Springs, South Dakota, United States",United States,United States
+1361,"Keystone, South Dakota, United States",United States,United States
+1362,"Mitchell, South Dakota, United States",United States,United States
+1363,"Pierre, South Dakota, United States",United States,United States
+1364,"Rapid City, South Dakota, United States",United States,United States
+1365,"Sioux Falls, South Dakota, United States",United States,United States
+1366,"Spearfish, South Dakota, United States",United States,United States
+1367,"Wall, South Dakota, United States",United States,United States
+1368,"Bristol, Tennessee, United States",United States,United States
+1369,"Chattanooga, Tennessee, United States",United States,United States
+1370,"Clarksville, Tennessee, United States",United States,United States
+1371,"Franklin, Tennessee, United States",United States,United States
+1372,"Gatlinburg, Tennessee, United States",United States,United States
+1373,"Johnson City, Tennessee, United States",United States,United States
+1374,"Knoxville, Tennessee, United States",United States,United States
+1375,"Lynchburg, Tennessee, United States",United States,United States
+1376,"Memphis, Tennessee, United States",United States,United States
+1377,"Murfreesboro, Tennessee, United States",United States,United States
+1378,"Nashville, Tennessee, United States",United States,United States
+1379,"Pigeon Forge, Tennessee, United States",United States,United States
+1380,"Sevierville, Tennessee, United States",United States,United States
+1381,"Amarillo, Texas, United States",United States,United States
+1382,"Arlington, Texas, United States",United States,United States
+1383,"Austin, Texas, United States",United States,United States
+1384,"College Station, Texas, United States",United States,United States
+1385,"Corpus Christi, Texas, United States",United States,United States
+1386,"Dallas, Texas, United States",United States,United States
+1387,"El Paso, Texas, United States",United States,United States
+1388,"Fort Worth, Texas, United States",United States,United States
+1389,"Fredericksburg, Texas, United States",United States,United States
+1390,"Galveston, Texas, United States",United States,United States
+1391,"Houston, Texas, United States",United States,United States
+1392,"Laredo, Texas, United States",United States,United States
+1393,"Lubbock, Texas, United States",United States,United States
+1394,"Luckenbach, Texas, United States",United States,United States
+1395,"New Braunfels, Texas, United States",United States,United States
+1396,"San Antonio, Texas, United States",United States,United States
+1397,"South Padre Island, Texas, United States",United States,United States
+1398,"Waco, Texas, United States",United States,United States
+1399,"Cruz Bay, U.S. Virgin Islands, United States",United States,United States
+1400,"Frederiksted, U.S. Virgin Islands, United States",United States,United States
+1401,"Kanab, Utah, United States",United States,United States
+1402,"Moab, Utah, United States",United States,United States
+1403,"Ogden, Utah, United States",United States,United States
+1404,"Park City, Utah, United States",United States,United States
+1405,"Provo, Utah, United States",United States,United States
+1406,"Saint George, Utah, United States",United States,United States
+1407,"Salt Lake City, Utah, United States",United States,United States
+1408,"Sandy City, Utah, United States",United States,United States
+1409,"Springdale, Utah, United States",United States,United States
+1410,"Torrey, Utah, United States",United States,United States
+1411,"Brattleboro, Vermont, United States",United States,United States
+1412,"Burlington, Vermont, United States",United States,United States
+1413,"Killington, Vermont, United States",United States,United States
+1414,"Manchester, Vermont, United States",United States,United States
+1415,"Montpelier, Vermont, United States",United States,United States
+1416,"Stowe, Vermont, United States",United States,United States
+1417,"Woodstock, Vermont, United States",United States,United States
+1418,"Alexandria, Virginia, United States",United States,United States
+1419,"Arlington, Virginia, United States",United States,United States
+1420,"Charlottesville, Virginia, United States",United States,United States
+1421,"Chincoteague Island, Virginia, United States",United States,United States
+1422,"Fredericksburg, Virginia, United States",United States,United States
+1423,"Harrisonburg, Virginia, United States",United States,United States
+1424,"Jamestown, Virginia, United States",United States,United States
+1425,"Middleburg, Virginia, United States",United States,United States
+1426,"Norfolk, Virginia, United States",United States,United States
+1427,"Richmond, Virginia, United States",United States,United States
+1428,"Roanoke, Virginia, United States",United States,United States
+1429,"Virginia Beach, Virginia, United States",United States,United States
+1430,"Williamsburg, Virginia, United States",United States,United States
+1431,"Bellevue, Washington, United States",United States,United States
+1432,"Bellingham, Washington, United States",United States,United States
+1433,"Kennewick, Washington, United States",United States,United States
+1434,"Leavenworth, Washington, United States",United States,United States
+1435,"Olympia, Washington, United States",United States,United States
+1436,"Port Angeles, Washington, United States",United States,United States
+1437,"Seattle, Washington, United States",United States,United States
+1438,"Snoqualmie, Washington, United States",United States,United States
+1439,"Spokane, Washington, United States",United States,United States
+1440,"Tacoma, Washington, United States",United States,United States
+1441,"Walla Walla, Washington, United States",United States,United States
+1442,"Beckley, West Virginia, United States",United States,United States
+1443,"Charleston, West Virginia, United States",United States,United States
+1444,"Elkins, West Virginia, United States",United States,United States
+1445,"Fayetteville, West Virginia, United States",United States,United States
+1446,"Harpers Ferry, West Virginia, United States",United States,United States
+1447,"Lewisburg, West Virginia, United States",United States,United States
+1448,"Morgantown, West Virginia, United States",United States,United States
+1449,"Bayfield, Wisconsin, United States",United States,United States
+1450,"Egg Harbor, Wisconsin, United States",United States,United States
+1451,"Fish Creek, Wisconsin, United States",United States,United States
+1452,"Green Bay, Wisconsin, United States",United States,United States
+1453,"La Crosse, Wisconsin, United States",United States,United States
+1454,"Madison, Wisconsin, United States",United States,United States
+1455,"Milwaukee, Wisconsin, United States",United States,United States
+1456,"Sturgeon Bay, Wisconsin, United States",United States,United States
+1457,"Superior, Wisconsin, United States",United States,United States
+1458,"Wisconsin Dells, Wisconsin, United States",United States,United States
+1459,"Casper, Wyoming, United States",United States,United States
+1460,"Cheyenne, Wyoming, United States",United States,United States
+1461,"Cody, Wyoming, United States",United States,United States
+1462,"Jackson, Wyoming, United States",United States,United States
+1463,"Laramie, Wyoming, United States",United States,United States
+1464,"Moran, Wyoming, United States",United States,United States
+1465,"Sheridan, Wyoming, United States",United States,United States
+1466,"Teton Village, Wyoming, United States",United States,United States
+1467,"Carmelo, Uruguay",Uruguay,Uruguay
+1468,"Colonia del Sacramento, Uruguay",Uruguay,Uruguay
+1469,"Montevideo, Uruguay",Uruguay,Uruguay
+1470,"Piriapolis, Uruguay",Uruguay,Uruguay
+1471,"Punta Ballena, Uruguay",Uruguay,Uruguay
+1472,"Punta del Este, Uruguay",Uruguay,Uruguay
+1473,"Bukhara, Uzbekistan",Uzbekistan,Uzbekistan
+1474,"Samarkand, Uzbekistan",Uzbekistan,Uzbekistan
+1475,"Tashkent, Uzbekistan",Uzbekistan,Uzbekistan
+1476,"Port Vila, Vanuatu",Vanuatu,Vanuatu
+1477,"Hanoi, Vietnam",Vietnam,Vietnam
+1478,"Ho Chi Minh City, Vietnam",Vietnam,Vietnam
+1479,"Hoi An, Vietnam",Vietnam,Vietnam
+1480,"Hue, Vietnam",Vietnam,Vietnam
+1481,"Nha Trang, Vietnam",Vietnam,Vietnam
+1482,"Phu Quoc, Vietnam",Vietnam,Vietnam
+1483,"Lusaka, Zambia",Zambia,Zambia
+1484,"Harare, Zimbabwe",Zimbabwe,Zimbabwe
+1485,"Victoria Falls, Zimbabwe",Zimbabwe,Zimbabwe

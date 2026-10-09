@@ -11,6 +11,7 @@ const currencyRoutes = require("./routes/currencyRoutes");
 const countryRoutes = require("./routes/countryRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const communityRoutes = require("./routes/communityRoutes");
+const recommendationRoutes = require("./routes/recommendationRoutes");
 
 connectDB();
 
@@ -38,6 +39,8 @@ app.use("/api/currency", currencyRoutes);
 app.use("/api/budgets", budgetRoutes);
 
 app.use("/api/community", communityRoutes);
+
+app.use("/api/recommendations", recommendationRoutes);
 app.get("/", (req, res) => {
   res.json({
     success: true,

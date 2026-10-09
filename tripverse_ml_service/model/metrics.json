@@ -1,0 +1,9 @@
+{
+  "model": "Destination-aware logistic ranking classifier",
+  "training_positive_samples": 100000,
+  "training_negative_samples": 100000,
+  "features_per_destination": 53,
+  "destinations": 1486,
+  "evaluation_roc_auc": 0.5939,
+  "note": "Evaluation used held-out positive interactions and five random unseen destinations per user."
+}
