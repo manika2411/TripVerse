@@ -16,8 +16,17 @@ MAPPING_PATH = os.path.join(DATA_DIR, "destination_mapping.csv")
 
 app = FastAPI(
     title="TripVerse Recommendation API",
-    version="1.0.0"
+    version="1.1.0"
 )
+
+if not os.path.exists(WEIGHTS_PATH):
+    raise RuntimeError(f"Model weights not found: {WEIGHTS_PATH}")
+
+if not os.path.exists(SCHEMA_PATH):
+    raise RuntimeError(f"Model schema not found: {SCHEMA_PATH}")
+
+if not os.path.exists(MAPPING_PATH):
+    raise RuntimeError(f"Destination mapping not found: {MAPPING_PATH}")
 
 weights = np.load(WEIGHTS_PATH)
 
@@ -32,10 +41,24 @@ destination_mapping = pd.read_csv(MAPPING_PATH)
 FEATURE_NAMES = schema["feature_names"]
 FEATURE_COUNT = len(FEATURE_NAMES)
 
+required_columns = {
+    "destination_id",
+    "destination",
+    "api_country"
+}
+
+missing_columns = required_columns - set(destination_mapping.columns)
+
+if missing_columns:
+    raise RuntimeError(
+        f"Destination mapping is missing columns: {sorted(missing_columns)}"
+    )
+
 if coef.shape[1] != len(destination_mapping) * FEATURE_COUNT:
     raise RuntimeError(
-        f"Model shape mismatch. Expected {len(destination_mapping) * FEATURE_COUNT} "
-        f"features but found {coef.shape[1]}."
+        f"Model shape mismatch. Expected "
+        f"{len(destination_mapping) * FEATURE_COUNT} features "
+        f"but found {coef.shape[1]}."
     )
 
 COEF_MATRIX = coef.reshape(
@@ -116,13 +139,101 @@ FIELD_OPTIONS = {
     }
 }
 
-LABEL_TO_CODE = {}
-
-for field, options in FIELD_OPTIONS.items():
-    LABEL_TO_CODE[field] = {
-        str(label).lower(): str(code)
+LABEL_TO_CODE = {
+    field: {
+        str(label).strip().lower(): str(code)
         for code, label in options.items()
     }
+    for field, options in FIELD_OPTIONS.items()
+}
+
+REGION_COUNTRIES = {
+    "e": {
+        "Albania", "Andorra", "Austria", "Belarus", "Belgium",
+        "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus",
+        "Czechia", "Denmark", "Estonia", "Finland", "France",
+        "Germany", "Greece", "Hungary", "Iceland", "Ireland",
+        "Italy", "Kosovo", "Latvia", "Liechtenstein", "Lithuania",
+        "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro",
+        "Netherlands", "North Macedonia", "Norway", "Poland",
+        "Portugal", "Romania", "Russia", "San Marino", "Serbia",
+        "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland",
+        "Ukraine", "United Kingdom", "Vatican City", "Türkiye"
+    },
+    "n": {
+        "Canada", "United States", "Mexico"
+    },
+    "c": {
+        "Antigua and Barbuda", "Bahamas", "Barbados", "Cuba",
+        "Dominica", "Dominican Republic", "Grenada", "Haiti",
+        "Jamaica", "Saint Kitts and Nevis", "Saint Lucia",
+        "Saint Vincent and the Grenadines", "Trinidad and Tobago",
+        "Puerto Rico"
+    },
+    "a": {
+        "Afghanistan", "Armenia", "Azerbaijan", "Bahrain",
+        "Bangladesh", "Bhutan", "Brunei", "Cambodia", "China",
+        "Georgia", "India", "Indonesia", "Iran", "Iraq", "Israel",
+        "Japan", "Jordan", "Kazakhstan", "Kuwait", "Kyrgyzstan",
+        "Laos", "Lebanon", "Malaysia", "Maldives", "Mongolia",
+        "Myanmar", "Nepal", "North Korea", "Oman", "Pakistan",
+        "Palestine", "Philippines", "Qatar", "Saudi Arabia",
+        "Singapore", "South Korea", "Sri Lanka", "Syria",
+        "Taiwan", "Tajikistan", "Thailand", "Timor-Leste",
+        "Turkmenistan", "United Arab Emirates", "Uzbekistan",
+        "Vietnam", "Yemen", "Türkiye", "Russia"
+    },
+    "s": {
+        "Argentina", "Bolivia", "Brazil", "Chile", "Colombia",
+        "Ecuador", "Guyana", "Paraguay", "Peru", "Suriname",
+        "Uruguay", "Venezuela"
+    },
+    "m": {
+        "Bahrain", "Egypt", "Iran", "Iraq", "Israel", "Jordan",
+        "Kuwait", "Lebanon", "Oman", "Palestine", "Qatar",
+        "Saudi Arabia", "Syria", "Türkiye",
+        "United Arab Emirates", "Yemen"
+    },
+    "f": {
+        "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso",
+        "Burundi", "Cabo Verde", "Cameroon", "Central African Republic",
+        "Chad", "Comoros", "Democratic Republic of the Congo",
+        "Republic of the Congo", "Djibouti", "Egypt", "Equatorial Guinea",
+        "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana",
+        "Guinea", "Guinea-Bissau", "Ivory Coast", "Kenya", "Lesotho",
+        "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania",
+        "Mauritius", "Morocco", "Mozambique", "Namibia", "Niger",
+        "Nigeria", "Rwanda", "Senegal", "Seychelles", "Sierra Leone",
+        "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania",
+        "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe"
+    },
+    "o": {
+        "Australia", "Fiji", "Kiribati", "Marshall Islands",
+        "Micronesia", "Nauru", "New Zealand", "Palau",
+        "Papua New Guinea", "Samoa", "Solomon Islands",
+        "Tonga", "Tuvalu", "Vanuatu"
+    }
+}
+
+COUNTRY_ALIASES = {
+    "united states of america": "united states",
+    "usa": "united states",
+    "uk": "united kingdom",
+    "czech republic": "czechia",
+    "turkey": "türkiye",
+    "uae": "united arab emirates",
+    "ivory coast": "ivory coast",
+    "viet nam": "vietnam",
+    "the bahamas": "bahamas"
+}
+
+NORMALIZED_REGION_COUNTRIES = {
+    region: {
+        COUNTRY_ALIASES.get(country.strip().lower(), country.strip().lower())
+        for country in countries
+    }
+    for region, countries in REGION_COUNTRIES.items()
+}
 
 
 class RecommendationRequest(BaseModel):
@@ -139,6 +250,11 @@ class RecommendationRequest(BaseModel):
     top_k: int = Field(default=10, ge=1, le=50)
     allowed_countries: Optional[List[str]] = None
     exclude_destinations: List[str] = Field(default_factory=list)
+
+
+def normalize_country(country):
+    country = str(country).strip().lower()
+    return COUNTRY_ALIASES.get(country, country)
 
 
 def normalize_value(field, value):
@@ -173,10 +289,8 @@ def normalize_list(field, values):
 
 def build_feature_vector(request):
     vector = np.zeros(FEATURE_COUNT, dtype=np.float32)
-
     feature_index = {
-        name: index
-        for index, name in enumerate(FEATURE_NAMES)
+        name: index for index, name in enumerate(FEATURE_NAMES)
     }
 
     form_a_values = request.form_a
@@ -184,19 +298,14 @@ def build_feature_vector(request):
     if isinstance(form_a_values, str):
         form_a_values = [form_a_values]
 
-    form_a_values = normalize_list("form_a", form_a_values)
-
-    for value in form_a_values:
+    for value in normalize_list("form_a", form_a_values):
         name = f"form_a_{value}"
         if name in feature_index:
             vector[feature_index[name]] = 1.0
 
     for field in ["form_f", "form_g", "form_rr"]:
-        values = normalize_list(field, getattr(request, field))
-
-        for value in values:
+        for value in normalize_list(field, getattr(request, field)):
             name = f"{field}_{value}"
-
             if name in feature_index:
                 vector[feature_index[name]] = 1.0
 
@@ -207,7 +316,6 @@ def build_feature_vector(request):
             value = "missing"
 
         name = f"{field}_{value}"
-
         if name in feature_index:
             vector[feature_index[name]] = 1.0
 
@@ -219,8 +327,23 @@ def build_feature_vector(request):
     return vector
 
 
-def normalize_country(country):
-    return str(country).strip().lower()
+def filter_by_regions(result, selected_regions):
+    if not selected_regions:
+        return result
+
+    allowed_countries = set()
+
+    for region in selected_regions:
+        allowed_countries.update(
+            NORMALIZED_REGION_COUNTRIES.get(region, set())
+        )
+
+    if not allowed_countries:
+        return result.iloc[0:0]
+
+    normalized_countries = result["api_country"].map(normalize_country)
+
+    return result[normalized_countries.isin(allowed_countries)]
 
 
 @app.get("/")
@@ -246,11 +369,13 @@ def health():
 def recommend(request: RecommendationRequest):
     try:
         vector = build_feature_vector(request)
-
         scores = COEF_MATRIX @ vector + MODEL_INTERCEPT
 
         result = destination_mapping.copy()
         result["score"] = scores
+
+        selected_regions = normalize_list("form_rr", request.form_rr)
+        result = filter_by_regions(result, selected_regions)
 
         if request.allowed_countries:
             allowed = {
@@ -260,7 +385,6 @@ def recommend(request: RecommendationRequest):
 
             result = result[
                 result["api_country"]
-                .astype(str)
                 .map(normalize_country)
                 .isin(allowed)
             ]
@@ -274,7 +398,8 @@ def recommend(request: RecommendationRequest):
             result = result[
                 ~result["destination"]
                 .astype(str)
-                .map(lambda x: x.strip().lower())
+                .str.strip()
+                .str.lower()
                 .isin(excluded)
             ]
 
@@ -284,7 +409,6 @@ def recommend(request: RecommendationRequest):
         ).head(request.top_k)
 
         recommendations = []
-
         score_values = result["score"].to_numpy()
 
         if len(score_values) > 0:
@@ -293,8 +417,7 @@ def recommend(request: RecommendationRequest):
 
             if maximum > minimum:
                 normalized_scores = (
-                    (score_values - minimum)
-                    / (maximum - minimum)
+                    (score_values - minimum) / (maximum - minimum)
                 )
             else:
                 normalized_scores = np.ones(len(score_values))
@@ -308,8 +431,7 @@ def recommend(request: RecommendationRequest):
                 "country": str(row["api_country"]),
                 "score": round(float(row["score"]), 6),
                 "matchScore": round(
-                    float(normalized_scores[index] * 100),
-                    2
+                    float(normalized_scores[index] * 100), 2
                 )
             })
 
