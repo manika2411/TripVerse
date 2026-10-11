@@ -1,18 +1,26 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout, initializing } = useContext(AuthContext);
+
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isHome = location.pathname === "/";
+  const isLoggedIn = Boolean(user);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 24);
+
     handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -21,28 +29,36 @@ function Navbar() {
   }, [location.pathname]);
 
   const navItems = [
-    { name: "HOME", path: "/" },
-    { name: "EXPLORE", path: "/explore" },
-    { name: "PLANNER", path: "/planner" },
-    { name: "BUDGET", path: "/budget-planner" },
-    { name: "DASHBOARD", path: "/dashboard" },
-    { name: "COMMUNITY", path: "/community" },
-    { name: "ABOUT", path: "/about" },
-    { name: "CONTACT", path: "/contact" },
+    { name: "Home", path: "/" },
+    { name: "Explore", path: "/explore" },
+    { name: "Planner", path: "/planner" },
+    { name: "Budget", path: "/budget-planner" },
+    ...(isLoggedIn
+      ? [
+          { name: "Dashboard", path: "/dashboard" },
+          { name: "Recommendations", path: "/recommendations" },
+          { name: "Community", path: "/community" },
+        ]
+      : []),
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    logout();
     setMenuOpen(false);
-    navigate("/login");
+    navigate("/", { replace: true });
   };
 
   const lightMode = !isHome || scrolled;
 
+  const buttonClass = lightMode
+    ? "border-slate-300 bg-white/70 text-slate-800 hover:border-cyan-300 hover:text-cyan-600"
+    : "border-white/25 bg-white/5 text-white hover:border-cyan-300 hover:text-cyan-300";
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-[1000] w-full border-b backdrop-blur-xl transition-all duration-500 ease-out ${
+      className={`fixed inset-x-0 top-0 z-[1000] w-full border-b backdrop-blur-xl transition-all duration-500 ${
         lightMode
           ? "border-slate-200/70 bg-white/90 text-slate-900 shadow-[0_8px_30px_rgba(15,23,42,0.08)]"
           : "border-white/10 bg-slate-950/35 text-white"
@@ -56,13 +72,13 @@ function Navbar() {
           className="group flex shrink-0 items-center border-0 bg-transparent p-0 leading-none"
         >
           <span
-            className={`text-[32px] font-extrabold tracking-[-2px] transition-colors duration-300 sm:text-[36px] ${
+            className={`text-[32px] font-extrabold tracking-[-2px] sm:text-[36px] ${
               lightMode ? "text-slate-950" : "text-white"
             }`}
           >
             Trip
           </span>
-          <span className="text-[32px] font-extrabold tracking-[-2px] text-cyan-500 transition-colors duration-300 group-hover:text-cyan-400 sm:text-[36px]">
+          <span className="text-[32px] font-extrabold tracking-[-2px] text-cyan-500 transition-colors group-hover:text-cyan-400 sm:text-[36px]">
             Verse
           </span>
         </button>
@@ -73,7 +89,7 @@ function Navbar() {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `relative whitespace-nowrap px-3 py-3 text-[14px] font-bold tracking-[0.04em] transition-colors duration-300 2xl:px-3.5 2xl:text-[15px] ${
+                `relative whitespace-nowrap px-3 py-3 text-[14px] font-bold tracking-[0.04em] transition-colors 2xl:px-3.5 2xl:text-[15px] ${
                   isActive
                     ? "text-cyan-500"
                     : lightMode
@@ -97,30 +113,54 @@ function Navbar() {
         </nav>
 
         <div className="ml-auto hidden shrink-0 items-center gap-3 xl:flex">
-          <button
-            type="button"
-            onClick={() => navigate("/profile")}
-            className={`rounded-full px-4 py-3 text-[14px] font-bold transition-colors duration-300 ${
-              location.pathname === "/profile"
-                ? "text-cyan-500"
-                : lightMode
-                  ? "text-slate-700 hover:text-cyan-500"
-                  : "text-white/85 hover:text-white"
-            }`}
-          >
-            PROFILE
-          </button>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className={`rounded-full border px-5 py-3 text-[14px] font-bold transition-all duration-300 ${
-              lightMode
-                ? "border-slate-300 bg-white/70 text-slate-800 hover:border-cyan-300 hover:text-cyan-600"
-                : "border-white/25 bg-white/5 text-white hover:border-cyan-300 hover:text-cyan-300"
-            }`}
-          >
-            LOGOUT
-          </button>
+          {!initializing &&
+            (isLoggedIn ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate("/profile")}
+                  className={`rounded-full px-4 py-3 text-sm font-bold transition-colors ${
+                    location.pathname === "/profile"
+                      ? "text-cyan-500"
+                      : lightMode
+                        ? "text-slate-700 hover:text-cyan-500"
+                        : "text-white/85 hover:text-white"
+                  }`}
+                >
+                  Profile
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className={`rounded-full border px-5 py-3 text-sm font-bold transition-all ${buttonClass}`}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className={`rounded-full px-4 py-3 text-sm font-bold ${
+                    lightMode
+                      ? "text-slate-700 hover:text-cyan-600"
+                      : "text-white hover:text-cyan-300"
+                  }`}
+                >
+                  Login
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/signup")}
+                  className="rounded-full bg-cyan-500 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-400"
+                >
+                  Sign Up
+                </button>
+              </>
+            ))}
         </div>
 
         <button
@@ -142,8 +182,10 @@ function Navbar() {
 
       <div
         className={`overflow-hidden border-t transition-all duration-300 xl:hidden ${
-          lightMode ? "border-slate-200 bg-white/95" : "border-white/10 bg-slate-950/95"
-        } ${menuOpen ? "max-h-[620px] opacity-100" : "max-h-0 opacity-0"}`}
+          lightMode
+            ? "border-slate-200 bg-white/95"
+            : "border-white/10 bg-slate-950/95"
+        } ${menuOpen ? "max-h-[720px] opacity-100" : "max-h-0 opacity-0"}`}
       >
         <nav className="mx-auto flex max-w-3xl flex-col gap-1 px-6 py-4">
           {navItems.map((item) => (
@@ -164,22 +206,48 @@ function Navbar() {
             </NavLink>
           ))}
 
-          <button
-            type="button"
-            onClick={() => navigate("/profile")}
-            className={`rounded-xl px-4 py-3 text-left text-sm font-bold ${
-              lightMode ? "text-slate-700" : "text-white/80"
-            }`}
-          >
-            PROFILE
-          </button>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-xl px-4 py-3 text-left text-sm font-bold text-red-500"
-          >
-            LOGOUT
-          </button>
+          {!initializing &&
+            (isLoggedIn ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate("/profile")}
+                  className={`rounded-xl px-4 py-3 text-left text-sm font-bold ${
+                    lightMode ? "text-slate-700" : "text-white/80"
+                  }`}
+                >
+                  Profile
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="rounded-xl px-4 py-3 text-left text-sm font-bold text-red-500"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className={`rounded-xl px-4 py-3 text-left text-sm font-bold ${
+                    lightMode ? "text-slate-700" : "text-white/80"
+                  }`}
+                >
+                  Login
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/signup")}
+                  className="rounded-xl px-4 py-3 text-left text-sm font-bold text-cyan-600"
+                >
+                  Sign Up
+                </button>
+              </>
+            ))}
         </nav>
       </div>
     </header>

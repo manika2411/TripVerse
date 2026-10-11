@@ -1,9 +1,10 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function ProtectedRoutes({ children }) {
-  const { user, initializing } = useContext(AuthContext);
+  const { user, token, initializing } = useContext(AuthContext);
+  const location = useLocation();
 
   if (initializing) {
     return (
@@ -13,8 +14,14 @@ function ProtectedRoutes({ children }) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!user || !token) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      />
+    );
   }
 
   return children;

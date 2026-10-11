@@ -21,116 +21,134 @@ function About() {
   ];
 
   return (
-    <main className="relative min-h-screen pt-36 pb-24 px-6 overflow-hidden">
-      <div className="absolute inset-0 trip-grid opacity-30" />
+    <main className="relative min-h-screen overflow-hidden px-5 pb-24 pt-32 sm:px-8 md:px-10 md:pt-36">
+      <div className="trip-grid pointer-events-none absolute inset-0 opacity-30" />
 
-      <div className="relative z-10 max-w-[1400px] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
+      <div className="relative z-10 mx-auto w-full max-w-[1400px]">
+        <motion.section
+          initial={{ opacity: 0, y: 35 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="w-full max-w-5xl"
         >
-          <p className="text-cyan-600 uppercase tracking-[6px] text-sm mb-5">
+          <p className="mb-5 text-xs font-bold uppercase tracking-[0.35em] text-cyan-600 sm:text-sm sm:tracking-[0.5em]">
             About TripVerse
           </p>
 
-          <h1 className="text-6xl md:text-8xl font-black leading-[0.9]">
+          <h1 className="text-4xl font-black leading-[1.05] tracking-tight text-slate-950 sm:text-6xl md:text-7xl lg:text-8xl">
             Travel Beyond
-            <span className="block trip-gradient-text">Expectations.</span>
+            <span className="trip-gradient-text mt-2 block">
+              Expectations.
+            </span>
           </h1>
 
-          <p className="text-slate-500 text-lg md:text-xl leading-8 mt-8 max-w-3xl">
+          <p className="mt-7 max-w-3xl text-base leading-7 text-slate-500 sm:text-lg sm:leading-8 md:text-xl">
             TripVerse is a modern travel planning platform built around
             destination discovery, itinerary organization, budget planning and
             immersive travel experiences.
           </p>
-        </motion.div>
+        </motion.section>
 
-        <div className="grid lg:grid-cols-3 gap-6 mt-20">
+        <section className="mt-16 grid gap-5 sm:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;
 
             return (
-              <motion.div
+              <motion.article
                 key={feature.title}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 35 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{
-                  duration: 0.7,
-                  delay: index * 0.1,
+                  duration: 0.65,
+                  delay: index * 0.12,
+                  ease: "easeOut",
                 }}
-                className="trip-card rounded-[32px] p-8"
+                whileHover={{ y: -7 }}
+                className="trip-card rounded-3xl p-6 transition-shadow duration-300 hover:shadow-xl hover:shadow-slate-200/50 sm:p-8 md:rounded-[32px]"
               >
-                <div
-                  className="
-                  w-14
-                  h-14
-                  rounded-2xl
-                  bg-cyan-300/10
-                  border
-                  border-cyan-300/10
-                  flex
-                  items-center
-                  justify-center
-                  text-cyan-600
-                  text-xl
-                "
+                <motion.div
+                  whileHover={{ rotate: 8, scale: 1.08 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-xl text-cyan-600"
                 >
                   <Icon />
-                </div>
+                </motion.div>
 
-                <h2 className="text-2xl font-bold mt-8">{feature.title}</h2>
+                <h2 className="mt-7 text-2xl font-bold tracking-tight text-slate-950">
+                  {feature.title}
+                </h2>
 
-                <p className="text-slate-500 mt-4 leading-7">{feature.text}</p>
-              </motion.div>
+                <p className="mt-4 leading-7 text-slate-500">
+                  {feature.text}
+                </p>
+              </motion.article>
             );
           })}
-        </div>
+        </section>
 
-        <div
-          className="
-          mt-20
-          rounded-[40px]
-          overflow-hidden
-          relative
-          min-h-[420px]
-        "
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative mt-16 min-h-[420px] w-full overflow-hidden rounded-[32px] shadow-2xl shadow-slate-900/10 sm:mt-20 sm:rounded-[40px] md:min-h-[480px]"
         >
           <img
             src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=85&w=1800"
-            alt="Mountain landscape"
-            className="absolute inset-0 w-full h-full object-cover"
+            alt="Mountain landscape surrounded by nature"
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
 
-          <div
-            className="
-            absolute
-            inset-0
-            bg-gradient-to-r
-            from-slate-950/80
-            via-slate-950/35
-            to-transparent
-          "
-          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/65 to-slate-950/25" />
 
-          <div className="relative z-10 p-10 md:p-16 max-w-2xl">
-            <p className="text-cyan-600 uppercase tracking-[5px] text-sm">
-              The idea
-            </p>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-slate-950/10" />
 
-            <h2 className="text-4xl md:text-6xl font-black mt-4">
-              Your next story
-              <span className="block text-cyan-300">starts here.</span>
-            </h2>
+          <div className="relative z-10 flex min-h-[420px] items-center px-6 py-12 sm:px-10 sm:py-14 md:min-h-[480px] md:px-16 lg:px-20">
+            <motion.div
+              initial={{ opacity: 0, x: -25 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
+              className="w-full max-w-3xl"
+            >
+              <p className="mb-5 text-xs font-bold uppercase tracking-[0.35em] text-cyan-300 sm:text-sm sm:tracking-[0.5em]">
+                The idea
+              </p>
 
-            <p className="text-slate-300 leading-7 mt-6">
-              TripVerse brings discovery and planning together so the journey
-              feels just as exciting as the destination.
-            </p>
+              <h2 className="max-w-full break-words text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                Your next story
+                <span className="mt-2 block text-cyan-300">
+                  starts here.
+                </span>
+              </h2>
+
+              <p className="mt-6 max-w-xl text-base leading-7 text-slate-200 sm:text-lg sm:leading-8">
+                TripVerse brings discovery and planning together so the journey
+                feels just as exciting as the destination.
+              </p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="mt-8"
+              >
+                <motion.a
+                  href="/explore"
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-3 rounded-xl bg-cyan-400 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/20 transition-colors hover:bg-cyan-300 sm:text-base"
+                >
+                  Explore destinations
+                  <span aria-hidden="true">→</span>
+                </motion.a>
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
+        </motion.section>
       </div>
     </main>
   );
