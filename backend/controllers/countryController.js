@@ -1,8 +1,36 @@
 const {
+  CountryInputError,
+  CountryNotFoundError,
   getCountries,
   getCountryByCode,
   getCountryByName,
 } = require("../services/countryService");
+
+// Anything that is not "bad input" or "not found" is OUR problem (missing API
+// key, upstream outage, ...). Log the details for developers, but never send
+// them to the browser.
+const sendLookupError = (res, error, label) => {
+  if (error instanceof CountryInputError) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  if (error instanceof CountryNotFoundError) {
+    return res.status(404).json({
+      success: false,
+      message: "Country not found",
+    });
+  }
+
+  console.error(`${label}:`, error);
+
+  return res.status(502).json({
+    success: false,
+    message: "Country service is temporarily unavailable",
+  });
+};
 
 const fetchCountries = async (req, res) => {
   try {
@@ -16,51 +44,36 @@ const fetchCountries = async (req, res) => {
   } catch (error) {
     console.error("Country API error:", error);
 
-    res.status(500).json({
+    res.status(502).json({
       success: false,
-      message: "Unable to fetch countries",
-      error: error.message,
+      message: "Unable to fetch countries right now",
     });
   }
 };
 
 const fetchCountryByCode = async (req, res) => {
   try {
-    const { code } = req.params;
-
-    const country = await getCountryByCode(code);
+    const country = await getCountryByCode(req.params.code);
 
     res.status(200).json({
       success: true,
       data: country,
     });
   } catch (error) {
-    console.error("Country lookup error:", error);
-
-    res.status(404).json({
-      success: false,
-      message: error.message,
-    });
+    sendLookupError(res, error, "Country lookup error");
   }
 };
 
 const fetchCountryByName = async (req, res) => {
   try {
-    const { name } = req.params;
-
-    const country = await getCountryByName(name);
+    const country = await getCountryByName(req.params.name);
 
     res.status(200).json({
       success: true,
       data: country,
     });
   } catch (error) {
-    console.error("Country name lookup error:", error);
-
-    res.status(404).json({
-      success: false,
-      message: error.message,
-    });
+    sendLookupError(res, error, "Country name lookup error");
   }
 };
 

@@ -4,7 +4,15 @@ const router = express.Router();
 
 router.get("/rate", async (req, res) => {
   try {
-    const { from, to } = req.query;
+    const from = String(req.query.from || "").trim().toUpperCase();
+    const to = String(req.query.to || "").trim().toUpperCase();
+
+    if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) {
+      return res.status(400).json({
+        success: false,
+        message: "from and to must be 3-letter currency codes",
+      });
+    }
 
     if (!from || !to) {
       return res.status(400).json({

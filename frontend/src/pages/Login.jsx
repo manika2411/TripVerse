@@ -1,6 +1,8 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import { pageTransition } from "../utils/animations";
 
 function Login() {
   const navigate = useNavigate();
@@ -76,7 +78,8 @@ function Login() {
       login(data.user, data.token);
 
       // Go to dashboard after successful login
-      navigate("/dashboard");
+      const destination = location.state?.from?.pathname || "/dashboard";
+      navigate(destination, { replace: true });
     } catch (err) {
       console.error("Login error:", err);
 
@@ -87,16 +90,16 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-6 py-12">
+    <main className="site-light-page flex min-h-screen items-center justify-center px-6 pb-16 pt-32">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-slate-200">
+        <motion.div {...pageTransition} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl md:p-10">
           {/* Header */}
           <div className="mb-8">
-            <p className="text-cyan-500 uppercase tracking-[4px] text-sm font-semibold mb-3">
+            <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
               Welcome Back
             </p>
 
-            <h1 className="text-4xl font-extrabold text-slate-900">Login</h1>
+            <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950">Login</h1>
 
             <p className="text-slate-500 mt-3">
               Continue your journey with TripVerse.
@@ -173,9 +176,9 @@ function Login() {
               Create Account
             </Link>
           </p>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </main>
   );
 }
 

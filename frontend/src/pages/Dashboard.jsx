@@ -1,30 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { getDashboardData } from "../services/dashboardApi";
+import PageLoader from "../components/PageLoader";
+import EditBudgetModal from "../components/EditBudgetModal";
+import { deleteBudget } from "../services/budgetApi";
+import { sumExpenses } from "../utils/budget";
+import { formatMoney, isValidCurrencyCode } from "../utils/currency";
+import {
+  alertMotion,
+  buttonPress,
+  cardHover,
+  fadeUp,
+  listItem,
+  pageTransition,
+  progressBar,
+} from "../utils/animations";
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-};
+/**
+ * Single place where a saved budget becomes display numbers.
+ * `used` is always summed from the individual expense fields (falling back to
+ * the stored total only for records that have no breakdown), and `remaining`
+ * is always budget - used. Nothing is trusted from a stored "remaining" value.
+ */
+const getBudgetFigures = (item) => {
+  const budget = Number(item.budget) || 0;
 
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    y: 30,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
+  const used =
+    item.expenses && typeof item.expenses === "object"
+      ? sumExpenses(item.expenses)
+      : Number(item.totalExpenses) || 0;
+
+  const currency = isValidCurrencyCode(item.currency)
+    ? item.currency.trim().toUpperCase()
+    : null;
+
+  return { budget, used, remaining: budget - used, currency };
 };
 
 function Dashboard() {
@@ -32,6 +43,34 @@ function Dashboard() {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState(null);
+  const [notice, setNotice] = useState("");
+
+  const showNotice = (text) => {
+    setNotice(text);
+    window.setTimeout(() => setNotice(""), 3500);
+  };
+
+  const handleSaved = (updated) => {
+    setBudgets((prev) => {
+      const exists = prev.some((b) => b._id === updated._id);
+      return exists
+        ? prev.map((b) => (b._id === updated._id ? updated : b))
+        : [updated, ...prev];
+    });
+    setEditing(null);
+    showNotice(`${updated.destination || "Budget"} updated successfully.`);
+  };
+
+  const handleDelete = async (item) => {
+    try {
+      await deleteBudget(item._id);
+      setBudgets((prev) => prev.filter((b) => b._id !== item._id));
+      showNotice(`${item.destination || "Budget"} deleted.`);
+    } catch (err) {
+      setError(err.message || "Failed to delete budget.");
+    }
+  };
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -42,7 +81,6 @@ function Dashboard() {
         const data = await getDashboardData();
 
         setBudgets(Array.isArray(data.budgets) ? data.budgets : []);
-
         setTrips(Array.isArray(data.trips) ? data.trips : []);
       } catch (err) {
         console.error("Dashboard error:", err);
@@ -55,447 +93,410 @@ function Dashboard() {
     loadDashboard();
   }, []);
 
-  const totalBudget = budgets.reduce(
-    (sum, item) => sum + Number(item.budget || 0),
-    0,
-  );
+  // Totals are kept per currency. Adding 500 MXN to 3,000 EUR would produce a
+  // meaningless number, so each currency gets its own line.
+  const totalsByCurrency = useMemo(() => {
+    const groups = new Map();
 
-  const totalExpenses = budgets.reduce(
-    (sum, item) => sum + Number(item.totalExpenses || 0),
-    0,
-  );
+    budgets.forEach((item) => {
+      const { budget, used, remaining, currency } = getBudgetFigures(item);
+      const key = currency || "";
+      const group = groups.get(key) || {
+        currency,
+        budget: 0,
+        used: 0,
+        remaining: 0,
+      };
 
-  const remainingBudget = budgets.reduce((sum, item) => {
-    const budget = Number(item.budget || 0);
-    const expenses = Number(item.totalExpenses || 0);
+      group.budget += budget;
+      group.used += used;
+      group.remaining += remaining;
+      groups.set(key, group);
+    });
 
-    return (
-      sum +
-      Number(
-        item.remainingBudget !== undefined
-          ? item.remainingBudget
-          : budget - expenses,
-      )
-    );
-  }, 0);
+    return [...groups.values()];
+  }, [budgets]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-100 pt-28 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="w-12 h-12 border-4 border-cyan-200 border-t-cyan-500 rounded-full mx-auto mb-5"
-          />
-
-          <p className="text-slate-700 font-semibold">
-            Loading your dashboard...
-          </p>
-        </motion.div>
-      </div>
-    );
+    return <PageLoader message="Loading your dashboard..." />;
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 relative overflow-hidden pt-28 pb-16">
-      <div className="absolute top-20 left-0 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl pointer-events-none" />
+    <main className="site-light-page px-6 pb-16 pt-32">
+      <div className="pointer-events-none absolute left-0 top-20 h-96 w-96 rounded-full bg-cyan-200/20 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-80 h-[500px] w-[500px] rounded-full bg-blue-200/20 blur-3xl" />
 
-      <div className="absolute top-80 right-0 w-[500px] h-[500px] bg-blue-200/20 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="mb-10"
-        >
-          <p className="text-cyan-500 uppercase tracking-[5px] text-sm font-bold">
-            TRIPVERSE
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <motion.div {...pageTransition} className="mb-10">
+          <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
+            TripVerse
           </p>
-
-          <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 mt-2">
+          <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
             Your Dashboard
           </h1>
-
-          <p className="text-slate-500 text-lg mt-4">
+          <p className="mt-4 text-lg text-slate-500">
             Manage your trips, budgets and travel plans.
           </p>
         </motion.div>
 
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 border border-red-200 text-red-600 rounded-2xl p-5 mb-8"
+            {...alertMotion}
+            className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-600"
           >
             <p className="font-semibold">Something went wrong</p>
-
-            <p className="text-sm mt-1">{error}</p>
+            <p className="mt-1 text-sm">{error}</p>
           </motion.div>
         )}
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"
-        >
-          <motion.div
-            variants={itemVariants}
-            whileHover={{ y: -6, scale: 1.01 }}
-            className="bg-white rounded-3xl p-7 shadow-sm border border-slate-200"
-          >
-            <p className="text-slate-500 text-sm font-medium">Total Budget</p>
-
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-4xl font-extrabold text-slate-900 mt-2"
+        <AnimatePresence>
+          {notice && (
+            <motion.div
+              {...alertMotion}
+              role="status"
+              className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-700"
             >
-              {totalBudget.toLocaleString()}
-            </motion.h2>
+              {notice}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-            <p className="text-slate-400 text-sm mt-2">
-              {budgets.length} saved budget
-              {budgets.length !== 1 ? "s" : ""}
-            </p>
-          </motion.div>
+        <div className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <StatCard
+            index={0}
+            label="Total Budget"
+            groups={totalsByCurrency}
+            field="budget"
+            footnote={`${budgets.length} saved budget${budgets.length !== 1 ? "s" : ""}`}
+          />
+          <StatCard
+            index={1}
+            label="Total Expenses"
+            groups={totalsByCurrency}
+            field="used"
+            footnote="Planned travel expenses"
+          />
+          <StatCard
+            index={2}
+            label="Remaining Budget"
+            groups={totalsByCurrency}
+            field="remaining"
+            footnote="Available across your budgets"
+            colorByValue
+          />
+        </div>
 
-          <motion.div
-            variants={itemVariants}
-            whileHover={{ y: -6, scale: 1.01 }}
-            className="bg-white rounded-3xl p-7 shadow-sm border border-slate-200"
-          >
-            <p className="text-slate-500 text-sm font-medium">Total Expenses</p>
-
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-4xl font-extrabold text-slate-900 mt-2"
-            >
-              {totalExpenses.toLocaleString()}
-            </motion.h2>
-
-            <p className="text-slate-400 text-sm mt-2">
-              Planned travel expenses
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={itemVariants}
-            whileHover={{ y: -6, scale: 1.01 }}
-            className="bg-white rounded-3xl p-7 shadow-sm border border-slate-200"
-          >
-            <p className="text-slate-500 text-sm font-medium">
-              Remaining Budget
-            </p>
-
-            <motion.h2
-              initial={{ opacity: 0, scale: 0.7 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                delay: 0.6,
-                duration: 0.5,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="text-4xl font-extrabold text-emerald-600 mt-2"
-            >
-              {remainingBudget.toLocaleString()}
-            </motion.h2>
-
-            <p className="text-slate-400 text-sm mt-2">
-              Available across your budgets
-            </p>
-          </motion.div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           <motion.section
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.35,
-            }}
-            className="bg-white rounded-3xl p-7 shadow-sm border border-slate-200"
+            {...fadeUp}
+            className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">
                   Saved Budgets
                 </h2>
-
-                <p className="text-slate-500 text-sm mt-1">
-                  Your travel budgets
-                </p>
+                <p className="mt-1 text-sm text-slate-500">Your travel budgets</p>
               </div>
 
-              <Link
-                to="/budget-planner"
-                className="bg-cyan-400 hover:bg-cyan-300 text-slate-900 px-5 py-3 rounded-xl font-bold transition-all hover:-translate-y-1"
-              >
-                Add Budget
-              </Link>
+              <motion.div {...buttonPress}>
+                <Link
+                  to="/budget-planner"
+                  className="inline-block rounded-xl bg-cyan-400 px-5 py-3 font-bold text-slate-900 transition-colors hover:bg-cyan-300"
+                >
+                  Add Budget
+                </Link>
+              </motion.div>
             </div>
 
             {budgets.length === 0 ? (
               <div className="py-12 text-center">
-                <div className="text-5xl mb-4">💰</div>
-
+                <div className="mb-4 text-5xl">💰</div>
                 <p className="text-slate-500">No saved budgets yet.</p>
-
                 <Link
                   to="/budget-planner"
-                  className="inline-block mt-4 text-cyan-600 font-semibold"
+                  className="mt-4 inline-block font-semibold text-cyan-600"
                 >
                   Create your first budget →
                 </Link>
               </div>
             ) : (
               <div className="space-y-4">
-                {budgets.map((budget, index) => {
-                  const budgetAmount = Number(budget.budget) || 0;
-
-                  const expenses = Number(budget.totalExpenses) || 0;
-
-                  const remaining =
-                    budget.remainingBudget !== undefined
-                      ? Number(budget.remainingBudget)
-                      : budgetAmount - expenses;
-
-                  const percentage =
-                    budgetAmount > 0
-                      ? Math.min(
-                          100,
-                          Math.max(0, (expenses / budgetAmount) * 100),
-                        )
-                      : 0;
-
-                  return (
-                    <motion.div
-                      key={budget._id || budget.id || index}
-                      initial={{
-                        opacity: 0,
-                        y: 20,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      transition={{
-                        delay: 0.45 + index * 0.1,
-                      }}
-                      whileHover={{
-                        y: -4,
-                      }}
-                      className="border border-slate-200 rounded-2xl p-5"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-bold text-slate-900 text-lg">
-                            {budget.destination || "Travel Budget"}
-                          </h3>
-
-                          <p className="text-slate-500 text-sm mt-1">
-                            Currency: {budget.currency || "N/A"}
-                          </p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="font-bold text-slate-900">
-                            {budgetAmount.toLocaleString()}
-                          </p>
-
-                          <p className="text-sm text-emerald-600 mt-1">
-                            {remaining.toLocaleString()} remaining
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-5">
-                        <div className="flex justify-between text-xs text-slate-400 mb-2">
-                          <span>Expenses</span>
-
-                          <span>{Math.round(percentage)}%</span>
-                        </div>
-
-                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{
-                              width: 0,
-                            }}
-                            animate={{
-                              width: `${percentage}%`,
-                            }}
-                            transition={{
-                              duration: 1,
-                              delay: 0.6 + index * 0.1,
-                              ease: "easeOut",
-                            }}
-                            className="h-full bg-cyan-400 rounded-full"
-                          />
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                {budgets.map((item, index) => (
+                  <BudgetCard
+                    key={item._id || item.id || index}
+                    item={item}
+                    index={index}
+                    onEdit={() => setEditing(item)}
+                    onDelete={() => handleDelete(item)}
+                  />
+                ))}
               </div>
             )}
           </motion.section>
 
           <motion.section
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.45,
-            }}
-            className="bg-white rounded-3xl p-7 shadow-sm border border-slate-200"
+            {...fadeUp}
+            className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">My Trips</h2>
-
-                <p className="text-slate-500 text-sm mt-1">
+                <p className="mt-1 text-sm text-slate-500">
                   Your saved travel plans
                 </p>
               </div>
 
-              <Link
-                to="/planner"
-                className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl font-bold transition-all hover:-translate-y-1"
-              >
-                Plan Trip
-              </Link>
+              <motion.div {...buttonPress}>
+                <Link
+                  to="/planner"
+                  className="inline-block rounded-xl bg-slate-900 px-5 py-3 font-bold text-white transition-colors hover:bg-slate-800"
+                >
+                  Plan Trip
+                </Link>
+              </motion.div>
             </div>
 
             {trips.length === 0 ? (
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  scale: 0.9,
-                }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                }}
-                transition={{
-                  delay: 0.7,
-                }}
-                className="py-12 text-center"
-              >
-                <motion.div
-                  animate={{
-                    y: [0, -10, 0],
-                    rotate: [0, -5, 5, 0],
-                  }}
-                  transition={{
-                    duration: 2.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="text-5xl mb-5"
-                >
-                  ✈️
-                </motion.div>
-
+              <div className="py-12 text-center">
+                <div className="mb-5 text-5xl">✈️</div>
                 <p className="text-slate-500">No trips created yet.</p>
-
                 <Link
                   to="/planner"
-                  className="inline-block mt-4 text-cyan-600 font-semibold"
+                  className="mt-4 inline-block font-semibold text-cyan-600"
                 >
                   Start planning →
                 </Link>
-              </motion.div>
+              </div>
             ) : (
               <div className="space-y-4">
-                {trips.map((trip, index) => {
-                  const status = trip.status || "Upcoming";
-
-                  const statusClass =
-                    status === "Completed"
-                      ? "bg-slate-100 text-slate-600"
-                      : status === "Ongoing"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-cyan-100 text-cyan-700";
-
-                  return (
-                    <motion.div
-                      key={trip._id || trip.id || index}
-                      initial={{
-                        opacity: 0,
-                        y: 20,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      transition={{
-                        delay: 0.5 + index * 0.1,
-                      }}
-                      whileHover={{
-                        y: -4,
-                      }}
-                      className="border border-slate-200 rounded-2xl p-5"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-bold text-slate-900 text-lg">
-                            {trip.tripName || "Untitled Trip"}
-                          </h3>
-
-                          <p className="text-slate-500 text-sm mt-1">
-                            {trip.destination || "Destination not specified"}
-                          </p>
-                        </div>
-
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClass}`}
-                        >
-                          {status}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-4 mt-4 text-sm text-slate-500">
-                        {trip.startDate && (
-                          <span>
-                            🗓 {new Date(trip.startDate).toLocaleDateString()}
-                          </span>
-                        )}
-
-                        {trip.endDate && (
-                          <span>
-                            → {new Date(trip.endDate).toLocaleDateString()}
-                          </span>
-                        )}
-
-                        {trip.budget !== undefined && (
-                          <span>
-                            💰 {Number(trip.budget || 0).toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                {trips.map((trip, index) => (
+                  <TripCard key={trip._id || trip.id || index} trip={trip} index={index} />
+                ))}
               </div>
             )}
           </motion.section>
         </div>
       </div>
-    </div>
+
+      <AnimatePresence>
+        {editing && (
+          <EditBudgetModal
+            key={editing._id}
+            item={editing}
+            onClose={() => setEditing(null)}
+            onSaved={handleSaved}
+          />
+        )}
+      </AnimatePresence>
+    </main>
+  );
+}
+
+function StatCard({ index, label, groups, field, footnote, colorByValue = false }) {
+  // With several currencies, each total gets its own line at a smaller size.
+  const multiple = groups.length > 1;
+  const rows = groups.length > 0 ? groups : [{ currency: null, [field]: 0 }];
+
+  return (
+    <motion.div
+      {...listItem(index)}
+      whileHover={cardHover.whileHover}
+      className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+    >
+      <p className="text-sm font-medium text-slate-500">{label}</p>
+
+      <div className="mt-2 space-y-1">
+        {rows.map((group) => {
+          const value = group[field];
+          const tone = colorByValue
+            ? value < 0
+              ? "text-red-500"
+              : "text-emerald-600"
+            : "text-slate-900";
+
+          return (
+            <p
+              key={group.currency || "unknown"}
+              className={`font-extrabold ${tone} ${
+                multiple ? "text-2xl" : "text-4xl"
+              }`}
+            >
+              {formatMoney(value, group.currency)}
+              {multiple && !group.currency && (
+                <span className="ml-2 text-xs font-semibold text-slate-400">
+                  (currency unknown)
+                </span>
+              )}
+            </p>
+          );
+        })}
+      </div>
+
+      <p className="mt-2 text-sm text-slate-400">{footnote}</p>
+    </motion.div>
+  );
+}
+
+function BudgetCard({ item, index, onEdit, onDelete }) {
+  const { budget, used, remaining, currency } = getBudgetFigures(item);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const overspent = remaining < 0;
+
+  const percentage =
+    budget > 0 ? Math.min(100, Math.max(0, (used / budget) * 100)) : 0;
+
+  return (
+    <motion.div
+      {...listItem(index)}
+      whileHover={cardHover.whileHover}
+      className="rounded-2xl border border-slate-200 p-5"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900">
+            {item.destination || "Travel Budget"}
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Currency: {currency || "Unknown"}
+          </p>
+          {!currency && (
+            <p className="mt-1 text-xs text-amber-600">
+              Re-save this budget in the planner to fix its currency.
+            </p>
+          )}
+        </div>
+
+        <div className="text-right">
+          <p className="font-bold text-slate-900">{formatMoney(budget, currency)}</p>
+          <p
+            className={`mt-1 text-sm ${
+              overspent ? "text-red-500" : "text-emerald-600"
+            }`}
+          >
+            {overspent
+              ? `${formatMoney(Math.abs(remaining), currency)} over budget`
+              : `${formatMoney(remaining, currency)} remaining`}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <div className="mb-2 flex justify-between text-xs text-slate-400">
+          <span>
+            Spent {formatMoney(used, currency)} of {formatMoney(budget, currency)}
+          </span>
+          <span>{Math.round(percentage)}%</span>
+        </div>
+
+        <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+          <motion.div
+            {...progressBar(percentage, 0.2 + Math.min(index, 8) * 0.06)}
+            className={`h-full rounded-full ${
+              overspent ? "bg-red-400" : "bg-cyan-400"
+            }`}
+          />
+        </div>
+      </div>
+
+      <div className="mt-5 flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
+        {confirmingDelete ? (
+          <>
+            <span className="mr-auto text-sm text-slate-500">
+              Delete this budget?
+            </span>
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(false)}
+              disabled={deleting}
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+            >
+              Keep
+            </button>
+            <button
+              type="button"
+              disabled={deleting}
+              onClick={async () => {
+                setDeleting(true);
+                await onDelete();
+                setDeleting(false);
+                setConfirmingDelete(false);
+              }}
+              className="rounded-xl bg-red-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-600 disabled:opacity-60"
+            >
+              {deleting ? "Deleting..." : "Yes, delete"}
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-500 transition hover:bg-red-50 hover:text-red-500"
+            >
+              Delete
+            </button>
+            <motion.button
+              {...buttonPress}
+              type="button"
+              onClick={onEdit}
+              className="rounded-xl bg-slate-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-cyan-500 hover:text-slate-950"
+            >
+              Edit
+            </motion.button>
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+function TripCard({ trip, index }) {
+  const status = trip.status || "Upcoming";
+
+  const statusClass =
+    status === "Completed"
+      ? "bg-slate-100 text-slate-600"
+      : status === "Ongoing"
+        ? "bg-emerald-100 text-emerald-700"
+        : "bg-cyan-100 text-cyan-700";
+
+  return (
+    <motion.div
+      {...listItem(index)}
+      whileHover={cardHover.whileHover}
+      className="rounded-2xl border border-slate-200 p-5"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900">
+            {trip.tripName || "Untitled Trip"}
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            {trip.destination || "Destination not specified"}
+          </p>
+        </div>
+
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClass}`}
+        >
+          {status}
+        </span>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
+        {trip.startDate && (
+          <span>🗓 {new Date(trip.startDate).toLocaleDateString()}</span>
+        )}
+        {trip.endDate && (
+          <span>→ {new Date(trip.endDate).toLocaleDateString()}</span>
+        )}
+        {trip.budget !== undefined && (
+          <span>💰 {Number(trip.budget || 0).toLocaleString()}</span>
+        )}
+      </div>
+    </motion.div>
   );
 }
 

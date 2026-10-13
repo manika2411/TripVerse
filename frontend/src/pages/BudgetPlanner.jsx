@@ -1,37 +1,49 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { getAllCountries, getCountryCode, getCountryName, getCurrencyCode, getCurrencyInfo, getCurrencyInfoAsync, getCurrencySymbol } from "../services/countryApi";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
-const categories = [
-  "Accommodation",
-  "Food & Dining",
-  "Transport",
-  "Activities",
-  "Shopping",
-  "Other",
-];
-
-const initialExpenses = {
-  Accommodation: 0,
-  "Food & Dining": 0,
-  Transport: 0,
-  Activities: 0,
-  Shopping: 0,
-  Other: 0,
-};
+import {
+  getAllCountries,
+  getCountryCode,
+  getCountryName,
+  getCurrencyInfo,
+  getCurrencyInfoAsync,
+} from "../services/countryApi";
+import MoneyInput from "../components/MoneyInput";
+import PageLoader from "../components/PageLoader";
+import {
+  getBudgetByDestination,
+  saveBudget as saveBudgetRequest,
+} from "../services/budgetApi";
+import {
+  CATEGORIES,
+  emptyExpenses,
+  expensesToInputs,
+  inputsToExpenses,
+  sumExpenses,
+} from "../utils/budget";
+import { formatMoney } from "../utils/currency";
+import {
+  alertMotion,
+  buttonPress,
+  fadeUp,
+  listItem,
+  pageTransition,
+  progressBar,
+} from "../utils/animations";
 
 function BudgetPlanner() {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [resolvedCurrency, setResolvedCurrency] = useState(null);
   const [budget, setBudget] = useState("");
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [expenses, setExpenses] = useState(emptyExpenses);
+  const [hasSavedBudget, setHasSavedBudget] = useState(false);
   const [loadingCountries, setLoadingCountries] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  // Guards against out-of-order responses when the destination changes quickly.
+  const selectionRef = useRef(0);
 
   useEffect(() => {
     const loadCountries = async () => {
@@ -56,40 +68,74 @@ function BudgetPlanner() {
 
   const currency = resolvedCurrency || getCurrencyInfo(selectedCountry);
 
+  // All derived numbers come from the inputs below, in one place.
   const totalExpenses = useMemo(
-    () =>
-      Object.values(expenses).reduce(
-        (sum, value) => sum + Number(value || 0),
-        0,
-      ),
+    () => sumExpenses(inputsToExpenses(expenses)),
     [expenses],
   );
 
   const numericBudget = Number(budget) || 0;
   const remainingBudget = numericBudget - totalExpenses;
+  const isOverBudget = remainingBudget < 0;
   const expensePercentage =
-    numericBudget > 0
-      ? Math.min(100, (totalExpenses / numericBudget) * 100)
-      : 0;
+    numericBudget > 0 ? Math.min(100, (totalExpenses / numericBudget) * 100) : 0;
+
+  const money = (amount) => formatMoney(amount, currency?.code);
+
+  const loadSavedBudget = async (code, requestId) => {
+    if (!localStorage.getItem("token")) return;
+
+    try {
+      const result = await getBudgetByDestination(code);
+
+      if (requestId !== selectionRef.current) return;
+
+      const saved = result.data;
+
+      if (!saved) return;
+
+      setHasSavedBudget(true);
+      setBudget(saved.budget ? String(saved.budget) : "");
+      setExpenses(expensesToInputs(saved.expenses));
+    } catch (err) {
+      // A missing saved budget is normal; don't block the form.
+      console.error("Could not load saved budget:", err);
+    }
+  };
 
   const handleDestinationChange = async (e) => {
     const code = e.target.value;
     const country = countries.find((item) => getCountryCode(item) === code);
+    const requestId = ++selectionRef.current;
 
     setSelectedCountry(country || null);
     setResolvedCurrency(null);
+    setHasSavedBudget(false);
+    setBudget("");
+    setExpenses(emptyExpenses());
+    setError("");
+    setMessage("");
 
-    if (country) {
-      const info = await getCurrencyInfoAsync(country);
-      setResolvedCurrency(info);
-    }
+    if (!country) return;
+
+    loadSavedBudget(code, requestId);
+
+    // Usually resolves instantly from the country record; only hits the
+    // network if the record carries no currency data.
+    const info = await getCurrencyInfoAsync(country);
+
+    if (requestId === selectionRef.current) setResolvedCurrency(info);
   };
 
-  const handleExpenseChange = (category, value) => {
-    setExpenses((prev) => ({
-      ...prev,
-      [category]: Math.max(0, Number(value) || 0),
-    }));
+  const handleBudgetChange = (e) => {
+    const value = e.target.value;
+    if (value !== "" && Number(value) < 0) return;
+    setBudget(value);
+  };
+
+  const handleExpenseChange = (key, value) => {
+    if (value !== "" && Number(value) < 0) return;
+    setExpenses((prev) => ({ ...prev, [key]: value }));
   };
 
   const saveBudget = async () => {
@@ -106,6 +152,11 @@ function BudgetPlanner() {
       return;
     }
 
+    if (!currency?.code) {
+      setError("We couldn't determine this destination's currency.");
+      return;
+    }
+
     if (!numericBudget) {
       setError("Please enter your total trip budget.");
       return;
@@ -119,45 +170,20 @@ function BudgetPlanner() {
     try {
       setSaving(true);
 
+      // Shape matches what the backend reads: a nested `expenses` object plus
+      // `destinationCode`. Totals are NOT sent; the server derives them from
+      // the expenses so they can never disagree.
       const payload = {
         destination: getCountryName(selectedCountry),
-        currency: getCurrencyCode(selectedCountry),
-        currencySymbol: getCurrencySymbol(selectedCountry),
+        destinationCode: getCountryCode(selectedCountry),
+        currency: currency.code,
         budget: numericBudget,
-        accommodation: Number(expenses.Accommodation) || 0,
-        food: Number(expenses["Food & Dining"]) || 0,
-        transport: Number(expenses.Transport) || 0,
-        activities: Number(expenses.Activities) || 0,
-        shopping: Number(expenses.Shopping) || 0,
-        other: Number(expenses.Other) || 0,
-        totalExpenses,
-        remainingBudget,
+        expenses: inputsToExpenses(expenses),
       };
 
-      const response = await fetch(`${API_URL}/budgets`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      await saveBudgetRequest(payload);
 
-      const text = await response.text();
-      let result = {};
-
-      if (text) {
-        try {
-          result = JSON.parse(text);
-        } catch {
-          throw new Error(`Server returned an invalid response (${response.status})`);
-        }
-      }
-
-      if (!response.ok || result.success === false) {
-        throw new Error(result.message || "Failed to save budget");
-      }
-
+      setHasSavedBudget(true);
       setMessage("Budget saved successfully!");
     } catch (err) {
       console.error("Save budget error:", err);
@@ -167,6 +193,10 @@ function BudgetPlanner() {
     }
   };
 
+  if (loadingCountries && countries.length === 0 && !error) {
+    return <PageLoader message="Loading destinations..." />;
+  }
+
   return (
     <main className="site-light-page px-6 pb-20 pt-32">
       <div className="pointer-events-none absolute left-0 top-28 h-[450px] w-[450px] rounded-full bg-cyan-200/25 blur-3xl" />
@@ -174,8 +204,7 @@ function BudgetPlanner() {
 
       <div className="relative z-10 mx-auto max-w-7xl">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          {...pageTransition}
           className="mb-10 flex flex-col justify-between gap-7 lg:flex-row lg:items-end"
         >
           <div>
@@ -186,29 +215,27 @@ function BudgetPlanner() {
               Budget Planner
             </h1>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-500">
-              Plan your trip expenses, track your spending and understand your travel budget in local currency.
+              Plan your trip expenses, track your spending and understand your
+              travel budget in local currency.
             </p>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white px-8 py-6 shadow-sm">
             <p className="text-sm text-slate-500">Remaining Budget</p>
-            <motion.p
-              key={remainingBudget}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className={`mt-2 text-3xl font-black ${remainingBudget < 0 ? "text-red-500" : "text-cyan-600"}`}
+            <p
+              className={`mt-2 text-3xl font-black ${
+                isOverBudget ? "text-red-500" : "text-cyan-600"
+              }`}
             >
-              {currency?.symbol || "—"} {remainingBudget.toLocaleString()}
-            </motion.p>
+              {money(remainingBudget)}
+            </p>
           </div>
         </motion.div>
 
         <AnimatePresence>
           {(error || message) && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              {...alertMotion}
               className={`mb-6 rounded-2xl border px-5 py-4 ${
                 error
                   ? "border-red-200 bg-red-50 text-red-600"
@@ -222,28 +249,35 @@ function BudgetPlanner() {
 
         <div className="grid gap-8 lg:grid-cols-[500px_1fr]">
           <motion.section
-            initial={{ opacity: 0, x: -35 }}
-            animate={{ opacity: 1, x: 0 }}
+            {...fadeUp}
             className="h-fit rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.07)]"
           >
-            <h2 className="mb-8 text-2xl font-black text-slate-950">Trip Details</h2>
+            <h2 className="mb-8 text-2xl font-black text-slate-950">
+              Trip Details
+            </h2>
 
-            <label className="mb-3 block text-sm font-bold text-slate-700">
+            <label
+              htmlFor="budget-destination"
+              className="mb-3 block text-sm font-bold text-slate-700"
+            >
               Destination
             </label>
             <select
+              id="budget-destination"
               value={getCountryCode(selectedCountry)}
               onChange={handleDestinationChange}
               disabled={loadingCountries}
               className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none transition focus:border-cyan-400 focus:bg-white focus:ring-4 focus:ring-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <option value="">
-                {loadingCountries ? "Loading destinations..." : "Select a destination"}
+                {loadingCountries
+                  ? "Loading destinations..."
+                  : "Select a destination"}
               </option>
               {countries.map((country, index) => {
-                const code = getCountryCode(country) || `country-${index}`;
+                const code = getCountryCode(country);
                 return (
-                  <option key={code} value={getCountryCode(country)}>
+                  <option key={code || `country-${index}`} value={code}>
                     {getCountryName(country)}
                   </option>
                 );
@@ -251,128 +285,122 @@ function BudgetPlanner() {
             </select>
 
             <div className="mt-8">
-              <label className="mb-3 block text-sm font-bold text-slate-700">
+              <p className="mb-3 block text-sm font-bold text-slate-700">
                 Destination Currency
-              </label>
-              <motion.div
-                layout
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
-              >
+              </p>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 {currency ? (
                   <div className="flex items-center gap-4">
-                    <motion.div
-                      initial={{ scale: 0, rotate: -20 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-2xl font-black text-cyan-600"
-                    >
+                    <div className="flex h-12 min-w-12 items-center justify-center rounded-2xl bg-cyan-50 px-3 text-xl font-black text-cyan-600">
                       {currency.symbol}
-                    </motion.div>
+                    </div>
                     <div>
-                      <p className="font-black text-slate-950">{currency.code}</p>
+                      <p className="font-black text-slate-950">
+                        {currency.code}
+                      </p>
                       <p className="text-sm text-slate-500">{currency.name}</p>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-slate-400">Select a destination</p>
+                  <p className="text-slate-400">
+                    {selectedCountry
+                      ? "Currency unavailable for this destination"
+                      : "Select a destination"}
+                  </p>
                 )}
-              </motion.div>
+              </div>
             </div>
 
             <div className="mt-8">
-              <label className="mb-3 block text-sm font-bold text-slate-700">
+              <label
+                htmlFor="budget-total"
+                className="mb-3 block text-sm font-bold text-slate-700"
+              >
                 Total Trip Budget
               </label>
-              <div className="relative">
-                <span className="absolute left-5 top-1/2 z-10 -translate-y-1/2 font-black text-cyan-600">
-                  {currency?.symbol || "—"}
-                </span>
-                <input
-                  type="number"
-                  min="0"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  placeholder="Enter your budget"
-                  className="trip-input pl-16"
-                />
-              </div>
+              <MoneyInput
+                id="budget-total"
+                symbol={currency?.symbol}
+                value={budget}
+                onChange={handleBudgetChange}
+                placeholder="Enter your budget"
+              />
             </div>
 
             {selectedCountry && (
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
+                {...pageTransition}
                 className="mt-8 rounded-2xl border border-cyan-100 bg-cyan-50 p-5"
               >
-                <p className="text-sm text-slate-500">Planning for</p>
+                <p className="text-sm text-slate-500">
+                  {hasSavedBudget ? "Editing saved budget for" : "Planning for"}
+                </p>
                 <p className="mt-1 text-xl font-black text-slate-950">
                   {getCountryName(selectedCountry)}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-cyan-700">
-                  Currency: {getCurrencyCode(selectedCountry)} · {getCurrencySymbol(selectedCountry)}
-                </p>
+                {currency && (
+                  <p className="mt-1 text-sm font-semibold text-cyan-700">
+                    Currency: {currency.code}
+                    {currency.symbol !== currency.code && ` · ${currency.symbol}`}
+                  </p>
+                )}
               </motion.div>
             )}
           </motion.section>
 
           <motion.section
-            initial={{ opacity: 0, x: 35 }}
-            animate={{ opacity: 1, x: 0 }}
+            {...fadeUp}
             className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.07)]"
           >
             <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-start">
               <div>
-                <h2 className="text-2xl font-black text-slate-950">Expense Breakdown</h2>
-                <p className="mt-2 text-slate-500">Estimate how much you plan to spend in each category.</p>
+                <h2 className="text-2xl font-black text-slate-950">
+                  Expense Breakdown
+                </h2>
+                <p className="mt-2 text-slate-500">
+                  Estimate how much you plan to spend in each category.
+                </p>
               </div>
               <div className="rounded-2xl bg-slate-50 px-5 py-4 text-right">
                 <p className="text-sm text-slate-500">Total Expenses</p>
-                <motion.p
-                  key={totalExpenses}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="mt-1 text-2xl font-black text-slate-950"
-                >
-                  {currency?.symbol || "—"} {totalExpenses.toLocaleString()}
-                </motion.p>
+                <p className="mt-1 text-2xl font-black text-slate-950">
+                  {money(totalExpenses)}
+                </p>
               </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-              {categories.map((category, index) => {
-                const value = Number(expenses[category]) || 0;
+              {CATEGORIES.map(({ key, label }, index) => {
+                const amount = Number(expenses[key]) || 0;
                 const percentage =
-                  numericBudget > 0 ? Math.min(100, (value / numericBudget) * 100) : 0;
+                  numericBudget > 0
+                    ? Math.min(100, (amount / numericBudget) * 100)
+                    : 0;
 
                 return (
-                  <motion.div
-                    key={category}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.07 }}
-                  >
+                  <motion.div key={key} {...listItem(index)}>
                     <div className="mb-3 flex items-center justify-between gap-3">
-                      <label className="text-sm font-bold text-slate-700">{category}</label>
+                      <label
+                        htmlFor={`expense-${key}`}
+                        className="text-sm font-bold text-slate-700"
+                      >
+                        {label}
+                      </label>
                       <span className="text-sm font-semibold text-slate-400">
-                        {currency?.symbol || "—"} {value.toLocaleString()}
+                        {money(amount)}
                       </span>
                     </div>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 z-10 -translate-y-1/2 font-black text-cyan-600">
-                        {currency?.symbol || "—"}
-                      </span>
-                      <input
-                        type="number"
-                        min="0"
-                        value={value}
-                        onChange={(e) => handleExpenseChange(category, e.target.value)}
-                        className="trip-input pl-12"
-                      />
-                    </div>
+
+                    <MoneyInput
+                      id={`expense-${key}`}
+                      symbol={currency?.symbol}
+                      value={expenses[key]}
+                      onChange={(e) => handleExpenseChange(key, e.target.value)}
+                    />
+
                     <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
                       <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${percentage}%` }}
-                        transition={{ duration: 0.5 }}
+                        {...progressBar(percentage)}
                         className="h-full rounded-full bg-cyan-400"
                       />
                     </div>
@@ -382,13 +410,16 @@ function BudgetPlanner() {
             </div>
 
             <div className="mt-10 grid gap-5 md:grid-cols-3">
-              <SummaryCard label="Planned Budget" value={numericBudget} symbol={currency?.symbol} />
-              <SummaryCard label="Total Expenses" value={totalExpenses} symbol={currency?.symbol} tone="cyan" />
+              <SummaryCard label="Planned Budget" value={money(numericBudget)} />
+              <SummaryCard
+                label="Total Expenses"
+                value={money(totalExpenses)}
+                tone="cyan"
+              />
               <SummaryCard
                 label="Remaining"
-                value={remainingBudget}
-                symbol={currency?.symbol}
-                tone={remainingBudget < 0 ? "red" : "green"}
+                value={money(remainingBudget)}
+                tone={isOverBudget ? "red" : "green"}
               />
             </div>
 
@@ -398,20 +429,24 @@ function BudgetPlanner() {
                 <span>{Math.round(expensePercentage)}%</span>
               </div>
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${expensePercentage}%` }}
-                className="h-2 rounded-full bg-cyan-400"
+                {...progressBar(expensePercentage)}
+                className={`h-2 rounded-full ${
+                  isOverBudget ? "bg-red-400" : "bg-cyan-400"
+                }`}
               />
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+              {...buttonPress}
               onClick={saveBudget}
               disabled={saving || loadingCountries}
               className="mt-8 w-full rounded-2xl bg-slate-950 py-4 font-black text-white transition hover:bg-cyan-500 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving ? "Saving Budget..." : "Save Budget"}
+              {saving
+                ? "Saving Budget..."
+                : hasSavedBudget
+                  ? "Update Budget"
+                  : "Save Budget"}
             </motion.button>
           </motion.section>
         </div>
@@ -420,7 +455,7 @@ function BudgetPlanner() {
   );
 }
 
-function SummaryCard({ label, value, symbol, tone = "neutral" }) {
+function SummaryCard({ label, value, tone = "neutral" }) {
   const styles = {
     neutral: "bg-slate-50 text-slate-950",
     cyan: "bg-cyan-50 text-slate-950",
@@ -431,9 +466,7 @@ function SummaryCard({ label, value, symbol, tone = "neutral" }) {
   return (
     <div className={`rounded-2xl p-5 ${styles[tone]}`}>
       <p className="text-sm opacity-75">{label}</p>
-      <p className="mt-2 text-2xl font-black">
-        {symbol || "—"} {Number(value || 0).toLocaleString()}
-      </p>
+      <p className="mt-2 text-2xl font-black">{value}</p>
     </div>
   );
 }

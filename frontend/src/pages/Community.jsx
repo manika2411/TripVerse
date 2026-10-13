@@ -10,7 +10,8 @@ import {
   deletePost,
 } from "../services/communityApi";
 
-import { fadeUp, staggerContainer, cardHover } from "../utils/animations";
+import { buttonPress, fadeUp, listItem, pageTransition, cardHover } from "../utils/animations";
+import PageLoader from "../components/PageLoader";
 
 function Community() {
   const { user } = useContext(AuthContext);
@@ -28,18 +29,52 @@ function Community() {
 
   const [commentInputs, setCommentInputs] = useState({});
 
+  // Pagination
+  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Posts whose like request is still in flight (blocks double-clicks)
+  const [likingIds, setLikingIds] = useState({});
+
   const loadPosts = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const data = await getPosts();
+      const result = await getPosts();
 
-      setPosts(data);
+      setPosts(Array.isArray(result?.data) ? result.data : []);
+      setHasMore(result.pagination.hasMore);
+      setNextCursor(result.pagination.nextCursor);
+    } catch (error) {
+      setPosts([]);
+      setError(error.message || "Unable to load community posts.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (!hasMore || loadingMore) return;
+
+    try {
+      setLoadingMore(true);
+      setError("");
+
+      const result = await getPosts({ before: nextCursor });
+
+      // De-duplicate by id in case a post we already show comes back again.
+      setPosts((prev) => {
+        const seen = new Set(prev.map((post) => post._id));
+        return [...prev, ...result.data.filter((post) => !seen.has(post._id))];
+      });
+      setHasMore(result.pagination.hasMore);
+      setNextCursor(result.pagination.nextCursor);
     } catch (error) {
       setError(error.message);
     } finally {
-      setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -51,14 +86,17 @@ function Community() {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {
+      setError("Please add both a title and your story before publishing.");
       return;
     }
 
     try {
+      setError("");
+
       const newPost = await createPost({
-        title,
-        content,
-        destination,
+        title: title.trim(),
+        content: content.trim(),
+        destination: destination.trim(),
       });
 
       setPosts((prev) => [newPost, ...prev]);
@@ -73,6 +111,10 @@ function Community() {
   };
 
   const handleLike = async (id) => {
+    if (likingIds[id]) return;
+
+    setLikingIds((prev) => ({ ...prev, [id]: true }));
+
     try {
       const result = await likePost(id);
 
@@ -88,6 +130,8 @@ function Community() {
       );
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLikingIds((prev) => ({ ...prev, [id]: false }));
     }
   };
 
@@ -131,22 +175,20 @@ function Community() {
   };
 
   return (
-    <div className="page-bg">
-      <div className="page-content">
-        <main className="page-container">
+    <main className="site-light-page px-6 pb-24 pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div>
           <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
+            {...pageTransition}
             className="mb-12"
           >
-            <p className="mb-4 text-sm font-bold tracking-[5px] text-cyan-500">
-              TRAVEL TOGETHER
+            <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
+              Travel Together
             </p>
 
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
-                <h1 className="text-5xl font-extrabold tracking-tight text-[#071827] md:text-6xl">
+                <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
                   Travel Community
                 </h1>
 
@@ -167,9 +209,7 @@ function Community() {
 
           {showCreate && (
             <motion.form
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
+              {...fadeUp}
               onSubmit={handleCreatePost}
               className="mb-10 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
             >
@@ -182,6 +222,8 @@ function Community() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Post title"
+                  maxLength={120}
+                  aria-label="Post title"
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-[#071827] outline-none transition focus:border-cyan-400"
                 />
 
@@ -189,6 +231,8 @@ function Community() {
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                   placeholder="Destination"
+                  maxLength={100}
+                  aria-label="Destination"
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-[#071827] outline-none transition focus:border-cyan-400"
                 />
 
@@ -197,8 +241,14 @@ function Community() {
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Tell the community about your experience..."
                   rows={6}
+                  maxLength={2000}
+                  aria-label="Your story"
                   className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-[#071827] outline-none transition focus:border-cyan-400"
                 />
+
+                <p className="-mt-3 text-right text-xs text-slate-400">
+                  {content.length}/2000
+                </p>
 
                 <button
                   type="submit"
@@ -217,14 +267,10 @@ function Community() {
           )}
 
           {loading ? (
-            <div className="py-20 text-center text-slate-500">
-              Loading community...
-            </div>
+            <PageLoader inline message="Loading community..." />
           ) : posts.length === 0 ? (
             <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
+              {...fadeUp}
               className="rounded-3xl border border-slate-200 bg-white px-6 py-20 text-center shadow-sm"
             >
               <div className="mb-5 text-6xl">✈️</div>
@@ -238,17 +284,12 @@ function Community() {
               </p>
             </motion.div>
           ) : (
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="grid gap-7"
-            >
-              {posts.map((post) => (
+            <div className="grid gap-7">
+              {posts.map((post, index) => (
                 <motion.article
                   key={post._id}
-                  variants={fadeUp}
-                  whileHover={cardHover}
+                  {...listItem(index)}
+                  whileHover={cardHover.whileHover}
                   className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-5">
@@ -287,7 +328,9 @@ function Community() {
                   <div className="mt-7 flex items-center gap-5 border-t border-slate-100 pt-5">
                     <button
                       onClick={() => handleLike(post._id)}
-                      className={`font-semibold transition ${
+                      disabled={Boolean(likingIds[post._id])}
+                      aria-pressed={Boolean(isLiked(post))}
+                      className={`font-semibold transition disabled:opacity-60 ${
                         isLiked(post)
                           ? "text-cyan-500"
                           : "text-slate-500 hover:text-cyan-500"
@@ -327,6 +370,14 @@ function Community() {
                           }))
                         }
                         placeholder="Write a comment..."
+                        maxLength={500}
+                        aria-label="Write a comment"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleComment(post._id);
+                          }
+                        }}
                         className="min-w-0 flex-1 rounded-full border border-slate-200 bg-slate-50 px-5 py-3 text-sm text-[#071827] outline-none focus:border-cyan-400"
                       />
 
@@ -340,11 +391,31 @@ function Community() {
                   </div>
                 </motion.article>
               ))}
-            </motion.div>
+            </div>
           )}
-        </main>
+
+          {!loading && posts.length > 0 && (
+            <div className="mt-10 text-center">
+              {hasMore ? (
+                <motion.button
+                  {...buttonPress}
+                  type="button"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  className="rounded-full bg-[#071827] px-8 py-4 font-bold text-white transition-colors hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loadingMore ? "Loading..." : "Load more stories"}
+                </motion.button>
+              ) : (
+                <p className="text-sm text-slate-400">
+                  You&apos;re all caught up ✈️
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 

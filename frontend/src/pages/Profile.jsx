@@ -1,5 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { alertMotion, fadeUp, pageTransition } from "../utils/animations";
+import PageLoader from "../components/PageLoader";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getProfile, updateProfile } from "../services/userApi";
@@ -115,15 +117,7 @@ function Profile() {
   };
 
   if (loading) {
-    return (
-      <main className="site-light-page flex min-h-screen items-center justify-center px-6 pt-28">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="h-12 w-12 rounded-full border-4 border-cyan-100 border-t-cyan-500"
-        />
-      </main>
-    );
+    return <PageLoader message="Loading your profile..." />;
   }
 
   return (
@@ -131,16 +125,12 @@ function Profile() {
       <div className="pointer-events-none absolute left-0 top-32 h-[420px] w-[420px] rounded-full bg-cyan-200/25 blur-3xl" />
       <div className="pointer-events-none absolute right-0 top-[500px] h-[500px] w-[500px] rounded-full bg-blue-200/20 blur-3xl" />
 
-      <div className="relative z-10 mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
-        >
-          <p className="mb-3 text-sm font-bold uppercase tracking-[5px] text-cyan-600">
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <motion.div {...pageTransition} className="mb-10">
+          <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
             Account
           </p>
-          <h1 className="text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
+          <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
             My Profile
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-slate-500">
@@ -156,8 +146,7 @@ function Profile() {
 
         {message && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...alertMotion}
             className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-600"
           >
             {message}
@@ -166,8 +155,7 @@ function Profile() {
 
         <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
           <motion.aside
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
+            {...fadeUp}
             className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.07)]"
           >
             <div className="flex flex-col items-center text-center">
@@ -204,9 +192,7 @@ function Profile() {
           </motion.aside>
 
           <motion.section
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
+            {...fadeUp}
             className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.07)] md:p-10"
           >
             <div className="mb-8">
@@ -243,7 +229,7 @@ function Profile() {
                   name="country"
                   value={formData.country}
                   onChange={handleChange}
-                  placeholder="India"
+                  placeholder="E.g. India"
                   className="trip-input"
                 />
               </div>

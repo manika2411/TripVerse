@@ -12,14 +12,22 @@ const countryRoutes = require("./routes/countryRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const recommendationRoutes = require("./routes/recommendationRoutes");
+const { notFound, errorHandler } = require("./middleware/errorHandler");
 
 connectDB();
 
 const app = express();
 
+// Allowed browser origins. Set CLIENT_URL in .env for production, e.g.
+// CLIENT_URL=https://tripverse.example.com  (comma-separate several origins).
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -47,6 +55,10 @@ app.get("/", (req, res) => {
     message: "TripVerse API Running",
   });
 });
+
+// Must come after every route.
+app.use("/api", notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

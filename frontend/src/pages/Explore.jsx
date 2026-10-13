@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { cardHover, pageTransition, revealItem } from "../utils/animations";
 import { getCountries, getCurrencyInfo } from "../services/countryApi";
 
 function Explore() {
@@ -120,7 +122,7 @@ function Explore() {
 
   if (loading) {
     return (
-      <main className="site-light-page min-h-screen bg-slate-50 text-slate-900 pt-28 pb-24">
+      <main className="site-light-page px-0 pb-24 pt-32 text-slate-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-14">
             <div className="h-4 w-36 rounded-full bg-slate-200 animate-pulse mb-5" />
@@ -162,7 +164,7 @@ function Explore() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-900 pt-28 pb-24">
+      <main className="site-light-page pb-24 pt-32 text-slate-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center py-24 bg-white border border-red-100 rounded-[2rem] shadow-sm">
             <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl">
@@ -173,7 +175,7 @@ function Explore() {
               Destinations
             </p>
 
-            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
+            <h1 className="mb-4 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
               Something went wrong
             </h1>
 
@@ -194,11 +196,11 @@ function Explore() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 pt-28 pb-24">
+    <main className="site-light-page pb-24 pt-32 text-slate-900">
       <div className="max-w-7xl mx-auto px-6">
 
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-5">
+        <motion.section {...pageTransition} className="mb-12">
+          <div className="flex items-center gap-3">
             <p className="uppercase tracking-[5px] text-cyan-600 text-sm font-bold">
               Explore The World
             </p>
@@ -206,13 +208,13 @@ function Explore() {
 
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
             <div>
-              <h1 className="text-5xl md:text-6xl xl:text-7xl font-black tracking-tight text-slate-950 leading-[0.95]">
+              <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
                 Discover
                 <br />
                 <span className="text-cyan-500">somewhere new.</span>
               </h1>
 
-              <p className="mt-7 text-slate-500 text-lg md:text-xl max-w-2xl leading-8">
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-500">
                 Explore countries, discover cultures, and find the destination
                 that matches your next adventure.
               </p>
@@ -228,7 +230,7 @@ function Explore() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         <section className="mb-12">
           <div className="bg-white border border-slate-200 rounded-3xl p-4 md:p-5 shadow-sm">
@@ -330,7 +332,7 @@ function Explore() {
         ) : (
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCountries.map((country) => {
+            {filteredCountries.map((country, index) => {
               const name = getCountryName(country);
 
               const officialName = getCountryOfficialName(country);
@@ -353,7 +355,11 @@ function Explore() {
                   to={`/destination/${code || encodeURIComponent(name)}`}
                   className="group"
                 >
-                  <article className="h-full bg-white rounded-[1.75rem] overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                  <motion.article
+                    {...revealItem(index % 4)}
+                    whileHover={cardHover.whileHover}
+                    className="h-full overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-2xl"
+                  >
                     <div className="relative h-56 overflow-hidden bg-slate-100">
                       {flag ? (
                         <img
@@ -470,7 +476,7 @@ function Explore() {
                         </span>
                       </div>
                     </div>
-                  </article>
+                  </motion.article>
                 </Link>
               );
             })}

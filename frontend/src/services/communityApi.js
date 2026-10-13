@@ -39,8 +39,37 @@ const request = async (url, options = {}) => {
   return data;
 };
 
-export const getPosts = () => {
-  return request("/community");
+// Cursor pagination: pass the `nextCursor` from the previous response as `before`.
+// Resolves to { data: Post[], pagination: { limit, hasMore, nextCursor } }.
+//
+// Always returns that shape, even if the server answers with something else
+// (for example an older backend that still returns a bare array), so the page
+// can never receive `undefined` posts.
+export const getPosts = async ({ before, limit = 10 } = {}) => {
+  const params = new URLSearchParams({ limit: String(limit) });
+
+  if (before) params.set("before", before);
+
+  const result = await request(`/community?${params.toString()}`);
+
+  // Older backend: a plain array with no pagination support.
+  if (Array.isArray(result)) {
+    return {
+      data: result,
+      pagination: { limit, hasMore: false, nextCursor: null },
+    };
+  }
+
+  const nextCursor = result?.pagination?.nextCursor || null;
+
+  return {
+    data: Array.isArray(result?.data) ? result.data : [],
+    pagination: {
+      limit: result?.pagination?.limit || limit,
+      hasMore: Boolean(result?.pagination?.hasMore && nextCursor),
+      nextCursor,
+    },
+  };
 };
 
 export const createPost = (post) => {

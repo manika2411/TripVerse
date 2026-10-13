@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { alertMotion, buttonPress, cardHover, fadeUp, pageTransition } from "../utils/animations";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAllCountries, getCountryName, getCurrencyCode, getCurrencyInfoAsync } from "../services/countryApi";
 
@@ -207,23 +208,18 @@ function TripPlanner() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-6 pt-32 pb-16">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="mb-12"
-        >
-          <p className="text-cyan-500 uppercase tracking-[5px] text-sm font-bold mb-4">
+    <main className="site-light-page px-6 pb-24 pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <motion.div {...pageTransition} className="mb-12">
+          <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
             Trip Planner
           </p>
 
-          <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900">
+          <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
             Design your next adventure.
           </h1>
 
-          <p className="text-slate-500 text-lg mt-5 max-w-2xl">
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-500">
             Tell us what you want from your trip and create a personalized
             travel plan.
           </p>
@@ -231,8 +227,7 @@ function TripPlanner() {
 
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...alertMotion}
             className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-600"
           >
             {error}
@@ -241,8 +236,7 @@ function TripPlanner() {
 
         {success && (
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...alertMotion}
             className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-600"
           >
             {success}
@@ -252,9 +246,7 @@ function TripPlanner() {
         <form onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-3 gap-8">
             <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              {...fadeUp}
               className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm p-8 md:p-10"
             >
               <h2 className="text-2xl font-bold text-slate-900 mb-8">
@@ -383,8 +375,7 @@ function TripPlanner() {
                         <motion.button
                           key={style}
                           type="button"
-                          whileHover={{ y: -3 }}
-                          whileTap={{ scale: 0.97 }}
+                          {...buttonPress}
                           onClick={() =>
                             setFormData((prev) => ({
                               ...prev,
@@ -417,8 +408,7 @@ function TripPlanner() {
                         <motion.button
                           key={interest}
                           type="button"
-                          whileHover={{ scale: 1.04 }}
-                          whileTap={{ scale: 0.96 }}
+                          {...buttonPress}
                           onClick={() => toggleInterest(interest)}
                           className={`px-4 py-2.5 rounded-full border text-sm font-semibold transition ${
                             selected
@@ -436,16 +426,11 @@ function TripPlanner() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.15,
-              }}
+              {...fadeUp}
               className="space-y-6"
             >
               <motion.div
-                whileHover={{ y: -5 }}
+                whileHover={cardHover.whileHover}
                 className="bg-slate-900 rounded-3xl p-8 text-white overflow-hidden relative"
               >
                 <div className="absolute -right-12 -top-12 w-40 h-40 bg-cyan-400/20 rounded-full blur-2xl" />
@@ -490,7 +475,7 @@ function TripPlanner() {
               </motion.div>
 
               <motion.div
-                whileHover={{ y: -5 }}
+                whileHover={cardHover.whileHover}
                 className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8"
               >
                 <h3 className="text-xl font-bold text-slate-900">
@@ -506,14 +491,7 @@ function TripPlanner() {
                     {formData.interests.map((interest) => (
                       <motion.span
                         key={interest}
-                        initial={{
-                          opacity: 0,
-                          scale: 0.7,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          scale: 1,
-                        }}
+                        {...alertMotion}
                         className="px-3 py-2 rounded-full bg-cyan-50 text-cyan-600 text-sm font-semibold"
                       >
                         {interest}
@@ -524,11 +502,7 @@ function TripPlanner() {
               </motion.div>
 
               <motion.button
-                whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 15px 35px rgba(34,211,238,0.25)",
-                }}
-                whileTap={{ scale: 0.98 }}
+                {...buttonPress}
                 type="submit"
                 disabled={saving || loadingCountries}
                 className="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 disabled:cursor-not-allowed text-slate-900 rounded-2xl py-5 font-bold text-lg transition"
@@ -539,7 +513,7 @@ function TripPlanner() {
           </div>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
 

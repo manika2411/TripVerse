@@ -270,25 +270,46 @@ body::before {
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
 }
 
-.trip-input {
-  width: 100%;
-  border-radius: 18px;
-  border: 1px solid #d6e3ea;
-  background: rgba(246, 250, 252, 0.96);
-  color: #0f172a;
-  padding: 15px 18px;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+/*
+ * IMPORTANT: .trip-input lives in Tailwind's "components" layer on purpose.
+ * Plain (un-layered) CSS written after `@tailwind utilities` beats utility
+ * classes of equal specificity, which silently discarded `pl-12` / `pl-16`
+ * and made currency symbols overlap the typed text. In the components layer,
+ * utilities such as `pl-12` correctly win.
+ */
+@layer components {
+  .trip-input {
+    width: 100%;
+    border-radius: 18px;
+    border: 1px solid #d6e3ea;
+    background: rgba(246, 250, 252, 0.96);
+    color: #0f172a;
+    padding: 15px 18px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  }
+
+  .trip-input::placeholder {
+    color: #94a3b8;
+  }
+
+  .trip-input:focus {
+    border-color: rgba(34, 211, 238, 0.8);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.09);
+  }
 }
 
-.trip-input::placeholder {
-  color: #94a3b8;
+/* Hide the browser's number-input spinner arrows for a consistent look. */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-.trip-input:focus {
-  border-color: rgba(34, 211, 238, 0.8);
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.09);
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .trip-page {

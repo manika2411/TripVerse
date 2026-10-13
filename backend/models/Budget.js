@@ -71,4 +71,20 @@ const budgetSchema = new mongoose.Schema(
   },
 );
 
+// totalExpenses / remainingBudget are derived values. Recompute them from the
+// individual expense fields on every save so they can never drift out of sync.
+budgetSchema.pre("validate", function () {
+  const e = this.expenses || {};
+
+  this.totalExpenses =
+    (Number(e.accommodation) || 0) +
+    (Number(e.food) || 0) +
+    (Number(e.transport) || 0) +
+    (Number(e.activities) || 0) +
+    (Number(e.shopping) || 0) +
+    (Number(e.other) || 0);
+
+  this.remainingBudget = (Number(this.budget) || 0) - this.totalExpenses;
+});
+
 module.exports = mongoose.model("Budget", budgetSchema);

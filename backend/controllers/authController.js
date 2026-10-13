@@ -6,7 +6,13 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (typeof name !== "string" || typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        message: "Name, email and password are required",
+      });
+    }
+
+    if (!name.trim() || !email.trim() || !password) {
       return res.status(400).json({
         message: "Name, email and password are required",
       });
@@ -74,6 +80,12 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
 
     const user = await User.findOne({
       email: email.trim().toLowerCase(),

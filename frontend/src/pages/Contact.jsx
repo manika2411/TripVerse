@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { fadeUp, pageTransition } from "../utils/animations";
 
 function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -10,32 +11,27 @@ function Contact() {
   };
 
   return (
-    <main className="relative min-h-screen pt-36 pb-24 px-6 overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden px-6 pb-24 pt-32">
       <div className="absolute inset-0 trip-grid opacity-30" />
 
       <div className="relative z-10 max-w-[1200px] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-14"
-        >
-          <p className="text-cyan-600 uppercase tracking-[6px] text-sm">
+        <motion.div {...pageTransition} className="mb-14 text-center">
+          <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
             Get In Touch
           </p>
 
-          <h1 className="text-6xl md:text-8xl font-black mt-5">Let's Talk.</h1>
+          <h1 className="mt-2 text-5xl font-black tracking-tight text-slate-950 md:text-6xl">
+            Let's Talk.
+          </h1>
 
-          <p className="text-slate-500 max-w-2xl mx-auto mt-6 text-lg leading-8">
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-500">
             Have a question, suggestion or simply want to say hello? Send us a
             message.
           </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.15 }}
+          {...fadeUp}
           className="
             trip-glass
             rounded-[36px]

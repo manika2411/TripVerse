@@ -1,3 +1,8 @@
+// Typed errors so controllers can answer correctly WITHOUT echoing internal
+// details (API keys, upstream messages) back to the browser.
+class CountryInputError extends Error {}
+class CountryNotFoundError extends Error {}
+
 const API_BASE = "https://api.restcountries.com/countries/v5";
 
 const API_KEY = process.env.REST_COUNTRIES_API_KEY;
@@ -76,6 +81,10 @@ const requestCountries = async (url) => {
     }
   }
 
+  if (response.status === 404) {
+    throw new CountryNotFoundError("Country not found");
+  }
+
   if (!response.ok) {
     const message =
       result?.errors?.[0]?.message ||
@@ -88,7 +97,13 @@ const requestCountries = async (url) => {
   return result;
 };
 
-const getCountries = async () => {
+const COUNTRIES_TTL_MS = 6 * 60 * 60 * 1000; // country data rarely changes
+
+let countriesCache = null;
+let countriesCacheTime = 0;
+let countriesInFlight = null;
+
+const fetchAllCountries = async () => {
   const allCountries = [];
 
   const limit = 100;
@@ -119,9 +134,36 @@ const getCountries = async () => {
   return allCountries.map(normalizeCountry).filter(Boolean);
 };
 
+// Cached + de-duplicated: concurrent requests share one upstream download, and
+// a stale cache is served if the upstream API is temporarily unavailable.
+const getCountries = async () => {
+  const fresh =
+    countriesCache && Date.now() - countriesCacheTime < COUNTRIES_TTL_MS;
+
+  if (fresh) return countriesCache;
+
+  if (!countriesInFlight) {
+    countriesInFlight = fetchAllCountries()
+      .then((countries) => {
+        countriesCache = countries;
+        countriesCacheTime = Date.now();
+        return countries;
+      })
+      .catch((error) => {
+        if (countriesCache) return countriesCache;
+        throw error;
+      })
+      .finally(() => {
+        countriesInFlight = null;
+      });
+  }
+
+  return countriesInFlight;
+};
+
 const getCountryByCode = async (code) => {
   if (!code) {
-    throw new Error("Country code is required");
+    throw new CountryInputError("Country code is required");
   }
 
   const cleanCode = String(code).trim().toUpperCase();
@@ -135,7 +177,7 @@ const getCountryByCode = async (code) => {
   const country = result?.data?.objects?.[0];
 
   if (!country) {
-    throw new Error(`Country not found: ${cleanCode}`);
+    throw new CountryNotFoundError("Country not found");
   }
 
   return normalizeCountry(country);
@@ -143,7 +185,7 @@ const getCountryByCode = async (code) => {
 
 const getCountryByName = async (name) => {
   if (!name) {
-    throw new Error("Country name is required");
+    throw new CountryInputError("Country name is required");
   }
 
   const cleanName = String(name).trim();
@@ -157,13 +199,15 @@ const getCountryByName = async (name) => {
   const country = result?.data?.objects?.[0];
 
   if (!country) {
-    throw new Error(`Country not found: ${cleanName}`);
+    throw new CountryNotFoundError("Country not found");
   }
 
   return normalizeCountry(country);
 };
 
 module.exports = {
+  CountryInputError,
+  CountryNotFoundError,
   getCountries,
   getCountryByCode,
   getCountryByName,

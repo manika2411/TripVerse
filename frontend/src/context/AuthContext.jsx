@@ -77,7 +77,28 @@ function AuthProvider({ children }) {
     );
     window.addEventListener("storage", handleStorageChange);
 
+    // Nothing in the app used to dispatch "tripverse:unauthorized", so a token
+    // the server rejected left the user looking logged in. Watch authenticated
+    // requests and dispatch it on any 401.
+    const originalFetch = window.fetch;
+
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+
+      if (response.status === 401) {
+        const init = args[1] || {};
+        const sentAuth = Boolean(
+          new Headers(init.headers || (args[0] instanceof Request ? args[0].headers : undefined)).get("Authorization"),
+        );
+
+        if (sentAuth) window.dispatchEvent(new Event("tripverse:unauthorized"));
+      }
+
+      return response;
+    };
+
     return () => {
+      window.fetch = originalFetch;
       window.removeEventListener(
         "tripverse:unauthorized",
         handleUnauthorized

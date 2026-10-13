@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { pageTransition } from "../utils/animations";
 
 function Register() {
   const navigate = useNavigate();
@@ -77,16 +79,16 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-6 py-12">
+    <main className="site-light-page flex min-h-screen items-center justify-center px-6 pb-16 pt-32">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-slate-200">
+        <motion.div {...pageTransition} className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl md:p-10">
           {/* Header */}
           <div className="mb-8">
-            <p className="text-cyan-500 uppercase tracking-[4px] text-sm font-semibold mb-3">
+            <p className="text-sm font-bold uppercase tracking-[5px] text-cyan-600">
               Join TripVerse
             </p>
 
-            <h1 className="text-4xl font-extrabold text-slate-900">
+            <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950">
               Create Account
             </h1>
 
@@ -176,9 +178,9 @@ function Register() {
               Login
             </Link>
           </p>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </main>
   );
 }
 

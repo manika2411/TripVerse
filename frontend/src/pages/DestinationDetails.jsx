@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { cardHover, fadeUp, pageTransition, ease } from "../utils/animations";
 import { Link, useParams } from "react-router-dom";
 import { getCountryByCode, getCurrencyInfo } from "../services/countryApi";
 
@@ -38,7 +39,7 @@ function DestinationDetails() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f5f9fc] px-6 pt-32 pb-24">
+      <main className="site-light-page px-6 pb-24 pt-32">
         <div className="mx-auto max-w-7xl">
           <div className="h-[500px] animate-pulse rounded-[40px] bg-slate-200" />
 
@@ -58,7 +59,7 @@ function DestinationDetails() {
 
   if (error || !country) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f5f9fc] px-6">
+      <main className="site-light-page flex min-h-screen items-center justify-center px-6">
         <div className="max-w-lg rounded-[30px] border border-slate-200 bg-white p-12 text-center shadow-xl">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-3xl">
             🌍
@@ -95,53 +96,22 @@ function DestinationDetails() {
   const currency = getCurrencyInfo(country);
 
   return (
-    <main className="min-h-screen bg-[#f5f9fc] text-slate-900">
+    <main className="site-light-page text-slate-900">
       {/* =====================================================
           HERO
       ===================================================== */}
 
-      <section className="relative overflow-hidden px-6 pt-28 pb-16">
+      <section className="relative overflow-hidden px-6 pb-16 pt-32">
         {/* Background glow */}
 
-        <motion.div
-          animate={{
-            x: [0, 60, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 9,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-cyan-300/20 blur-3xl"
-        />
+        <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-cyan-300/20 blur-3xl" />
 
-        <motion.div
-          animate={{
-            x: [0, -50, 0],
-            y: [0, 40, 0],
-          }}
-          transition={{
-            duration: 11,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="pointer-events-none absolute right-[-100px] top-0 h-[450px] w-[450px] rounded-full bg-blue-300/20 blur-3xl"
-        />
+        <div className="pointer-events-none absolute right-[-100px] top-0 h-[450px] w-[450px] rounded-full bg-blue-300/20 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl">
           {/* Back */}
 
-          <motion.div
-            initial={{
-              opacity: 0,
-              x: -20,
-            }}
-            animate={{
-              opacity: 1,
-              x: 0,
-            }}
-          >
+          <motion.div {...pageTransition}>
             <Link
               to="/explore"
               className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-cyan-600"
@@ -153,18 +123,7 @@ function DestinationDetails() {
           {/* Hero card */}
 
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.1,
-            }}
+            {...pageTransition}
             className="relative mt-8 overflow-hidden rounded-[40px] border border-slate-200 bg-white shadow-[0_30px_90px_rgba(15,23,42,0.10)]"
           >
             <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
@@ -173,17 +132,9 @@ function DestinationDetails() {
               <div className="relative min-h-[420px] overflow-hidden bg-slate-900 lg:min-h-[560px]">
                 {flag && (
                   <motion.img
-                    initial={{
-                      scale: 1.15,
-                      opacity: 0,
-                    }}
-                    animate={{
-                      scale: 1,
-                      opacity: 1,
-                    }}
-                    transition={{
-                      duration: 1.2,
-                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.55, ease }}
                     src={flag}
                     alt={`${name} flag`}
                     className="absolute inset-0 h-full w-full object-cover"
@@ -265,19 +216,7 @@ function DestinationDetails() {
 
       <section className="px-6 pb-24">
         <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-          >
+          <motion.div {...fadeUp}>
             <p className="text-sm font-bold uppercase tracking-[4px] text-cyan-600">
               Destination overview
             </p>
@@ -331,31 +270,9 @@ function DestinationDetails() {
           <div className="relative overflow-hidden rounded-[40px] bg-slate-900 px-8 py-16 text-white md:px-16 md:py-20">
             {/* Animated background */}
 
-            <motion.div
-              animate={{
-                x: [0, 80, 0],
-                y: [0, -50, 0],
-              }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute -right-24 -top-32 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl"
-            />
+            <div className="absolute -right-24 -top-32 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" />
 
-            <motion.div
-              animate={{
-                x: [0, -60, 0],
-                y: [0, 40, 0],
-              }}
-              transition={{
-                duration: 12,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl"
-            />
+            <div className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
 
             <div className="relative z-10 max-w-3xl">
               <p className="text-sm font-bold uppercase tracking-[4px] text-cyan-300">
@@ -411,23 +328,8 @@ function InfoItem({ icon, label, value }) {
 function InfoCard({ icon, title, value, description }) {
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        y: 30,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-      }}
-      whileHover={{
-        y: -7,
-      }}
-      viewport={{
-        once: true,
-      }}
-      transition={{
-        duration: 0.5,
-      }}
+      {...fadeUp}
+      whileHover={cardHover.whileHover}
       className="rounded-[28px] border border-slate-200 bg-white p-7 shadow-[0_15px_45px_rgba(15,23,42,0.05)] transition-shadow duration-300 hover:shadow-[0_25px_60px_rgba(15,23,42,0.10)]"
     >
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-50 text-2xl">

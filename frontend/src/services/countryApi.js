@@ -63,90 +63,55 @@ export const getCountryCode = (country) => {
   );
 };
 
+const CURRENCY_CODE_REGEX = /^[A-Z]{3}$/;
+
+// Normalise every currency shape we may receive into [{ code, name, symbol }].
+//   REST Countries v5 (via our backend): [{ code: "MXN", name: "...", symbol: "$" }]
+//   Legacy / v3 style:                    { MXN: { name: "...", symbol: "$" } }
+//   Single object / plain string:         { code, name, symbol } | "MXN"
+const toCurrencyEntries = (raw) => {
+  if (!raw) return [];
+
+  if (typeof raw === "string") return [{ code: raw }];
+
+  if (Array.isArray(raw)) return raw.flatMap(toCurrencyEntries);
+
+  if (typeof raw === "object") {
+    if (typeof raw.code === "string") {
+      return [{ code: raw.code, name: raw.name, symbol: raw.symbol }];
+    }
+
+    // Object keyed by currency code. Keys are only trusted when they are real
+    // codes, so numeric array-style keys such as "0" can never leak through.
+    return Object.entries(raw).map(([code, item]) => ({
+      code,
+      name: typeof item === "string" ? item : item?.name,
+      symbol: typeof item === "object" ? item?.symbol : undefined,
+    }));
+  }
+
+  return [];
+};
+
 export const getCurrencyInfo = (country) => {
   if (!country) return null;
 
-  const raw = country.currency;
+  const candidates = [
+    ...toCurrencyEntries(country.currencies),
+    ...toCurrencyEntries(country.currency),
+    ...toCurrencyEntries(country.currencyCode),
+    ...toCurrencyEntries(country.currency_code),
+  ];
 
-  // Some backend country records use 0 as a placeholder.
-  // Never treat that placeholder as a real currency code.
+  for (const entry of candidates) {
+    const code = String(entry.code || "").trim().toUpperCase();
 
-  if (typeof raw === "string" && raw.trim()) {
-    const code = raw.trim().toUpperCase();
+    if (!CURRENCY_CODE_REGEX.test(code)) continue;
+
     return {
       code,
-      name: code,
-      symbol: CURRENCY_SYMBOLS[code] || code,
-    };
-  }
-
-  if (raw && typeof raw === "object") {
-    if (raw.code || raw.symbol || raw.name) {
-      const code = String(raw.code || "").toUpperCase();
-      if (code === "0") return null;
-      return {
-        code: code || "",
-        name: raw.name || code || "Local currency",
-        symbol: raw.symbol || CURRENCY_SYMBOLS[code] || code || "¤",
-      };
-    }
-
-    const rawCode = Object.keys(raw)[0];
-    if (rawCode) {
-      const item = raw[rawCode];
-      const code = rawCode.toUpperCase();
-      return {
-        code,
-        name: item?.name || code,
-        symbol: item?.symbol || CURRENCY_SYMBOLS[code] || code,
-      };
-    }
-  }
-
-  const currencies = country.currencies;
-
-  if (currencies && typeof currencies === "object") {
-    const code = Object.keys(currencies)[0];
-
-    if (code) {
-      const item = currencies[code];
-      const normalizedCode = code.toUpperCase();
-
-      if (typeof item === "string") {
-        return {
-          code: normalizedCode,
-          name: item,
-          symbol: CURRENCY_SYMBOLS[normalizedCode] || normalizedCode,
-        };
-      }
-
-      return {
-        code: normalizedCode,
-        name: item?.name || normalizedCode,
-        symbol:
-          item?.symbol ||
-          CURRENCY_SYMBOLS[normalizedCode] ||
-          normalizedCode,
-      };
-    }
-  }
-
-  const fallbackCode =
-    typeof country.currencyCode === "string"
-      ? country.currencyCode
-      : typeof country.currency_code === "string"
-        ? country.currency_code
-        : typeof country.currency?.code === "string"
-          ? country.currency.code
-          : "";
-
-  const code = fallbackCode.trim().toUpperCase();
-
-  if (code && code !== "0") {
-    return {
-      code,
-      name: code,
-      symbol: CURRENCY_SYMBOLS[code] || code,
+      name: entry.name || code,
+      symbol: entry.symbol || CURRENCY_SYMBOLS[code] || code,
     };
   }
 
@@ -213,27 +178,20 @@ export const getCountryByName = async (name) => {
   return getJson(response, "Failed to load country");
 };
 
-// Async currency resolver used when the backend country payload does not
-// contain usable currency metadata (for example, a numeric 0 placeholder).
+// Async currency resolver. If the country object in hand has no usable
+// currency data, ask our own backend for the full country record.
 export const getCurrencyInfoAsync = async (country) => {
   const localInfo = getCurrencyInfo(country);
 
-  if (localInfo && localInfo.code && localInfo.code !== "0") {
-    return localInfo;
-  }
+  if (localInfo) return localInfo;
 
-  const name = getCountryName(country);
-  if (!name || name === "Unknown") return null;
+  const code = getCountryCode(country);
+
+  if (!code) return null;
 
   try {
-    const response = await fetch(
-      `https://restcountries.com/v3.1/name/${encodeURIComponent(name)}?fullText=true`,
-    );
-
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    return getCurrencyInfo(data?.[0]) || null;
+    const fullCountry = await getCountryByCode(code);
+    return getCurrencyInfo(fullCountry);
   } catch (error) {
     console.error("Currency fallback error:", error);
     return null;

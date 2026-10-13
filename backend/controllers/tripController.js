@@ -5,6 +5,10 @@ const calculateStatus = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
+  // A date-only value such as "2026-10-13" means midnight at the START of that
+  // day, so without this a trip was marked Completed during its last day.
+  end.setUTCHours(23, 59, 59, 999);
+
   if (end < now) {
     return "Completed";
   }
@@ -24,6 +28,8 @@ const getTrips = async (req, res) => {
       startDate: 1,
     });
 
+    const staleTrips = [];
+
     const updatedTrips = trips.map((trip) => {
       const status = calculateStatus(
         trip.startDate,
@@ -32,7 +38,7 @@ const getTrips = async (req, res) => {
 
       if (trip.status !== status) {
         trip.status = status;
-        trip.save();
+        staleTrips.push(trip);
       }
 
       return {
@@ -40,6 +46,18 @@ const getTrips = async (req, res) => {
         status,
       };
     });
+
+    // Persist changed statuses. This used to be an un-awaited trip.save()
+    // inside map(): one failed save became an unhandled rejection, which
+    // crashes Node 15+. Failures are now logged and never affect the response.
+    await Promise.allSettled(staleTrips.map((trip) => trip.save())).then(
+      (results) =>
+        results.forEach((result) => {
+          if (result.status === "rejected") {
+            console.error("Trip status sync failed:", result.reason);
+          }
+        })
+    );
 
     res.status(200).json(updatedTrips);
   } catch (error) {

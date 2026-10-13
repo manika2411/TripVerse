@@ -2,6 +2,7 @@ import { useLocation, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
@@ -31,16 +32,16 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/destination/:id" element={<DestinationDetails />} />
-          <Route path="/planner" element={<TripPlanner />} />
-          <Route path="/budget-planner" element={<BudgetPlanner />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/community" element={<Community />} />
+          <Route path="/planner" element={<ProtectedRoutes><TripPlanner /></ProtectedRoutes>} />
+          <Route path="/budget-planner" element={<ProtectedRoutes><BudgetPlanner /></ProtectedRoutes>} />
+          <Route path="/dashboard" element={<ProtectedRoutes><Dashboard /></ProtectedRoutes>} />
+          <Route path="/community" element={<ProtectedRoutes><Community /></ProtectedRoutes>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/recommendations" element={<Recommendations />}/>
+          <Route path="/recommendations" element={<ProtectedRoutes><Recommendations /></ProtectedRoutes>} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
         </Routes>
       </div>
     </div>
